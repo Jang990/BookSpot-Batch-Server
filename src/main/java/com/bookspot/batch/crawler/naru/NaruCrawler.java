@@ -1,20 +1,25 @@
 package com.bookspot.batch.crawler.naru;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Element;
+import com.bookspot.batch.crawler.common.CookieKey;
+import com.bookspot.batch.crawler.common.JsoupCrawler;
+import com.bookspot.batch.crawler.common.CrawlingResult;
+import com.bookspot.batch.crawler.common.CrawlingResultUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
-import java.io.IOException;
-
+@Service
+@RequiredArgsConstructor
 public class NaruCrawler {
-    public NaruRequest createRequest(LibraryCode code) throws IOException {
-        Connection.Response response = Jsoup.connect(NaruSiteConst.LIBRARY_LIST_PATH)
-                .execute();
-        Element csrfToken = response.parse().selectFirst("input[name=_csrf]");
+    private final JsoupCrawler crawler;
+    private final CrawlingResultUtils crawlingResultUtils;
+
+    public NaruRequest createRequest(LibraryCode code) {
+        CrawlingResult response = crawler.get(NaruSiteConst.LIBRARY_LIST_PATH);
 
         return new NaruRequest(
-                response.cookie("JSESSIONID"),
-                csrfToken.attr("value"),
+                response.getCookie(CookieKey.SESSION_ID),
+                crawlingResultUtils.findElementAttribute(
+                        response, NaruPageConst.CSS_QUERY_CSRF, NaruPageConst.VALUE_CSRF),
                 code.getCode()
         );
     }

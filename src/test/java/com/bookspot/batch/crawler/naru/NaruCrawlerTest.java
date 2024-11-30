@@ -1,23 +1,40 @@
 package com.bookspot.batch.crawler.naru;
 
-import org.junit.jupiter.api.Assertions;
+import com.bookspot.batch.crawler.common.CrawlingResultUtils;
+import com.bookspot.batch.crawler.common.JsoupCrawler;
+import com.bookspot.batch.crawler.common.CrawlingResult;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class NaruCrawlerTest {
-    private NaruCrawler crawler = new NaruCrawler();
+    @Mock JsoupCrawler jsoupCrawler;
+    @Mock CrawlingResultUtils utils;
+    @InjectMocks
+    NaruCrawler naruCrawler;
 
     @Test
-    void 정보나루에_요청을_보낼_수_있는_요소들을_세팅한다() throws IOException {
+    void 정보나루에_요청을_보낼_수_있는_요소들을_세팅한다() {
+        CrawlingResult crawlingResult = mock(CrawlingResult.class);
+        when(jsoupCrawler.get(anyString())).thenReturn(crawlingResult);
         LibraryCode code = new LibraryCode("127058");
-        NaruRequest request = crawler.createRequest(code);
+        when(crawlingResult.getCookie(anyString())).thenReturn("MySessionId");
+        when(utils.findElementAttribute(any(), anyString(), anyString())).thenReturn("CSRF_TOKEN_VALUE");
 
-        assertFalse(request.getJSessionId().isBlank());
-        assertFalse(request.getCsrfToken().isBlank());
+
+        NaruRequest request = naruCrawler.createRequest(code);
+
         assertEquals("127058", request.getLibraryCode());
+        assertEquals("MySessionId", request.getJSessionId());
+        assertEquals("CSRF_TOKEN_VALUE", request.getCsrfToken());
     }
 
 }
