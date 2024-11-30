@@ -1,4 +1,4 @@
-package com.bookspot.batch.bookspot_batch;
+package com.bookspot.batch;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

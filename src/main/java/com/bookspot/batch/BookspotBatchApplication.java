@@ -1,4 +1,4 @@
-package com.bookspot.batch.bookspot_batch;
+package com.bookspot.batch;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
