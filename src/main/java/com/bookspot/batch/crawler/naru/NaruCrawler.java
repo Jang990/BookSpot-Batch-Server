@@ -1,6 +1,6 @@
 package com.bookspot.batch.crawler.naru;
 
-import com.bookspot.batch.crawler.common.CookieKey;
+import com.bookspot.batch.crawler.common.CookieKeyConst;
 import com.bookspot.batch.crawler.common.JsoupCrawler;
 import com.bookspot.batch.crawler.common.CrawlingResult;
 import com.bookspot.batch.crawler.common.CrawlingResultUtils;
@@ -17,7 +17,7 @@ public class NaruCrawler {
         CrawlingResult response = crawler.get(NaruSiteConst.LIBRARY_LIST_PATH);
 
         return new NaruRequest(
-                response.getCookie(CookieKey.SESSION_ID),
+                response.getCookie(CookieKeyConst.SESSION_ID),
                 crawlingResultUtils.findElementAttribute(
                         response, NaruPageConst.CSS_QUERY_CSRF, NaruPageConst.VALUE_CSRF),
                 code.getCode()
