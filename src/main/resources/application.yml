@@ -1,0 +1,8 @@
+spring:
+  application.name: bookspot-batch
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/BookSpot
+    hikari:
+      username: root
+      password: 1234
