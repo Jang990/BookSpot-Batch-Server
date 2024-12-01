@@ -3,7 +3,6 @@ package com.bookspot.batch.crawler.naru;
 import com.bookspot.batch.crawler.common.CookieKeyConst;
 import com.bookspot.batch.crawler.common.JsoupCrawler;
 import com.bookspot.batch.crawler.common.CrawlingResult;
-import com.bookspot.batch.crawler.common.CrawlingResultUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,15 +10,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class NaruCrawler {
     private final JsoupCrawler crawler;
-    private final CrawlingResultUtils crawlingResultUtils;
 
     public NaruRequest createRequest(LibraryCode code) {
-        CrawlingResult response = crawler.get(NaruSiteConst.LIBRARY_LIST_PATH);
+        CrawlingResult result = crawler.get(NaruSiteConst.LIBRARY_LIST_PATH);
 
         return new NaruRequest(
-                response.getCookie(CookieKeyConst.SESSION_ID),
-                crawlingResultUtils.findElementAttribute(
-                        response, NaruPageConst.CSS_QUERY_CSRF, NaruPageConst.VALUE_CSRF),
+                result.getCookie(CookieKeyConst.SESSION_ID),
+                result.findElementAttribute(
+                        NaruPageConst.CSS_QUERY_CSRF, NaruPageConst.VALUE_CSRF),
                 code.getCode()
         );
     }
