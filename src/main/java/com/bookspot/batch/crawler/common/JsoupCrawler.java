@@ -1,5 +1,6 @@
 package com.bookspot.batch.crawler.common;
 
+import com.bookspot.batch.crawler.common.exception.NetworkException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;
@@ -17,8 +18,8 @@ public class JsoupCrawler {
                     .execute();
             return new CrawlingResult(response.parse(), response.cookies());
         } catch (IOException e) {
-            // TODO : 커스텀 예외 필요
-            throw new RuntimeException(e);
+            throw new NetworkException(e);
         }
     }
+
 }
