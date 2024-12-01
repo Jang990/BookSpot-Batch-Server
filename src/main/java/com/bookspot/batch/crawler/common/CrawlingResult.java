@@ -16,6 +16,12 @@ public class CrawlingResult {
         Objects.requireNonNull(cookies);
         this.response = response;
         this.cookies = cookies;
+
+        System.out.println(response);
+    }
+
+    public Map<String,String> getCookies() {
+        return cookies;
     }
 
     public String getCookie(String key) {
@@ -24,10 +30,19 @@ public class CrawlingResult {
 
     public String findElementAttribute(
             String cssQuery, String attributeKey) {
+        Element element = findFirstElement(cssQuery);
+        return element.attr(attributeKey);
+    }
+
+    public String findElementText(String cssQuery) {
+        Element element = findFirstElement(cssQuery);
+        return element.text();
+    }
+
+    private Element findFirstElement(String cssQuery) {
         Element element = response.selectFirst(cssQuery);
         if(element == null)
             throw new ElementNotFoundException();
-
-        return element.attr(attributeKey);
+        return element;
     }
 }
