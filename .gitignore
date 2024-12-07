@@ -37,3 +37,4 @@ out/
 .vscode/
 
 /src/main/resources/application-api.yml
+/src/test/java/com/bookspot/batch/openapi/ApiUrlHolder.java
