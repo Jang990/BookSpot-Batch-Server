@@ -7,6 +7,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class Library {
     private String libraryCode;
+    private String name;
     private String address;
     private String tel;
     private double latitude;
