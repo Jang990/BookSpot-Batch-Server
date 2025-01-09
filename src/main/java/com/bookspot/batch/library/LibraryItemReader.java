@@ -25,7 +25,7 @@ public class LibraryItemReader implements ItemReader<Library> {
     @PostConstruct
     protected void postConstruct() {
         totalLibraries = libraryApiRequester.countSupportedLibrary();
-        currentPage = 0;
+        currentPage = 1;
         currentIndex = 0;
         currentBatch = new ArrayList<>();
     }
@@ -52,6 +52,6 @@ public class LibraryItemReader implements ItemReader<Library> {
     }
 
     private int getFetchedDataCount() {
-        return currentPage * LibraryJobConst.LIBRARY_CHUNK_SIZE;
+        return (currentPage - 1) * LibraryJobConst.LIBRARY_CHUNK_SIZE;
     }
 }
