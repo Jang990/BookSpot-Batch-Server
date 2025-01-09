@@ -2,11 +2,14 @@ package com.bookspot.batch.openapi;
 
 import com.bookspot.batch.library.data.Library;
 import com.bookspot.batch.library.api.LibraryApiRequester;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class LibraryApiRequesterTest {
@@ -21,6 +24,13 @@ class LibraryApiRequesterTest {
         for (Library library : result) {
             System.out.println(library.getName());
         }
+    }
+
+//    @Test
+    void 도서관_정보가_없다면_EMPTY_LIST_반환() {
+        PageRequest pageable = PageRequest.of(17, 100);
+        List<Library> result = requester.findAllSupportedLibrary(pageable);
+        assertTrue(result.isEmpty());
     }
 
 }
