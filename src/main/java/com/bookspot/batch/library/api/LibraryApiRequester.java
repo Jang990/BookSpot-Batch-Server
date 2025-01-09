@@ -37,7 +37,6 @@ public class LibraryApiRequester {
     }
 
     private Library convert(SupportedLibraryResponseSpec.Response.LibraryInfoSpec lib) {
-        System.out.println(lib);
         return new Library(
                 lib.getLibCode(),
                 lib.getLibName(),
