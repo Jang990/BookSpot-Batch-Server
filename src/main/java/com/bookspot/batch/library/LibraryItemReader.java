@@ -41,7 +41,7 @@ public class LibraryItemReader implements ItemReader<Library> {
 
     private void fetchNextPage() {
         currentBatch = libraryApiRequester.findAllSupportedLibrary(
-                PageRequest.of(currentPage, LibraryJobConst.LIBRARY_CHUNK_SIZE));
+                PageRequest.of(currentPage, LibraryStepConst.LIBRARY_CHUNK_SIZE));
         currentIndex = 0;
         currentPage++;
     }
@@ -52,6 +52,6 @@ public class LibraryItemReader implements ItemReader<Library> {
     }
 
     private int getFetchedDataCount() {
-        return (currentPage - 1) * LibraryJobConst.LIBRARY_CHUNK_SIZE;
+        return (currentPage - 1) * LibraryStepConst.LIBRARY_CHUNK_SIZE;
     }
 }
