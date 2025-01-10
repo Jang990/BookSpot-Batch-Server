@@ -8,7 +8,6 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.database.ItemPreparedStatementSetter;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
@@ -49,7 +48,8 @@ public class LibraryJobConfig {
                 .dataSource(dataSource)
                 .sql("""
                         INSERT INTO library (name, library_code, location) VALUES
-                        (?, ?, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')'), 4326));
+                        (?, ?, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')'), 4326))
+                        ON DUPLICATE KEY UPDATE name = VALUES(name), location = VALUES(location);
                         """)
                 .itemPreparedStatementSetter(
                         (library, ps) -> {
