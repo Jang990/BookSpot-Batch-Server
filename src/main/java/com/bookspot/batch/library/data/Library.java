@@ -1,4 +1,4 @@
-package com.bookspot.batch.data.library;
+package com.bookspot.batch.library.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,7 +6,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class Library {
-    private LibraryCode code;
+    private String libraryCode;
+    private String name;
     private String address;
     private String tel;
     private double latitude;
