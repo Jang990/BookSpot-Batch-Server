@@ -47,9 +47,9 @@ public class LibraryJobConfig {
         return new JdbcBatchItemWriterBuilder<Library>()
                 .dataSource(dataSource)
                 .sql("""
-                        INSERT INTO library (name, library_code, location) VALUES
-                        (?, ?, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')'), 4326))
-                        ON DUPLICATE KEY UPDATE name = VALUES(name), location = VALUES(location);
+                        INSERT INTO library (name, library_code, location, updated_at) VALUES
+                        (?, ?, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')'), 4326), NOW())
+                        ON DUPLICATE KEY UPDATE name = VALUES(name), location = VALUES(location), updated_at = NOW();
                         """)
                 .itemPreparedStatementSetter(
                         (library, ps) -> {
