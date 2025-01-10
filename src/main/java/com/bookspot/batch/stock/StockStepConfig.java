@@ -4,6 +4,7 @@ import com.bookspot.batch.stock.data.LibraryStockCsvData;
 import com.bookspot.batch.stock.reader.StockCsvDataMapper;
 import com.bookspot.batch.stock.reader.StockCsvDelimiterTokenizer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
@@ -15,6 +16,7 @@ import org.springframework.core.io.Resource;
 public class StockStepConfig {
 
     @Bean
+    @StepScope
     public FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader(Resource resource) {
         return new FlatFileItemReaderBuilder<LibraryStockCsvData>()
                 .name("bookStockCsvFileReader")
