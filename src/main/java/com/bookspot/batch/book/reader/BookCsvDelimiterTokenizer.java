@@ -12,19 +12,9 @@ import java.util.Arrays;
 
 public class BookCsvDelimiterTokenizer implements LineTokenizer {
     private static final char QUOTE = '"';
-    private static final String[] fieldNames = {
-            "controlNumber", "authorName", "volumeName",
-            "publicationYear", "classificationNumber", "bookSymbolNumber",
-            "titleName", "libraryCode", "isbn13Number",
-            "representativeBook", "registerNumber", "incomeFlagName",
-            "manageFlagName", "mediaFlagName", "utilizationLimitFlagName",
-            "utilizationTargetFlagName", "accompanyDataName", "singleVolumeIsbn",
-            "singleVolumeIsbnAdditionalSymbolName", "classificationSymbolFlagName", "volumeSymbolName",
-            "duplicateCopySymbolName", "registerDate", "isbn13OriginalNumber",
-            "masterLibraryCode", "volumeExists", "setIsbnChanged",
-            "volumeOriginalName", "titleSubstituteName", "kdcName",
-            "bookClassificationCode", "bookLocationCode"
-    };
+    private static final String[] fieldNames = Arrays.stream(BookCsvSpec.values())
+            .map(BookCsvSpec::value)
+            .toArray(String[]::new);
 
     @SneakyThrows
     @Override

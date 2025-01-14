@@ -1,5 +1,6 @@
 package com.bookspot.batch.book.reader;
 
+import com.bookspot.batch.book.data.Book;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +14,8 @@ public class BookReaderConfig {
     private static final Resource SAMPLE_RESOURCE = new PathMatchingResourcePatternResolver().getResource(TARGET_PATH);
 
     @Bean
-    public FlatFileItemReader<BookCsvData> bookCsvFileItemReader() {
-        return new FlatFileItemReaderBuilder<BookCsvData>()
+    public FlatFileItemReader<Book> bookCsvFileItemReader() {
+        return new FlatFileItemReaderBuilder<Book>()
                 .name("bookCsvFileItemReader")
                 .resource(SAMPLE_RESOURCE)
                 .encoding("UTF-8")

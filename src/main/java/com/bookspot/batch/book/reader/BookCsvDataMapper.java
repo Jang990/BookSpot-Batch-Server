@@ -1,61 +1,45 @@
 package com.bookspot.batch.book.reader;
 
+import com.bookspot.batch.book.data.Book;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;
 import org.springframework.validation.BindException;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
-public class BookCsvDataMapper implements FieldSetMapper<BookCsvData> {
-
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.S");
+public class BookCsvDataMapper implements FieldSetMapper<Book> {
 
     @Override
-    public BookCsvData mapFieldSet(FieldSet fieldSet) throws BindException {
-        BookCsvData result = new BookCsvData();
-
-        result.setControlNumber(fieldSet.readString("controlNumber"));
-        result.setAuthorName(fieldSet.readString("authorName"));
-        result.setVolumeName(fieldSet.readString("volumeName"));
-        result.setPublicationYear(fieldSet.readString("publicationYear"));
-        result.setClassificationNumber(fieldSet.readString("classificationNumber"));
-        result.setBookSymbolNumber(fieldSet.readString("bookSymbolNumber"));
-        result.setTitleName(fieldSet.readString("titleName"));
-        result.setLibraryCode(fieldSet.readString("libraryCode"));
-        result.setIsbn13Number(fieldSet.readString("isbn13Number"));
-        result.setRepresentativeBook(fieldSet.readString("representativeBook"));
-        result.setRegisterNumber(fieldSet.readString("registerNumber"));
-        result.setIncomeFlagName(fieldSet.readString("incomeFlagName"));
-        result.setManageFlagName(fieldSet.readString("manageFlagName"));
-        result.setMediaFlagName(fieldSet.readString("mediaFlagName"));
-        result.setUtilizationLimitFlagName(fieldSet.readString("utilizationLimitFlagName"));
-        result.setUtilizationTargetFlagName(fieldSet.readString("utilizationTargetFlagName"));
-        result.setAccompanyDataName(fieldSet.readString("accompanyDataName"));
-        result.setSingleVolumeIsbn(fieldSet.readString("singleVolumeIsbn"));
-        result.setSingleVolumeIsbnAdditionalSymbolName(fieldSet.readString("singleVolumeIsbnAdditionalSymbolName"));
-        result.setClassificationSymbolFlagName(fieldSet.readString("classificationSymbolFlagName"));
-        result.setVolumeSymbolName(fieldSet.readString("volumeSymbolName"));
-        result.setDuplicateCopySymbolName(fieldSet.readString("duplicateCopySymbolName"));
-        result.setRegisterDate(LocalDate.parse(fieldSet.readString("registerDate"), formatter));
-        result.setIsbn13OriginalNumber(fieldSet.readString("isbn13OriginalNumber"));
-        result.setMasterLibraryCode(fieldSet.readString("masterLibraryCode"));
-        result.setVolumeExists(fieldSet.readString("volumeExists"));
-        result.setSetIsbnChanged(fieldSet.readString("setIsbnChanged"));
-        result.setVolumeOriginalName(fieldSet.readString("volumeOriginalName"));
-        result.setTitleSubstituteName(fieldSet.readString("titleSubstituteName"));
-        result.setKdcName(fieldSet.readString("kdcName"));
-        result.setBookClassificationCode(fieldSet.readString("bookClassificationCode"));
-        result.setBookLocationCode(fieldSet.readString("bookLocationCode"));
-
+    public Book mapFieldSet(FieldSet fieldSet) throws BindException {
+        Book result = new Book();
+        result.setIsbn13(read(fieldSet, BookCsvSpec.ISBN13_NUMBER));
+        result.setAuthor(read(fieldSet, BookCsvSpec.AUTHOR_NAME));
+        result.setPublicationYear(toInt(read(fieldSet, BookCsvSpec.PUBLICATION_YEAR)));
+        result.setTitle(readTitle(fieldSet));
+        result.setSubjectCode(read(fieldSet, BookCsvSpec.CLASSIFICATION_NUMBER));
         return result;
     }
 
-    private long toLong(String value) {
-        return value.isBlank() ? 0 : Long.parseLong(value);
+    private int toInt(String value) {
+        return Integer.parseInt(value);
     }
 
-    private int toInt(String value) {
-        return value.isBlank() ? 0 : Integer.parseInt(value);
+    private String readTitle(FieldSet fieldSet) {
+        String volumeExists = read(fieldSet, BookCsvSpec.VOLUME_EXISTS);
+        if(volumeExists == null || !(volumeExists.equals("Y") || volumeExists.equals("N")))
+            throw new IllegalArgumentException("representativeBook 필드 오류 - %s".formatted(volumeExists));
+
+        if(volumeExists.equals("N"))
+            return read(fieldSet, BookCsvSpec.TITLE_NAME);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(read(fieldSet, BookCsvSpec.TITLE_NAME)).append(" ")
+                .append(read(fieldSet, BookCsvSpec.VOLUME_NAME)).append("권");
+        return sb.toString();
+    }
+
+    private String read(FieldSet fieldSet, BookCsvSpec spec) {
+        String result = fieldSet.readString(spec.value());
+        if(result == null || result.isBlank())
+            return null;
+        return result;
     }
 }

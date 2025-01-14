@@ -1,5 +1,6 @@
 package com.bookspot.batch.book.reader;
 
+import com.bookspot.batch.book.data.Book;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.ExecutionContext;
@@ -13,12 +14,27 @@ class BookReaderConfigTest {
     @Test
     @DisplayName("파일 리딩 가능")
     void test1() throws Exception {
-        FlatFileItemReader<BookCsvData> reader = config.bookCsvFileItemReader(/*SAMPLE_RESOURCE*/);
+        FlatFileItemReader<Book> reader = config.bookCsvFileItemReader(/*SAMPLE_RESOURCE*/);
         reader.open(new ExecutionContext());
+        skip(reader, 46);
 
-        assertEquals("(Why)지구", reader.read().getTitleName());
-        assertEquals("(Why)동물", reader.read().getTitleName());
-        assertEquals("(Why)미래과학", reader.read().getTitleName());
-        assertEquals("(Why)외계인과 UFO", reader.read().getTitleName());
+        Book result = reader.read();
+        assertEquals("(한·양방) 똑똑한 병원이용", result.getTitle());
+        assertEquals("517.16", result.getSubjectCode());
+        assertEquals("백태선 지음", result.getAuthor());
+        assertEquals("9788991373273", result.getIsbn13());
+        assertEquals(2008, result.getPublicationYear());
+
+        result = reader.read();
+        assertEquals("당신도 건강하게 100세 이상 살 수 있다 2권", result.getTitle());
+        assertEquals("517", result.getSubjectCode());
+        assertEquals(null, result.getAuthor());
+        assertEquals("9788988314944", result.getIsbn13());
+        assertEquals(2002, result.getPublicationYear());
+    }
+
+    private static void skip(FlatFileItemReader<Book> reader, int cnt) throws Exception {
+        for (int i = 0; i < cnt; i++)
+            reader.read();
     }
 }
