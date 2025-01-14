@@ -1,4 +1,4 @@
-package com.bookspot.batch.data.book;
+package com.bookspot.batch.book.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
