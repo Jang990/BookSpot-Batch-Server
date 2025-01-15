@@ -14,14 +14,19 @@ public class BookReaderConfig {
     private static final Resource SAMPLE_RESOURCE = new PathMatchingResourcePatternResolver().getResource(TARGET_PATH);
 
     @Bean
-    public FlatFileItemReader<Book> bookCsvFileItemReader() {
-        return new FlatFileItemReaderBuilder<Book>()
+    public FlatFileItemReader<BookCsvData> bookCsvFileItemReader() {
+        return new FlatFileItemReaderBuilder<BookCsvData>()
                 .name("bookCsvFileItemReader")
                 .resource(SAMPLE_RESOURCE)
                 .encoding("UTF-8")
                 .lineTokenizer(new BookCsvDelimiterTokenizer())
-                .fieldSetMapper(new BookCsvDataMapper())
+                .fieldSetMapper(new BookCsvDataMapper(yearParser()))
                 .linesToSkip(1)
                 .build();
+    }
+
+    @Bean
+    public YearParser yearParser() {
+        return new YearParser();
     }
 }
