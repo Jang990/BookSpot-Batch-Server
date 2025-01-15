@@ -1,6 +1,5 @@
 package com.bookspot.batch.book.reader;
 
-import com.bookspot.batch.book.data.Book;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
@@ -20,13 +19,8 @@ public class BookReaderConfig {
                 .resource(SAMPLE_RESOURCE)
                 .encoding("UTF-8")
                 .lineTokenizer(new BookCsvDelimiterTokenizer())
-                .fieldSetMapper(new BookCsvDataMapper(yearParser()))
+                .fieldSetMapper(new BookCsvDataMapper())
                 .linesToSkip(1)
                 .build();
-    }
-
-    @Bean
-    public YearParser yearParser() {
-        return new YearParser();
     }
 }

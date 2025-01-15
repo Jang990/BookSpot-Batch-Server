@@ -1,5 +1,6 @@
-package com.bookspot.batch.book.reader;
+package com.bookspot.batch.book.processor;
 
+import com.bookspot.batch.book.processor.YearParser;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

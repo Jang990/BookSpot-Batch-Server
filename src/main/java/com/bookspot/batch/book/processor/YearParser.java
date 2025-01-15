@@ -1,8 +1,11 @@
-package com.bookspot.batch.book.reader;
+package com.bookspot.batch.book.processor;
+
+import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component
 public class YearParser {
     private static final Pattern YEAR_PATTERN = Pattern.compile("\\d{4,}");
 
