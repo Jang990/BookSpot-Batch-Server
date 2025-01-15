@@ -1,12 +1,14 @@
-package com.bookspot.batch.data.book;
+package com.bookspot.batch.book.data;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Book {
-    private Isbn13 isbn13;          // 9788954605816
+    private String isbn13;          // 9788954605816
     private String title;           // 눈물상자 (제목 + 권 수)
     private String author;          // 한강 글 ;봄로야 그림
     private String publisher;       // 문학동네

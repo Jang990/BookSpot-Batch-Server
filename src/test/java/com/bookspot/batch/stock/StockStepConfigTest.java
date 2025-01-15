@@ -19,7 +19,7 @@ class StockStepConfigTest {
     @Test
     @DisplayName("파일 리딩 가능")
     void test1() throws Exception {
-        FlatFileItemReader<LibraryStockCsvData> reader = config.bookStockCsvFileReader(SAMPLE_RESOURCE);
+        FlatFileItemReader<LibraryStockCsvData> reader = config.bookStockCsvFileReader(/*SAMPLE_RESOURCE*/);
         reader.open(new ExecutionContext());
 
         assertEquals("9791171830602", reader.read().getIsbn());
