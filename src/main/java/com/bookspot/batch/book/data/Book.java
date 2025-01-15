@@ -12,6 +12,14 @@ public class Book {
     private String title;           // 눈물상자 (제목 + 권 수)
     private String author;          // 한강 글 ;봄로야 그림
     private String publisher;       // 문학동네
-    private int publicationYear;    // 2021
+    private Integer publicationYear;    // 2021
     private String subjectCode; // 813.7
+
+    public Book(String isbn13, String title, String author, Integer publicationYear, String subjectCode) {
+        this.isbn13 = isbn13;
+        this.title = title;
+        this.author = author;
+        this.publicationYear = publicationYear;
+        this.subjectCode = subjectCode;
+    }
 }
