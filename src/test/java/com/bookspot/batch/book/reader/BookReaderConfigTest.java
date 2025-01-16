@@ -23,7 +23,7 @@ class BookReaderConfigTest {
         assertEquals("517.16", result.getSubjectCode());
         assertEquals("백태선 지음", result.getAuthor());
         assertEquals("9788991373273", result.getIsbn13());
-        assertEquals(2008, result.getPublicationYear());
+        assertEquals("2008", result.getPublicationYear());
         assertNull(result.getVolume());
 
         result = reader.read();
@@ -31,7 +31,7 @@ class BookReaderConfigTest {
         assertEquals("517", result.getSubjectCode());
         assertNull(result.getAuthor());
         assertEquals("9788988314944", result.getIsbn13());
-        assertEquals(2002, result.getPublicationYear());
+        assertEquals("2002", result.getPublicationYear());
         assertEquals("2", result.getVolume());
     }
 

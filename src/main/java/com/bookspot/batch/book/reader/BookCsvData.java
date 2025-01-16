@@ -9,7 +9,7 @@ public class BookCsvData {
     private String isbn13;
     private String author;
     private String title;
-    private Integer publicationYear;
+    private String publicationYear;
     private String subjectCode;
     private String volume; // "상" "중" "하" or "1" "2" "3" ...
 }

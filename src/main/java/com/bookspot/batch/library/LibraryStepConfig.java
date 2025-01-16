@@ -24,7 +24,7 @@ public class LibraryStepConfig {
 
     @Bean
     public Step libraryStep() {
-        return new StepBuilder("libraryStep", jobRepository)
+        return new StepBuilder(LibraryStepConst.STEP_NAME, jobRepository)
                 .<Library, Library>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryItemReader)
                 .writer(libraryWriter())
