@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.adapter.ItemProcessorAdapter;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
@@ -25,9 +26,10 @@ import java.util.Arrays;
 public class BookConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
+    private final DataSource dataSource;
 
     private final FlatFileItemReader<BookCsvData> bookStockCsvFileReader;
-    private final BookCsvProcessor bookCsvProcessor;
+    private final ItemProcessor<BookCsvData, Book> bookCsvProcessor;
 
     @Bean
     public Step bookStep() {
@@ -35,7 +37,27 @@ public class BookConfig {
                 .<BookCsvData, Book>chunk(BookStepConst.CHUNK_SIZE, platformTransactionManager)
                 .reader(bookStockCsvFileReader)
                 .processor(bookCsvProcessor)
-                .writer(items -> items.forEach(System.out::println))
+                .writer(bookWriter())
                 .build();
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<Book> bookWriter() {
+        JdbcBatchItemWriter<Book> writer = new JdbcBatchItemWriterBuilder<Book>()
+                .dataSource(dataSource)
+                .sql("""
+                        INSERT IGNORE INTO book
+                        (isbn13, title, classification)
+                        VALUES(?, ?, ?);
+                        """)
+                .itemPreparedStatementSetter(
+                        (book, ps) -> {
+                            ps.setString(1, book.getIsbn13());
+                            ps.setString(2, book.getTitle());
+                            ps.setString(3, book.getSubjectCode());
+                        })
+                .assertUpdates(false) // 업데이트 되지 않는 row가 있어도 진행
+                .build();
+        return writer;
     }
 }
