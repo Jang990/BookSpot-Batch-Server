@@ -1,5 +1,6 @@
 package com.bookspot.batch;
 
+import com.bookspot.batch.book.BookStepConst;
 import com.bookspot.batch.library.LibraryStepConst;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -18,9 +19,10 @@ public class JobConfig {
     private final BookSpotSteps bookSpotSteps;
 
     @Bean
-    public Job libraryJob() {
-        return new JobBuilder("libraryJob2", jobRepository)
-                .start(getStep(LibraryStepConst.STEP_NAME))
+    public Job bookSpot() {
+        return new JobBuilder("bookSpot", jobRepository)
+//                .start(getStep(LibraryStepConst.STEP_NAME))
+                .start(getStep(BookStepConst.STEP_NAME))
                 .incrementer(new RunIdIncrementer())
                 .build();
     }
