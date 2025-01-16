@@ -13,7 +13,9 @@ public class BookCsvProcessor implements ItemProcessor<BookCsvData, Book> {
 
     @Override
     public Book process(BookCsvData item) throws Exception {
-        if(item.getIsbn13() == null)
+        if(item.getIsbn13() == null
+                || item.getIsbn13().isBlank()
+                || item.getIsbn13().length() != 13)
             return null;
 
         return new Book(
