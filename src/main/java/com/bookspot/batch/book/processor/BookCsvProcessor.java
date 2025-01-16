@@ -21,7 +21,8 @@ public class BookCsvProcessor implements ItemProcessor<BookCsvData, Book> {
                 item.getTitle(),
                 item.getAuthor(),
                 yearParser.parse(item.getPublicationYear()),
-                item.getSubjectCode()
+                item.getSubjectCode(),
+                item.getVolume()
         );
     }
 }
