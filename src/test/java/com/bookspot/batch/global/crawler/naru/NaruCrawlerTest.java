@@ -1,7 +1,7 @@
-package com.bookspot.batch.crawler.naru;
+package com.bookspot.batch.global.crawler.naru;
 
-import com.bookspot.batch.crawler.common.JsoupCrawler;
-import com.bookspot.batch.crawler.common.CrawlingResult;
+import com.bookspot.batch.global.crawler.common.JsoupCrawler;
+import com.bookspot.batch.global.crawler.common.CrawlingResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

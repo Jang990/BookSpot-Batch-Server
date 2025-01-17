@@ -1,4 +1,4 @@
-package com.bookspot.batch.crawler.common;
+package com.bookspot.batch.global.crawler.common;
 
 import java.util.Collections;
 import java.util.Map;

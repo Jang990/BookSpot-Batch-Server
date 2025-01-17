@@ -1,6 +1,6 @@
-package com.bookspot.batch.crawler.naru;
+package com.bookspot.batch.global.crawler.naru;
 
-import com.bookspot.batch.crawler.naru.exception.NaruRequestValidationException;
+import com.bookspot.batch.global.crawler.naru.exception.NaruRequestValidationException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

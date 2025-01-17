@@ -1,9 +1,9 @@
-package com.bookspot.batch.crawler.naru;
+package com.bookspot.batch.global.crawler.naru;
 
-import com.bookspot.batch.crawler.common.CookieKeyConst;
-import com.bookspot.batch.crawler.common.JsoupCrawler;
-import com.bookspot.batch.crawler.common.CrawlingResult;
-import com.bookspot.batch.crawler.common.RequestData;
+import com.bookspot.batch.global.crawler.common.CookieKeyConst;
+import com.bookspot.batch.global.crawler.common.JsoupCrawler;
+import com.bookspot.batch.global.crawler.common.CrawlingResult;
+import com.bookspot.batch.global.crawler.common.RequestData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

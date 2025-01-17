@@ -1,6 +1,6 @@
-package com.bookspot.batch.crawler.common;
+package com.bookspot.batch.global.crawler.common;
 
-import com.bookspot.batch.crawler.common.exception.ElementNotFoundException;
+import com.bookspot.batch.global.crawler.common.exception.ElementNotFoundException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 

@@ -1,8 +1,8 @@
 package com.bookspot.batch.library.api;
 
 import com.bookspot.batch.library.data.Library;
-import com.bookspot.batch.openapi.ApiRequester;
-import com.bookspot.batch.openapi.naru.NaruApiUrlCreator;
+import com.bookspot.batch.global.openapi.ApiRequester;
+import com.bookspot.batch.global.openapi.naru.NaruApiUrlCreator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
