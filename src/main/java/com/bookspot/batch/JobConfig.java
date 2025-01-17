@@ -23,8 +23,10 @@ public class JobConfig {
     public Job bookSpot() {
         return new JobBuilder("bookSpot", jobRepository)
 //                .start(getStep(LibraryStepConst.STEP_NAME))
-//                .start(getStep(BookStepConst.STEP_NAME))
-                .start(getStep(StockStepConst.STEP_NAME))
+
+                .start(getStep(BookStepConst.STEP_NAME))
+                .next(getStep(StockStepConst.STEP_NAME))
+
                 .incrementer(new RunIdIncrementer())
                 .build();
     }
