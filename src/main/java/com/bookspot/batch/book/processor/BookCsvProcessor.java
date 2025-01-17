@@ -2,6 +2,7 @@ package com.bookspot.batch.book.processor;
 
 import com.bookspot.batch.book.data.Book;
 import com.bookspot.batch.book.reader.BookCsvData;
+import com.bookspot.batch.stock.processor.IsbnValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
@@ -10,12 +11,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class BookCsvProcessor implements ItemProcessor<BookCsvData, Book> {
     private final YearParser yearParser;
+    private final IsbnValidator isbnValidator;
 
     @Override
     public Book process(BookCsvData item) throws Exception {
-        if(item.getIsbn13() == null
-                || item.getIsbn13().isBlank()
-                || item.getIsbn13().length() != 13)
+        if(isbnValidator.isInValid(item.getIsbn13()))
             return null;
 
         return new Book(
