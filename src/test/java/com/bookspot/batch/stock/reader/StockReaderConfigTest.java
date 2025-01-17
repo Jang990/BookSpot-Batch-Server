@@ -1,5 +1,6 @@
 package com.bookspot.batch.stock.reader;
 
+import com.bookspot.batch.book.processor.YearParser;
 import com.bookspot.batch.stock.StockStepConfig;
 import com.bookspot.batch.stock.data.LibraryStockCsvData;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +13,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import static org.junit.jupiter.api.Assertions.*;
 
 class StockReaderConfigTest {
-    StockReaderConfig config = new StockReaderConfig();
+    StockReaderConfig config = new StockReaderConfig(new YearParser());
 
     private static final String TARGET_PATH = "부평구립삼산도서관 장서 대출목록 (2024년 12월).csv";
     private static final Resource SAMPLE_RESOURCE = new PathMatchingResourcePatternResolver().getResource(TARGET_PATH);
