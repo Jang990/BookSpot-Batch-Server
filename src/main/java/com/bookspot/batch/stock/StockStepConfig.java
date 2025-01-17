@@ -16,36 +16,20 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
-
 @Configuration
 @RequiredArgsConstructor
 public class StockStepConfig {
-    private static final String TARGET_PATH = "부평구립삼산도서관 장서 대출목록 (2024년 12월).csv";
-    private static final Resource SAMPLE_RESOURCE = new PathMatchingResourcePatternResolver().getResource(TARGET_PATH);
-
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
+
+    private final FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader;
 
     @Bean
     public Step libraryStockStep() {
         return new StepBuilder(StockStepConst.STEP_NAME, jobRepository)
                 .<LibraryStockCsvData, LibraryStockCsvData>chunk(StockStepConst.CHUNK_SIZE, platformTransactionManager)
-                .reader(bookStockCsvFileReader())
+                .reader(bookStockCsvFileReader)
                 .writer(items -> items.forEach(System.out::println))
-                .build();
-    }
-
-    @Bean
-    @StepScope
-    public FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader() {
-        return new FlatFileItemReaderBuilder<LibraryStockCsvData>()
-                .name("bookStockCsvFileReader")
-                .resource(SAMPLE_RESOURCE)
-                .encoding("euc-kr")
-                .lineTokenizer(new StockCsvDelimiterTokenizer())
-                .fieldSetMapper(new StockCsvDataMapper())
-                .linesToSkip(1)
                 .build();
     }
 }
