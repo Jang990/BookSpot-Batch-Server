@@ -30,7 +30,7 @@ public class BookWriterConfig {
                             ps.setString(1, book.getIsbn());
                             ps.setString(2, book.getTitle());
                             ps.setString(3, book.getSubjectCode());
-                            ps.setString(4, String.valueOf(book.getVolume()));
+                            ps.setString(4, book.getVolume());
                         })
                 .assertUpdates(false)
                 .build();
