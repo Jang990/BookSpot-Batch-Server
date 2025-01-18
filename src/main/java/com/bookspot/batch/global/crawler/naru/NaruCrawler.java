@@ -27,14 +27,14 @@ public class NaruCrawler {
 
     private final JsoupCrawler crawler;
 
-    public NaruRequest createRequest(LibraryCode code) {
+    public NaruRequest createRequest(String code) {
         CrawlingResult result = crawler.get(LIBRARY_LIST_PATH);
 
         return new NaruRequest(
                 result.getCookie(CookieKeyConst.SESSION_ID),
                 result.findElementAttribute(
                         CSS_QUERY_CSRF_TOKEN, VALUE_CSRF_TOKEN),
-                code.getCode()
+                code
         );
     }
 
