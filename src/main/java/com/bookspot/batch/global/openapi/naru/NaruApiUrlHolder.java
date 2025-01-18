@@ -1,4 +1,4 @@
-package com.bookspot.batch.openapi.naru;
+package com.bookspot.batch.global.openapi.naru;
 
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;

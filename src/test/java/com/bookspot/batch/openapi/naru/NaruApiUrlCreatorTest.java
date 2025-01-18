@@ -1,5 +1,7 @@
 package com.bookspot.batch.openapi.naru;
 
+import com.bookspot.batch.global.openapi.naru.NaruApiUrlCreator;
+import com.bookspot.batch.global.openapi.naru.NaruApiUrlHolder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

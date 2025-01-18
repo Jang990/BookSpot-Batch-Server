@@ -1,6 +1,6 @@
-package com.bookspot.batch.crawler.common;
+package com.bookspot.batch.global.crawler.common;
 
-import com.bookspot.batch.crawler.common.exception.NetworkException;
+import com.bookspot.batch.global.crawler.common.exception.NetworkException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.springframework.stereotype.Service;

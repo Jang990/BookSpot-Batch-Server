@@ -1,4 +1,4 @@
-package com.bookspot.batch.crawler.naru;
+package com.bookspot.batch.global.crawler.naru;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

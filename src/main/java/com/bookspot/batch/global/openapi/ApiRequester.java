@@ -1,4 +1,4 @@
-package com.bookspot.batch.openapi;
+package com.bookspot.batch.global.openapi;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
