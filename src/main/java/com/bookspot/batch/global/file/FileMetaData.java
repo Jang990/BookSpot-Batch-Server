@@ -9,9 +9,11 @@ public record FileMetaData(String name, String directory, FileFormat format) {
         Objects.requireNonNull(format);
     }
 
-
-
     public String fullName() {
         return name.concat(format.getExt());
+    }
+
+    public String absolutePath() {
+        return directory.concat("/").concat(fullName());
     }
 }

@@ -14,13 +14,11 @@ public class LibraryFileDownloader {
     private final NaruFileDownloader naruFileDownloader;
 
     private static final String URL = "https://www.data4library.kr/libDataDownload";
-    private static final String FILE_NAME = "library_list";
-    private static final String DIRECTORY_NAME = "bookSpotFiles/library";
 
     public void download() {
         naruFileDownloader.downloadSync(
                 URL,
                 requestCreator.create(),
-                new FileMetaData(FILE_NAME, DIRECTORY_NAME, FileFormat.EXCEL));
+                LibraryExcelConst.metadata);
     }
 }

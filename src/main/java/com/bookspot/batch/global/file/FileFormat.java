@@ -1,7 +1,7 @@
 package com.bookspot.batch.global.file;
 
 public enum FileFormat {
-    CSV("csv"),
+    CSV(".csv"),
     EXCEL(".xlsx");
 
     private final String ext;
