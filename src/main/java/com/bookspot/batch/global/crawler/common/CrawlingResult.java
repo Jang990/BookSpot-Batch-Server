@@ -16,8 +16,6 @@ public class CrawlingResult {
         Objects.requireNonNull(cookies);
         this.response = response;
         this.cookies = cookies;
-
-        System.out.println(response);
     }
 
     public Map<String,String> getCookies() {

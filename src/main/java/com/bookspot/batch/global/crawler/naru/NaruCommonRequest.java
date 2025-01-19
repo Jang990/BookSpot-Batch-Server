@@ -35,11 +35,11 @@ public class NaruCommonRequest {
         return !StringUtils.hasText(jSessionId);
     }
 
-    protected String getJSessionId() {
+    public String getJSessionId() {
         return jSessionId;
     }
 
-    protected String getCsrfToken() {
+    public String getCsrfToken() {
         return csrfToken;
     }
 
