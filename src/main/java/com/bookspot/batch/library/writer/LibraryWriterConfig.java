@@ -1,6 +1,7 @@
 package com.bookspot.batch.library.writer;
 
 import com.bookspot.batch.library.data.Library;
+import com.bookspot.batch.library.data.LibraryNaruDetail;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
@@ -30,6 +31,24 @@ public class LibraryWriterConfig {
                             ps.setDouble(3, library.getLatitude());
                             ps.setDouble(4, library.getLongitude());
                             ps.setString(5, library.getAddress());
+                        })
+                .build();
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<LibraryNaruDetail> naruDetailWriter() {
+        return new JdbcBatchItemWriterBuilder<LibraryNaruDetail>()
+                .dataSource(dataSource)
+                .sql("""
+                        UPDATE library
+                        SET naru_detail = ?
+                        WHERE address = ? AND name = ?
+                        """)
+                .itemPreparedStatementSetter(
+                        (naruDetail, ps) -> {
+                            ps.setString(1, naruDetail.naruDetail());
+                            ps.setString(2, naruDetail.address());
+                            ps.setString(3, naruDetail.name());
                         })
                 .build();
     }
