@@ -27,10 +27,10 @@ public class NaruCrawler {
 
     private final JsoupCrawler crawler;
 
-    public NaruRequest createRequest(String code) {
+    public NaruDetailRequest createRequest(String code) {
         CrawlingResult result = crawler.get(LIBRARY_LIST_PATH);
 
-        return new NaruRequest(
+        return new NaruDetailRequest(
                 result.getCookie(CookieKeyConst.SESSION_ID),
                 result.findElementAttribute(
                         CSS_QUERY_CSRF_TOKEN, VALUE_CSRF_TOKEN),
@@ -38,7 +38,7 @@ public class NaruCrawler {
         );
     }
 
-    public CsvFilePath findCurrentBooksFilePath(NaruRequest request) {
+    public CsvFilePath findCurrentBooksFilePath(NaruDetailRequest request) {
         RequestData requestData = new RequestData(
                 LIBRARY_DETAIL_PATH,
                 request.getHeader(),

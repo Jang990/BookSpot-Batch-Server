@@ -33,7 +33,7 @@ class NaruCrawlerTest {
         when(crawlingResult.getCookie(anyString())).thenReturn("MySessionId");
         when(crawlingResult.findElementAttribute(anyString(), anyString())).thenReturn("CSRF_TOKEN_VALUE");
 
-        NaruRequest request = naruCrawler.createRequest("4505");
+        NaruDetailRequest request = naruCrawler.createRequest("4505");
 
         assertEquals("4505", request.getLibraryCode());
         assertEquals("MySessionId", request.getJSessionId());
@@ -48,7 +48,7 @@ class NaruCrawlerTest {
         when(crawlingResult.findElementAttribute(anyString(), anyString())).thenReturn("/MyFilePath");
 
         CsvFilePath result = naruCrawler.findCurrentBooksFilePath(
-                new NaruRequest("MySessionId", "MyCsrfToken", "123424"));
+                new NaruDetailRequest("MySessionId", "MyCsrfToken", "123424"));
 
         assertThat(result.getPath()).contains("/MyFilePath");
         assertThat(result.getReferenceDate()).isEqualTo(LocalDate.parse("2024-11-01"));

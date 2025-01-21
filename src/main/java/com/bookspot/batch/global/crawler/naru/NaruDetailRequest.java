@@ -3,11 +3,7 @@ package com.bookspot.batch.global.crawler.naru;
 import com.bookspot.batch.global.crawler.naru.exception.NaruRequestValidationException;
 import org.springframework.util.StringUtils;
 
-import java.util.Map;
-
-public class NaruRequest extends NaruCommonRequest {
-    private static final String HEADER_KEY_JSESSIONID = "JSESSIONID";
-
+public class NaruDetailRequest extends NaruCommonRequest {
     private static final String PAIR_DELIMITER = "&";
     private static final String KEY_VALUE_DELIMITER = "=";
     private static final String BODY_KEY_CSRF_TOKEN = "_csrf";
@@ -15,7 +11,7 @@ public class NaruRequest extends NaruCommonRequest {
 
     private final String libraryCode;
 
-    public NaruRequest(String jSessionId, String csrfToken, String libraryCode) {
+    public NaruDetailRequest(String jSessionId, String csrfToken, String libraryCode) {
         super(jSessionId, csrfToken);
         if (isBlank(libraryCode))
             throw new NaruRequestValidationException();
