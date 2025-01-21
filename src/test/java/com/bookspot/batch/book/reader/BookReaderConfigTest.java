@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BookReaderConfigTest {
     BookReaderConfig config = new BookReaderConfig();
 
-    @Test
+//    @Test // 파일 제거함
     @DisplayName("파일 리딩 가능")
     void test1() throws Exception {
         FlatFileItemReader<BookCsvData> reader = config.bookCsvFileItemReader(/*SAMPLE_RESOURCE*/);

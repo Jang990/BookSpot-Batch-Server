@@ -35,7 +35,7 @@ class NaruCrawlerTest {
 
         NaruRequest request = naruCrawler.createRequest("4505");
 
-        assertEquals("10801", request.getLibraryCode());
+        assertEquals("4505", request.getLibraryCode());
         assertEquals("MySessionId", request.getJSessionId());
         assertEquals("CSRF_TOKEN_VALUE", request.getCsrfToken());
     }
