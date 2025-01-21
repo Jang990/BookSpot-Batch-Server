@@ -1,6 +1,8 @@
 package com.bookspot.batch.library;
 
 import com.bookspot.batch.library.data.Library;
+import com.bookspot.batch.library.data.LibraryNaruDetail;
+import com.bookspot.batch.library.naru.LibraryNaruDetailReader;
 import com.bookspot.batch.library.reader.file.LibraryFileDownloader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -13,18 +15,27 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.sql.DataSource;
-
 @Configuration
 @RequiredArgsConstructor
 public class LibraryStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
-    private final PoiItemReader<Library> libraryExcelReader;
     private final LibraryFileDownloader downloader;
-
+    private final PoiItemReader<Library> libraryExcelReader;
     private final JdbcBatchItemWriter<Library> libraryWriter;
+
+    private final LibraryNaruDetailReader naruDetailReader;
+    private final JdbcBatchItemWriter<LibraryNaruDetail> libraryNaruDetailWriter;
+
+    @Bean
+    public Step libraryNaruDetailStep() {
+        return new StepBuilder(LibraryStepConst.NARU_DETAIL_STEP_NAME, jobRepository)
+                .<LibraryNaruDetail, LibraryNaruDetail>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
+                .reader(naruDetailReader)
+                .writer(libraryNaruDetailWriter)
+                .build();
+    }
 
     @Bean
     public Step libraryStep() {
