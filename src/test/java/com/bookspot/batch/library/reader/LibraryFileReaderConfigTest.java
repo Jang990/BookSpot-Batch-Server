@@ -1,4 +1,4 @@
-package com.bookspot.batch.library.file;
+package com.bookspot.batch.library.reader;
 
 import com.bookspot.batch.library.data.Library;
 import com.bookspot.batch.library.reader.file.LibraryFileReaderConfig;

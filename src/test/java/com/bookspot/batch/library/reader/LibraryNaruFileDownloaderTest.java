@@ -1,4 +1,4 @@
-package com.bookspot.batch.library;
+package com.bookspot.batch.library.reader;
 
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
 import com.bookspot.batch.global.crawler.naru.NaruRequestCreator;
