@@ -17,17 +17,27 @@ public class LibraryFileReaderConfig {
         reader.setRowMapper(rs -> {
             String[] row = rs.getCurrentRow();
             return new Library(
-                    row[LibraryExcelSpec.LIBRARY_CODE.index],
-                    row[LibraryExcelSpec.NAME.index],
-                    row[LibraryExcelSpec.ADDRESS.index],
-                    row[LibraryExcelSpec.TEL.index],
-                    Double.parseDouble(row[LibraryExcelSpec.LATITUDE.index]),
-                    Double.parseDouble(row[LibraryExcelSpec.LONGITUDE.index]),
-                    row[LibraryExcelSpec.HOMEPAGE.index],
-                    row[LibraryExcelSpec.CLOSED.index],
-                    row[LibraryExcelSpec.OPERATING_INFO.index]
+                    getString(row, LibraryExcelSpec.LIBRARY_CODE),
+                    getString(row, LibraryExcelSpec.NAME),
+                    getAddress(row),
+                    getString(row, LibraryExcelSpec.TEL),
+                    Double.parseDouble(getString(row, LibraryExcelSpec.LATITUDE)),
+                    Double.parseDouble(getString(row, LibraryExcelSpec.LONGITUDE)),
+                    getString(row, LibraryExcelSpec.HOMEPAGE),
+                    getString(row, LibraryExcelSpec.CLOSED),
+                    getString(row, LibraryExcelSpec.OPERATING_INFO)
             );
         });
         return reader;
+    }
+
+    private static String getAddress(String[] row) {
+        return getString(row, LibraryExcelSpec.ADDRESS)
+                .replace("&middot;", "·") // "경상남도 창원시 마산회원구 3&middot;15대로 558"
+                .replaceAll("\\s{2,}", " "); // "경상북도  포항시..." - 공백 2개 이상
+    }
+
+    private static String getString(String[] row, LibraryExcelSpec spec) {
+        return row[spec.index].trim();
     }
 }
