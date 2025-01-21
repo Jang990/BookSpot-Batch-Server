@@ -1,4 +1,4 @@
-package com.bookspot.batch.library.api;
+package com.bookspot.batch.library.reader.api;
 
 import lombok.Data;
 
@@ -50,7 +50,7 @@ import java.util.List;
 }
  */
 @Data
-public class SupportedLibraryResponseSpec {
+class SupportedLibraryResponseSpec {
     private Response response;
 
     @Data

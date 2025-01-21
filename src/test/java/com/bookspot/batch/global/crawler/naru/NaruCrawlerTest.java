@@ -23,19 +23,17 @@ class NaruCrawlerTest {
 //    @Test
     void 정보나루_실제_요청() {
         NaruCrawler naru = new NaruCrawler(new JsoupCrawler());
-        LibraryCode code = new LibraryCode("4505");
-        naru.findCurrentBooksFilePath(naru.createRequest(code));
+        naru.findCurrentBooksFilePath(naru.createRequest("4505"));
     }
 
     @Test
     void 요청을_보낼_수_있는_요소들을_세팅한다() {
         CrawlingResult crawlingResult = mock(CrawlingResult.class);
         when(jsoupCrawler.get(anyString())).thenReturn(crawlingResult);
-        LibraryCode code = new LibraryCode("10801");
         when(crawlingResult.getCookie(anyString())).thenReturn("MySessionId");
         when(crawlingResult.findElementAttribute(anyString(), anyString())).thenReturn("CSRF_TOKEN_VALUE");
 
-        NaruRequest request = naruCrawler.createRequest(code);
+        NaruRequest request = naruCrawler.createRequest("4505");
 
         assertEquals("10801", request.getLibraryCode());
         assertEquals("MySessionId", request.getJSessionId());

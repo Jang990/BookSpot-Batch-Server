@@ -1,4 +1,4 @@
-package com.bookspot.batch.library.api;
+package com.bookspot.batch.library.reader.api;
 
 import com.bookspot.batch.library.data.Library;
 import com.bookspot.batch.global.openapi.ApiRequester;
@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class LibraryApiRequester {
+class LibraryApiRequester {
     private final ApiRequester apiRequester;
     private final NaruApiUrlCreator naruApiUrlCreator;
     
