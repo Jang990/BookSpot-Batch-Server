@@ -1,10 +1,11 @@
-package com.bookspot.batch.library.naru;
+package com.bookspot.batch.global.crawler.naru;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class NaruPagingUrlBuilder {
     private static final String PAGE_SIZE_OPTION_TEMPLATE = "pageNo=%d&pageSize=%d";

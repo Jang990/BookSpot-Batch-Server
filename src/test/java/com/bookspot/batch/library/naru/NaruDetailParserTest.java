@@ -1,8 +1,8 @@
 package com.bookspot.batch.library.naru;
 
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
+import com.bookspot.batch.global.crawler.naru.NaruPagingUrlBuilder;
 import com.bookspot.batch.library.data.LibraryNaruDetail;
-import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;

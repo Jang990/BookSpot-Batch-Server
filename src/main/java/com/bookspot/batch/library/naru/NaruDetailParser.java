@@ -3,6 +3,7 @@ package com.bookspot.batch.library.naru;
 import com.bookspot.batch.global.crawler.common.CrawlingResult;
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
 import com.bookspot.batch.global.crawler.common.exception.ElementNotFoundException;
+import com.bookspot.batch.global.crawler.naru.NaruPagingUrlBuilder;
 import com.bookspot.batch.library.LibraryStepConst;
 import com.bookspot.batch.library.data.LibraryNaruDetail;
 import lombok.RequiredArgsConstructor;
