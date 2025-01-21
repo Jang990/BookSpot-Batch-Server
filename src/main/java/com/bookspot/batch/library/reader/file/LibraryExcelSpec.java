@@ -1,6 +1,6 @@
 package com.bookspot.batch.library.reader.file;
 
-public enum LibraryExcelSpec {
+enum LibraryExcelSpec {
     NAME(0),     // 도서관명 - 2.28도서관
     ADDRESS(1),            // 주소 - 대구광역시 중구 2·28길 9
     TEL(2),       // 전화번호 - 053-257-2280

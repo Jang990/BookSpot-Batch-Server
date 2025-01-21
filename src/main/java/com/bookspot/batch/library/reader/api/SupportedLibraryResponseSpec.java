@@ -50,7 +50,7 @@ import java.util.List;
 }
  */
 @Data
-public class SupportedLibraryResponseSpec {
+class SupportedLibraryResponseSpec {
     private Response response;
 
     @Data

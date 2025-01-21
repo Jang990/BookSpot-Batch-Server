@@ -12,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class LibraryApiRequester {
+class LibraryApiRequester {
     private final ApiRequester apiRequester;
     private final NaruApiUrlCreator naruApiUrlCreator;
     
