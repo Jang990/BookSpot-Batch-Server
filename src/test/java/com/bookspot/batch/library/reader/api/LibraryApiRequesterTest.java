@@ -1,4 +1,4 @@
-package com.bookspot.batch.openapi;
+package com.bookspot.batch.library.reader.api;
 
 import com.bookspot.batch.library.data.Library;
 import com.bookspot.batch.library.reader.api.LibraryApiRequester;

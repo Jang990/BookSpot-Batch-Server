@@ -1,9 +1,8 @@
-package com.bookspot.batch.library.reader;
+package com.bookspot.batch.library.reader.file;
 
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
 import com.bookspot.batch.global.crawler.naru.NaruRequestCreator;
 import com.bookspot.batch.global.file.NaruFileDownloader;
-import com.bookspot.batch.library.reader.file.LibraryFileDownloader;
 
 class LibraryNaruFileDownloaderTest {
     LibraryFileDownloader libraryFileDownloader = new LibraryFileDownloader(
