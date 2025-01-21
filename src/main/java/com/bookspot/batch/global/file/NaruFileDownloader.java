@@ -25,7 +25,7 @@ public class NaruFileDownloader {
         this.webClient = WebClient.builder().build();
     }
 
-    public void downloadSync(String url, NaruCommonRequest request, FileMetaData fileMetadata) {
+    public void downloadSync(String url, NaruCommonRequest request, FileMetadata fileMetadata) {
         try {
             // 저장 경로 설정
             Path savePath = Path.of(fileMetadata.directory(), fileMetadata.fullName());

@@ -2,8 +2,8 @@ package com.bookspot.batch.global.file;
 
 import java.util.Objects;
 
-public record FileMetaData(String name, String directory, FileFormat format) {
-    public FileMetaData {
+public record FileMetadata(String name, String directory, FileFormat format) {
+    public FileMetadata {
         Objects.requireNonNull(name);
         Objects.requireNonNull(directory);
         Objects.requireNonNull(format);
