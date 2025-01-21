@@ -1,4 +1,4 @@
-package com.bookspot.batch.library.naru;
+package com.bookspot.batch.library.reader.crawler;
 
 class NaruDetailPageSpec {
     protected static final String NAME_SELECTOR_TEMPLATE = "#pagef > div.tbl_scroll_box.mgb_20 > table > tbody > tr:nth-child(%d) > td:nth-child(2) > a";

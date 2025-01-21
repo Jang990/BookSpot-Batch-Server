@@ -2,7 +2,7 @@ package com.bookspot.batch.library;
 
 import com.bookspot.batch.library.data.Library;
 import com.bookspot.batch.library.data.LibraryNaruDetail;
-import com.bookspot.batch.library.naru.LibraryNaruDetailReader;
+import com.bookspot.batch.library.reader.crawler.LibraryNaruDetailReader;
 import com.bookspot.batch.library.reader.file.LibraryFileDownloader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;

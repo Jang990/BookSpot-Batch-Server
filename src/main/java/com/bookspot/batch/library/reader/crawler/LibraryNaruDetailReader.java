@@ -1,4 +1,4 @@
-package com.bookspot.batch.library.naru;
+package com.bookspot.batch.library.reader.crawler;
 
 import com.bookspot.batch.library.LibraryStepConst;
 import com.bookspot.batch.library.data.LibraryNaruDetail;

@@ -1,6 +1,7 @@
-package com.bookspot.batch.library.naru;
+package com.bookspot.batch.library.reader.crawler;
 
 import com.bookspot.batch.global.crawler.common.CrawlingResult;
+import com.bookspot.batch.library.reader.crawler.LibraryListPageConvertor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

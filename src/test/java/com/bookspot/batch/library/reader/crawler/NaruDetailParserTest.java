@@ -1,8 +1,10 @@
-package com.bookspot.batch.library.naru;
+package com.bookspot.batch.library.reader.crawler;
 
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
 import com.bookspot.batch.global.crawler.naru.NaruPagingUrlBuilder;
 import com.bookspot.batch.library.data.LibraryNaruDetail;
+import com.bookspot.batch.library.reader.crawler.LibraryListPageConvertor;
+import com.bookspot.batch.library.reader.crawler.NaruDetailParser;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
