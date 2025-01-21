@@ -9,6 +9,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.nio.file.Files;
@@ -61,5 +62,10 @@ public class NaruFileDownloader {
         } catch (IOException e) {
             throw new RuntimeException("File save error", e);
         }
+    }
+
+    public boolean deleteFile(FileMetadata metadata) {
+        File file = new File(metadata.absolutePath());
+        return file.delete();
     }
 }
