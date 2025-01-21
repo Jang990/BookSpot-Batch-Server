@@ -4,7 +4,7 @@ import com.bookspot.batch.global.crawler.common.CrawlingResult;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LibraryListPageConvertor {
+class LibraryListPageConvertor {
     public String findAddress(CrawlingResult crawling, int num) {
         return crawling.findElementText(addressSelector(num));
     }

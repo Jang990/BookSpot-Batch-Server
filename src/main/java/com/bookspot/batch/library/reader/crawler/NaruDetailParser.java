@@ -17,7 +17,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class NaruDetailParser {
+class NaruDetailParser {
     private final JsoupCrawler jsoupCrawler;
     private final NaruPagingUrlBuilder urlBuilder;
     private final LibraryListPageConvertor libraryListPageConvertor;
