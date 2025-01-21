@@ -1,4 +1,4 @@
-package com.bookspot.batch.library.api;
+package com.bookspot.batch.library.reader.api;
 
 import lombok.Data;
 

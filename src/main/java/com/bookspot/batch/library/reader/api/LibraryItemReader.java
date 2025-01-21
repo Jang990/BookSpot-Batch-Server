@@ -1,6 +1,7 @@
-package com.bookspot.batch.library;
+package com.bookspot.batch.library.reader.api;
 
-import com.bookspot.batch.library.api.LibraryApiRequester;
+import com.bookspot.batch.library.LibraryStepConst;
+import com.bookspot.batch.library.reader.api.LibraryApiRequester;
 import com.bookspot.batch.library.data.Library;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

@@ -5,5 +5,5 @@ public class LibraryStepConst {
     public static final String FILE_DOWNLOAD_STEP_NAME = "libraryExcelDownloadStep";
     public static final String FILE_DELETE_STEP_NAME = "libraryExcelDeleteStep";
 
-    protected static final int LIBRARY_CHUNK_SIZE = 100;
+    public static final int LIBRARY_CHUNK_SIZE = 100;
 }

@@ -1,8 +1,7 @@
 package com.bookspot.batch.openapi;
 
 import com.bookspot.batch.library.data.Library;
-import com.bookspot.batch.library.api.LibraryApiRequester;
-import org.junit.jupiter.api.Test;
+import com.bookspot.batch.library.reader.api.LibraryApiRequester;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
