@@ -1,4 +1,4 @@
-package com.bookspot.batch.library.file;
+package com.bookspot.batch.library.reader.file;
 
 import com.bookspot.batch.global.file.FileFormat;
 import com.bookspot.batch.global.file.FileMetadata;

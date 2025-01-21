@@ -1,4 +1,4 @@
-package com.bookspot.batch.library.file;
+package com.bookspot.batch.library.reader.file;
 
 public enum LibraryExcelSpec {
     NAME(0),     // 도서관명 - 2.28도서관

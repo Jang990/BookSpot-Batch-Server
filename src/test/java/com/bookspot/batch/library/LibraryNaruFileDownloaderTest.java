@@ -3,8 +3,7 @@ package com.bookspot.batch.library;
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
 import com.bookspot.batch.global.crawler.naru.NaruRequestCreator;
 import com.bookspot.batch.global.file.NaruFileDownloader;
-import com.bookspot.batch.library.file.LibraryFileDownloader;
-import org.junit.jupiter.api.Test;
+import com.bookspot.batch.library.reader.file.LibraryFileDownloader;
 
 class LibraryNaruFileDownloaderTest {
     LibraryFileDownloader libraryFileDownloader = new LibraryFileDownloader(
