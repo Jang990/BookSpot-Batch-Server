@@ -23,6 +23,7 @@ public class JobConfig {
                 .start(getStep(LibraryStepConst.FILE_DOWNLOAD_STEP_NAME))
                 .next(getStep(LibraryStepConst.STEP_NAME))
                 .next(getStep(LibraryStepConst.FILE_DELETE_STEP_NAME))
+                .next(getStep(LibraryStepConst.NARU_DETAIL_STEP_NAME))
 
                 /*.start(getStep(BookStepConst.STEP_NAME))
                 .next(getStep(StockStepConst.STEP_NAME))*/
