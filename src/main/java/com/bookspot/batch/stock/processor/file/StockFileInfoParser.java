@@ -1,4 +1,4 @@
-package com.bookspot.batch.stock.file;
+package com.bookspot.batch.stock.processor.file;
 
 import com.bookspot.batch.global.crawler.common.exception.ElementNotFoundException;
 import com.bookspot.batch.global.crawler.naru.CsvFilePath;
@@ -8,31 +8,32 @@ import com.bookspot.batch.stock.data.CurrentLibrary;
 import com.bookspot.batch.stock.data.StockFileData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StockFileInfoParser {
+public class StockFileInfoParser implements ItemProcessor<CurrentLibrary, StockFileData> {
     private final NaruCrawler naruCrawler;
 
-    public StockFileData parse(CurrentLibrary library) {
+    @Override
+    public StockFileData process(CurrentLibrary item) throws Exception {
         try {
-            NaruDetailRequest request = naruCrawler.createRequest(library.libraryCode());
+            NaruDetailRequest request = naruCrawler.createRequest(item.naruDetail());
             CsvFilePath currentFilePath = naruCrawler.findCurrentBooksFilePath(request);
 
-            if(library.stockUpdatedAt() != null
-                    && !library.stockUpdatedAt().isBefore(currentFilePath.getReferenceDate()))
+            if(item.stockUpdatedAt() != null
+                    && !item.stockUpdatedAt().isBefore(currentFilePath.getReferenceDate()))
                 return null;
 
             return new StockFileData(
-                    library.libraryCode(),
+                    item.libraryCode(),
                     currentFilePath.getPath(),
                     currentFilePath.getReferenceDate());
         } catch (ElementNotFoundException e) {
-            log.warn("도서관 CSV 파일을 찾을 수 없음.", e);
+            log.warn("도서관 CSV 파일을 찾을 수 없음. {}", item, e);
             return null;
         }
     }
-
 }
