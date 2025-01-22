@@ -3,6 +3,7 @@ package com.bookspot.batch.global.file;
 import com.bookspot.batch.global.crawler.naru.NaruCommonRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -51,6 +52,44 @@ public class NaruFileDownloader {
                                 channel.write(dataBuffer.asByteBuffer());
                             } catch (IOException e) {
                                 throw new RuntimeException("File write error", e);
+                            }
+                        });
+
+                log.info("File downloaded successfully: {}", savePath);
+            }
+        } catch (WebClientResponseException e) {
+            log.error("HTTP Error: {}", e.getStatusCode());
+            log.error("Response Body: {}", e.getResponseBodyAsString());
+        } catch (IOException e) {
+            throw new RuntimeException("File save error", e);
+        }
+    }
+
+    // TODO: 리팩터링 및 성능 개선 필요
+    public void downloadSync(String url, FileMetadata fileMetadata) {
+        try {
+            // 저장 경로 설정
+            Path savePath = Path.of(fileMetadata.directory(), fileMetadata.fullName());
+
+            // 폴더가 존재하지 않으면 생성
+            Files.createDirectories(savePath.getParent());
+
+            // 파일 저장 처리
+            try (FileChannel channel = FileChannel.open(savePath,
+                    StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+
+                webClient.get()
+                        .uri(url)
+                        .retrieve()
+                        .bodyToFlux(DataBuffer.class) // 파일 데이터를 Flux로 받음
+                        .toStream() // Flux를 Stream으로 변환 (동기 처리)
+                        .forEach(dataBuffer -> {
+                            try {
+                                channel.write(dataBuffer.asByteBuffer());
+                            } catch (IOException e) {
+                                throw new RuntimeException("File write error", e);
+                            } finally {
+                                DataBufferUtils.release(dataBuffer);
                             }
                         });
 
