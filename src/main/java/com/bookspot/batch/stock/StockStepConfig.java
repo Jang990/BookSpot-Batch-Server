@@ -13,7 +13,7 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -24,7 +24,7 @@ public class StockStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
-    private final FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader;
+    private final MultiResourceItemReader<LibraryStockCsvData> multiBookStockCsvFileReader;
     private final LibraryStockProcessor LibraryStockProcessor;
     private final JdbcBatchItemWriter<LibraryStock> libraryStockWriter;
 
@@ -36,7 +36,7 @@ public class StockStepConfig {
     public Step libraryStockStep() {
         return new StepBuilder(StockStepConst.STEP_NAME, jobRepository)
                 .<LibraryStockCsvData, LibraryStock>chunk(StockStepConst.CHUNK_SIZE, platformTransactionManager)
-                .reader(bookStockCsvFileReader)
+                .reader(multiBookStockCsvFileReader)
                 .processor(LibraryStockProcessor)
                 .writer(libraryStockWriter)
                 .build();
