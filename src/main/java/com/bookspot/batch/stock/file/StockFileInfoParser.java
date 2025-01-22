@@ -4,6 +4,8 @@ import com.bookspot.batch.global.crawler.common.exception.ElementNotFoundExcepti
 import com.bookspot.batch.global.crawler.naru.CsvFilePath;
 import com.bookspot.batch.global.crawler.naru.NaruCrawler;
 import com.bookspot.batch.global.crawler.naru.NaruDetailRequest;
+import com.bookspot.batch.stock.data.CurrentLibrary;
+import com.bookspot.batch.stock.data.StockFileData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
