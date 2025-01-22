@@ -1,4 +1,4 @@
-package com.bookspot.batch.stock.file;
+package com.bookspot.batch.stock.writer.file;
 
 import com.bookspot.batch.BookSpotFileConst;
 import com.bookspot.batch.global.file.FileFormat;
