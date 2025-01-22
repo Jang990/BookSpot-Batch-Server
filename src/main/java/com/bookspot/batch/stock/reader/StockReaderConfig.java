@@ -1,6 +1,7 @@
 package com.bookspot.batch.stock.reader;
 
 import com.bookspot.batch.book.processor.YearParser;
+import com.bookspot.batch.stock.StockCsvMetadataCreator;
 import com.bookspot.batch.stock.data.LibraryStockCsvData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -48,7 +49,8 @@ public class StockReaderConfig {
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
         try {
-            Resource[] resources = resolver.getResources("file:bookSpotFiles/stock/*.csv");
+
+            Resource[] resources = resolver.getResources(getFilePath());
             reader.setResources(resources);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load files", e);
@@ -56,5 +58,11 @@ public class StockReaderConfig {
 
         reader.setDelegate(bookStockCsvFileReader());
         return reader;
+    }
+
+    private static String getFilePath() {
+        // file:bookSpotFiles/stock/*.csv
+        return "file:".concat(
+                StockCsvMetadataCreator.create("*").fullName());
     }
 }
