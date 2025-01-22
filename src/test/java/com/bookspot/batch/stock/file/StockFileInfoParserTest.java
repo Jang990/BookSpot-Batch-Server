@@ -37,7 +37,7 @@ class StockFileInfoParserTest {
             String title) {
         when(naruCrawler.findCurrentBooksFilePath(any())).thenReturn(new CsvFilePath("FILE_PATH", currentFileDate));
 
-        StockFileData result = parser.parse(new CurrentLibrary("123", "NARU_DETAIL", stockUpdatedAt));
+        StockFileData result = parser.process(new CurrentLibrary("123", "NARU_DETAIL", stockUpdatedAt));
 
         if(expected == null)
             assertNull(result);
@@ -66,7 +66,7 @@ class StockFileInfoParserTest {
         when(naruCrawler.findCurrentBooksFilePath(any())).thenReturn(
                 new CsvFilePath("FILE_PATH", createDate(1)));
 
-        StockFileData result = parser.parse(
+        StockFileData result = parser.process(
                 new CurrentLibrary("123", "NARU_DETAIL", null));
 
         assertEquals("123", result.libraryCode());

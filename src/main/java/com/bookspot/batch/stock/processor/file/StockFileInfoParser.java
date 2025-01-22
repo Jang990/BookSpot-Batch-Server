@@ -18,7 +18,7 @@ public class StockFileInfoParser implements ItemProcessor<CurrentLibrary, StockF
     private final NaruCrawler naruCrawler;
 
     @Override
-    public StockFileData process(CurrentLibrary item) throws Exception {
+    public StockFileData process(CurrentLibrary item) {
         try {
             NaruDetailRequest request = naruCrawler.createRequest(item.naruDetail());
             CsvFilePath currentFilePath = naruCrawler.findCurrentBooksFilePath(request);
