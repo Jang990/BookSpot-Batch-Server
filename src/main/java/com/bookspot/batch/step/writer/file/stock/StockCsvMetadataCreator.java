@@ -6,7 +6,7 @@ import com.bookspot.batch.global.file.FileMetadata;
 
 public class StockCsvMetadataCreator {
 
-    private static final String DIRECTORY_NAME = BookSpotFileConst.ROOT_DIRECTORY.concat("/stock");
+    public static final String DIRECTORY_NAME = BookSpotFileConst.ROOT_DIRECTORY.concat("/stock");
 
     public static FileMetadata create(String filename) {
         return new FileMetadata(filename, DIRECTORY_NAME, FileFormat.CSV);
