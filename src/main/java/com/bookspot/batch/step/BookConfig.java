@@ -1,4 +1,4 @@
-package com.bookspot.batch.book;
+package com.bookspot.batch.step;
 
 import com.bookspot.batch.stock.data.LibraryStockCsvData;
 import lombok.RequiredArgsConstructor;
