@@ -1,6 +1,8 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.step.BookStepConst;
 import com.bookspot.batch.step.LibraryStepConst;
+import com.bookspot.batch.step.StockStepConst;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,24 +17,30 @@ import org.springframework.context.annotation.Configuration;
 public class JobConfig {
     private final JobRepository jobRepository;
 
-    private final BookSpotSteps bookSpotSteps;
 
     @Bean
-    public Job bookSpot() {
+    public Job bookSpot(Step stockCsvDownloadStep) {
         return new JobBuilder("bookSpot", jobRepository)
-                .start(getStep(LibraryStepConst.FILE_DOWNLOAD_STEP_NAME))
+
+                // 도서관 파일 다운로드 -> 도서관 파일 정보 저장 -> 파일 삭제 -> naru_detail 파싱
+                /*.start(getStep(LibraryStepConst.FILE_DOWNLOAD_STEP_NAME))
                 .next(getStep(LibraryStepConst.STEP_NAME))
                 .next(getStep(LibraryStepConst.FILE_DELETE_STEP_NAME))
-                .next(getStep(LibraryStepConst.NARU_DETAIL_STEP_NAME))
+                .next(getStep(LibraryStepConst.NARU_DETAIL_STEP_NAME))*/
 
-                /*.start(getStep(BookStepConst.STEP_NAME))
-                .next(getStep(StockStepConst.STEP_NAME))*/
-
+                // naru_detail이 있는 도서관 파일 다운로드
+                .start(stockCsvDownloadStep)
                 .incrementer(new RunIdIncrementer())
                 .build();
     }
 
-    private Step getStep(String stepName) {
-        return bookSpotSteps.getStep(stepName);
+    @Bean
+    public Job tempJob(Step tempStep) {
+        // 책 업데이트 -> 재고 업데이트 -> 파일 삭제 -> 크롤링 시점 업데이트
+        return new JobBuilder("tempJob", jobRepository)
+                .start(tempStep)
+                .incrementer(new RunIdIncrementer())
+                .build();
     }
+
 }
