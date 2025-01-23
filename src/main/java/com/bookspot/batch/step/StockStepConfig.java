@@ -1,4 +1,4 @@
-package com.bookspot.batch.stock;
+package com.bookspot.batch.step;
 
 import com.bookspot.batch.stock.data.CurrentLibrary;
 import com.bookspot.batch.stock.data.LibraryStock;

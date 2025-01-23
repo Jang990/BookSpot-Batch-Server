@@ -1,6 +1,6 @@
 package com.bookspot.batch.stock.reader.file;
 
-import com.bookspot.batch.stock.StockStepConst;
+import com.bookspot.batch.step.StockStepConst;
 import com.bookspot.batch.stock.data.CurrentLibrary;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
