@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.processor.crawler.stock;
+package com.bookspot.batch.step.processor.crawler;
 
 import com.bookspot.batch.global.crawler.naru.CsvFilePath;
 import com.bookspot.batch.global.crawler.naru.NaruCrawler;

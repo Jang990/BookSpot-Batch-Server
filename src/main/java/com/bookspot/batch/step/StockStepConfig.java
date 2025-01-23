@@ -5,7 +5,7 @@ import com.bookspot.batch.stock.data.LibraryStock;
 import com.bookspot.batch.stock.data.LibraryStockCsvData;
 import com.bookspot.batch.stock.data.StockFileData;
 import com.bookspot.batch.step.processor.csv.stock.LibraryStockProcessor;
-import com.bookspot.batch.step.processor.crawler.stock.StockFilePathParser;
+import com.bookspot.batch.step.processor.crawler.StockFilePathParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
