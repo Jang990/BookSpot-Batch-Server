@@ -15,7 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @RequiredArgsConstructor
 public class BookConfig {
-    private final JobRepository jobRepository;
+    /*private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
     private final MultiResourceItemReader<LibraryStockCsvData> multiBookStockCsvFileReader;
@@ -30,5 +30,5 @@ public class BookConfig {
                 .processor(isbnValidationProcessor)
                 .writer(stockBookWriter)
                 .build();
-    }
+    }*/
 }

@@ -44,7 +44,7 @@ public class StockCsvFileReaderConfig {
                 .build();
     }
 
-    @Bean
+    /*@Bean
     @StepScope
     public MultiResourceItemReader<LibraryStockCsvData> multiBookStockCsvFileReader() {
         MultiResourceItemReader<LibraryStockCsvData> reader = new MultiResourceItemReader<>();
@@ -66,5 +66,5 @@ public class StockCsvFileReaderConfig {
         // file:bookSpotFiles/stock/*.csv
         return "file:".concat(
                 StockCsvMetadataCreator.create("*").fullName());
-    }
+    }*/
 }
