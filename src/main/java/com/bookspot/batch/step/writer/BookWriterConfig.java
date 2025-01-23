@@ -1,4 +1,4 @@
-package com.bookspot.batch.book.writer;
+package com.bookspot.batch.step.writer;
 
 import com.bookspot.batch.book.data.Book;
 import com.bookspot.batch.stock.data.LibraryStockCsvData;

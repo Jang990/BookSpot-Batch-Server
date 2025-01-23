@@ -1,8 +1,12 @@
-package com.bookspot.batch.stock;
+package com.bookspot.batch.step.writer;
 
+import com.bookspot.batch.step.writer.file.stock.StockFileDownloader;
 import com.bookspot.batch.stock.data.LibraryStock;
 import com.bookspot.batch.stock.data.LibraryStockCsvData;
+import com.bookspot.batch.stock.data.StockFileData;
 import lombok.RequiredArgsConstructor;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.adapter.ItemWriterAdapter;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +18,8 @@ import javax.sql.DataSource;
 @RequiredArgsConstructor
 public class StockWriterConfig {
     private final DataSource dataSource;
+
+    private final StockFileDownloader stockFileDownloader;
 
     @Bean
     public JdbcBatchItemWriter<LibraryStock> libraryStockWriter() {
@@ -32,5 +38,13 @@ public class StockWriterConfig {
                 .assertUpdates(false)
                 .build();
         return writer;
+    }
+
+    @Bean
+    public ItemWriter<StockFileData> stockFileDownloaderWriter() {
+        ItemWriterAdapter<StockFileData> adapter = new ItemWriterAdapter<>();
+        adapter.setTargetObject(stockFileDownloader);
+        adapter.setTargetMethod("download");
+        return adapter;
     }
 }

@@ -1,7 +1,6 @@
-package com.bookspot.batch.stock.writer.file;
+package com.bookspot.batch.step.writer.file.stock;
 
 import com.bookspot.batch.global.file.NaruFileDownloader;
-import com.bookspot.batch.stock.StockCsvMetadataCreator;
 import com.bookspot.batch.stock.data.StockFileData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
