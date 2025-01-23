@@ -15,7 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class StockStepConfig {
+public class StockCsvDownloadStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
@@ -38,7 +38,7 @@ public class StockStepConfig {
     }*/
 
     @Bean
-    public Step stockFileDownloadStep() {
+    public Step stockCsvDownloadStep() {
         return new StepBuilder(StockStepConst.DOWNLOAD_STEP_NAME, jobRepository)
                 .<LibraryForFileParsing, StockFileData>chunk(StockStepConst.DOWNLOAD_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryForFileParsingReader)
