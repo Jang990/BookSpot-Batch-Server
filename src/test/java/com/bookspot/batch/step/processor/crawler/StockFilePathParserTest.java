@@ -2,8 +2,8 @@ package com.bookspot.batch.step.processor.crawler;
 
 import com.bookspot.batch.global.crawler.naru.CsvFilePath;
 import com.bookspot.batch.global.crawler.naru.NaruCrawler;
-import com.bookspot.batch.stock.data.CurrentLibrary;
-import com.bookspot.batch.stock.data.StockFileData;
+import com.bookspot.batch.data.LibraryForFileParsing;
+import com.bookspot.batch.data.crawler.StockFileData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -36,7 +36,7 @@ class StockFilePathParserTest {
             String title) {
         when(naruCrawler.findCurrentBooksFilePath(any())).thenReturn(new CsvFilePath("FILE_PATH", currentFileDate));
 
-        StockFileData result = parser.process(new CurrentLibrary("123", "NARU_DETAIL", stockUpdatedAt));
+        StockFileData result = parser.process(new LibraryForFileParsing("123", "NARU_DETAIL", stockUpdatedAt));
 
         if(expected == null)
             assertNull(result);
@@ -66,7 +66,7 @@ class StockFilePathParserTest {
                 new CsvFilePath("FILE_PATH", createDate(1)));
 
         StockFileData result = parser.process(
-                new CurrentLibrary("123", "NARU_DETAIL", null));
+                new LibraryForFileParsing("123", "NARU_DETAIL", null));
 
         assertEquals("123", result.libraryCode());
         assertEquals("FILE_PATH", result.filePath());

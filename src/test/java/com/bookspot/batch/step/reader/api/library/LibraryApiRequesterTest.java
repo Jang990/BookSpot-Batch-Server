@@ -1,7 +1,6 @@
 package com.bookspot.batch.step.reader.api.library;
 
-import com.bookspot.batch.library.data.Library;
-import com.bookspot.batch.step.reader.api.library.LibraryApiRequester;
+import com.bookspot.batch.data.Library;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;

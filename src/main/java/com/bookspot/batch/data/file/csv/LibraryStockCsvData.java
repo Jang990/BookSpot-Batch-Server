@@ -1,4 +1,4 @@
-package com.bookspot.batch.stock.data;
+package com.bookspot.batch.data.file.csv;
 
 import lombok.Data;
 

@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.reader.file.csv.book;
 
+import com.bookspot.batch.data.file.csv.BookCsvData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;

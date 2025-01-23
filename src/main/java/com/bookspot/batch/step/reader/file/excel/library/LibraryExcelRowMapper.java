@@ -1,6 +1,6 @@
 package com.bookspot.batch.step.reader.file.excel.library;
 
-import com.bookspot.batch.library.data.Library;
+import com.bookspot.batch.data.Library;
 import org.springframework.batch.extensions.excel.RowMapper;
 import org.springframework.batch.extensions.excel.support.rowset.RowSet;
 

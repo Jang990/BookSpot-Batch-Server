@@ -1,6 +1,6 @@
 package com.bookspot.batch.step;
 
-import com.bookspot.batch.stock.data.LibraryStockCsvData;
+import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;

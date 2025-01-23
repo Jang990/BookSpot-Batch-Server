@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.reader.file.csv.book;
+package com.bookspot.batch.data.file.csv;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

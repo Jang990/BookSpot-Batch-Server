@@ -1,7 +1,7 @@
 package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.step.LibraryStepConst;
-import com.bookspot.batch.library.data.Library;
+import com.bookspot.batch.data.Library;
 import com.bookspot.batch.step.reader.api.library.LibraryApiRequester;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import jakarta.annotation.PostConstruct;

@@ -1,7 +1,7 @@
 package com.bookspot.batch.step.writer;
 
-import com.bookspot.batch.book.data.Book;
-import com.bookspot.batch.stock.data.LibraryStockCsvData;
+import com.bookspot.batch.data.Book;
+import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;

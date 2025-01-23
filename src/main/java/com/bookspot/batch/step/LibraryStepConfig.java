@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
-import com.bookspot.batch.library.data.Library;
-import com.bookspot.batch.library.data.LibraryNaruDetail;
+import com.bookspot.batch.data.Library;
+import com.bookspot.batch.data.crawler.LibraryNaruDetail;
 import com.bookspot.batch.step.reader.LibraryNaruDetailReader;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import lombok.RequiredArgsConstructor;

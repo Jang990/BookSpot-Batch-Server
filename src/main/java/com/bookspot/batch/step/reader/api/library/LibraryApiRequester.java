@@ -1,6 +1,6 @@
 package com.bookspot.batch.step.reader.api.library;
 
-import com.bookspot.batch.library.data.Library;
+import com.bookspot.batch.data.Library;
 import com.bookspot.batch.global.openapi.ApiRequester;
 import com.bookspot.batch.global.openapi.naru.NaruApiUrlCreator;
 import lombok.RequiredArgsConstructor;

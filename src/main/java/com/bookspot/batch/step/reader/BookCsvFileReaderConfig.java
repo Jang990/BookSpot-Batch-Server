@@ -1,6 +1,6 @@
 package com.bookspot.batch.step.reader;
 
-import com.bookspot.batch.step.reader.file.csv.book.BookCsvData;
+import com.bookspot.batch.data.file.csv.BookCsvData;
 import com.bookspot.batch.step.reader.file.csv.book.BookCsvDataMapper;
 import com.bookspot.batch.step.reader.file.csv.book.BookCsvDelimiterTokenizer;
 import org.springframework.batch.item.file.FlatFileItemReader;

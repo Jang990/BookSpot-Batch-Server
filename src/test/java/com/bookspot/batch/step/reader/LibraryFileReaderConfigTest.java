@@ -1,6 +1,6 @@
 package com.bookspot.batch.step.reader;
 
-import com.bookspot.batch.library.data.Library;
+import com.bookspot.batch.data.Library;
 import org.springframework.batch.extensions.excel.poi.PoiItemReader;
 import org.springframework.batch.item.ExecutionContext;
 

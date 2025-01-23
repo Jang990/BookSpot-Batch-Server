@@ -5,7 +5,7 @@ import com.bookspot.batch.global.crawler.common.JsoupCrawler;
 import com.bookspot.batch.global.crawler.common.exception.ElementNotFoundException;
 import com.bookspot.batch.global.crawler.naru.NaruPagingUrlBuilder;
 import com.bookspot.batch.step.LibraryStepConst;
-import com.bookspot.batch.library.data.LibraryNaruDetail;
+import com.bookspot.batch.data.crawler.LibraryNaruDetail;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;

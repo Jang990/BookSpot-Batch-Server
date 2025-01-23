@@ -1,7 +1,7 @@
 package com.bookspot.batch.step.reader.file.csv.stock;
 
 import com.bookspot.batch.step.processor.csv.book.YearParser;
-import com.bookspot.batch.stock.data.LibraryStockCsvData;
+import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
 import org.springframework.batch.item.file.transform.FieldSet;

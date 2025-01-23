@@ -4,8 +4,8 @@ import com.bookspot.batch.global.crawler.common.exception.ElementNotFoundExcepti
 import com.bookspot.batch.global.crawler.naru.CsvFilePath;
 import com.bookspot.batch.global.crawler.naru.NaruCrawler;
 import com.bookspot.batch.global.crawler.naru.NaruDetailRequest;
-import com.bookspot.batch.stock.data.CurrentLibrary;
-import com.bookspot.batch.stock.data.StockFileData;
+import com.bookspot.batch.data.LibraryForFileParsing;
+import com.bookspot.batch.data.crawler.StockFileData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
@@ -14,11 +14,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StockFilePathParser implements ItemProcessor<CurrentLibrary, StockFileData> {
+public class StockFilePathParser implements ItemProcessor<LibraryForFileParsing, StockFileData> {
     private final NaruCrawler naruCrawler;
 
     @Override
-    public StockFileData process(CurrentLibrary item) {
+    public StockFileData process(LibraryForFileParsing item) {
         try {
             NaruDetailRequest request = naruCrawler.createRequest(item.naruDetail());
             CsvFilePath currentFilePath = naruCrawler.findCurrentBooksFilePath(request);

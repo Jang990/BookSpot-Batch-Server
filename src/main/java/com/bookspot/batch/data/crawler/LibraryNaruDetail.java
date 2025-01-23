@@ -1,4 +1,4 @@
-package com.bookspot.batch.library.data;
+package com.bookspot.batch.data.crawler;
 
 import java.util.Objects;
 

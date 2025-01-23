@@ -1,6 +1,6 @@
 package com.bookspot.batch.step.reader;
 
-import com.bookspot.batch.step.reader.file.csv.book.BookCsvData;
+import com.bookspot.batch.data.file.csv.BookCsvData;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.FlatFileItemReader;

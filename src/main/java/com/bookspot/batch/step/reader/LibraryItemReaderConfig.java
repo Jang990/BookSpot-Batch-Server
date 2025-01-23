@@ -1,7 +1,7 @@
 package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.step.StockStepConst;
-import com.bookspot.batch.stock.data.CurrentLibrary;
+import com.bookspot.batch.data.LibraryForFileParsing;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.PagingQueryProvider;
@@ -19,8 +19,8 @@ public class LibraryItemReaderConfig {
     private final DataSource dataSource;
 
     @Bean
-    public JdbcPagingItemReader<CurrentLibrary> libraryStockDataReader() throws Exception {
-        return new JdbcPagingItemReaderBuilder<CurrentLibrary>()
+    public JdbcPagingItemReader<LibraryForFileParsing> libraryStockDataReader() throws Exception {
+        return new JdbcPagingItemReaderBuilder<LibraryForFileParsing>()
                 .name("libraryStockDataReader")
                 .dataSource(dataSource)
                 .queryProvider(libraryStockPagingQueryProvider())
@@ -29,7 +29,7 @@ public class LibraryItemReaderConfig {
                     String libraryCode = rs.getString("library_code");
                     String naruDetail = rs.getString("naru_detail");
                     Timestamp stockUpdatedAt = rs.getTimestamp("stock_updated_at");
-                    return new CurrentLibrary(
+                    return new LibraryForFileParsing(
                             libraryCode,
                             naruDetail,
                             stockUpdatedAt == null ? null : stockUpdatedAt.toLocalDateTime().toLocalDate());
