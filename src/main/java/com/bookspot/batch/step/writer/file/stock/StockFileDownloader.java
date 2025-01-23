@@ -13,6 +13,6 @@ public class StockFileDownloader {
     public void download(StockFileData stockFileData) {
         downloader.downloadSync(
                 stockFileData.filePath(),
-                StockCsvMetadataCreator.create(stockFileData.libraryCode()));
+                StockCsvMetadataCreator.create(String.valueOf(stockFileData.libraryId())));
     }
 }

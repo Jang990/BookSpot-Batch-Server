@@ -19,19 +19,18 @@ public class LibraryItemReaderConfig {
     private final DataSource dataSource;
 
     @Bean
-    public JdbcPagingItemReader<LibraryForFileParsing> libraryStockDataReader() throws Exception {
+    public JdbcPagingItemReader<LibraryForFileParsing> libraryForFileParsingReader() throws Exception {
         return new JdbcPagingItemReaderBuilder<LibraryForFileParsing>()
                 .name("libraryStockDataReader")
                 .dataSource(dataSource)
                 .queryProvider(libraryStockPagingQueryProvider())
                 .pageSize(StockStepConst.DOWNLOAD_CHUNK_SIZE)
                 .rowMapper((rs, rowNum) -> {
-                    String libraryCode = rs.getString("library_code");
-                    String naruDetail = rs.getString("naru_detail");
                     Timestamp stockUpdatedAt = rs.getTimestamp("stock_updated_at");
                     return new LibraryForFileParsing(
-                            libraryCode,
-                            naruDetail,
+                            rs.getLong("id"),
+                            rs.getString("library_code"),
+                            rs.getString("naru_detail"),
                             stockUpdatedAt == null ? null : stockUpdatedAt.toLocalDateTime().toLocalDate());
                 })
                 .build();
