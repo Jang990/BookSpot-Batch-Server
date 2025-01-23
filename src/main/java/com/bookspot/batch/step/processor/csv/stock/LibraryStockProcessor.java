@@ -1,7 +1,7 @@
 package com.bookspot.batch.step.processor.csv.stock;
 
-import com.bookspot.batch.book.BookRepository;
-import com.bookspot.batch.library.LibraryRepository;
+import com.bookspot.batch.step.processor.csv.stock.repository.BookRepository;
+import com.bookspot.batch.step.processor.csv.stock.repository.LibraryRepository;
 import com.bookspot.batch.stock.data.LibraryStock;
 import com.bookspot.batch.stock.data.LibraryStockCsvData;
 import lombok.RequiredArgsConstructor;
