@@ -1,6 +1,6 @@
-package com.bookspot.batch;
+package com.bookspot.batch.job;
 
-import com.bookspot.batch.library.LibraryStepConst;
+import com.bookspot.batch.step.LibraryStepConst;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

@@ -1,4 +1,4 @@
-package com.bookspot.batch;
+package com.bookspot.batch.job;
 
 import org.springframework.batch.core.Step;
 import org.springframework.stereotype.Component;
