@@ -5,7 +5,7 @@ import com.bookspot.batch.stock.data.LibraryStock;
 import com.bookspot.batch.stock.data.LibraryStockCsvData;
 import com.bookspot.batch.stock.data.StockFileData;
 import com.bookspot.batch.step.processor.csv.stock.LibraryStockProcessor;
-import com.bookspot.batch.step.processor.crawler.stock.StockFileInfoParser;
+import com.bookspot.batch.step.processor.crawler.stock.StockFilePathParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -29,7 +29,7 @@ public class StockStepConfig {
     private final JdbcBatchItemWriter<LibraryStock> libraryStockWriter;
 
     private final JdbcPagingItemReader<CurrentLibrary> libraryStockDataReader;
-    private final StockFileInfoParser stockFileInfoParser;
+    private final StockFilePathParser stockFilePathParser;
     private final ItemWriter<StockFileData> stockFileDownloaderWriter;
 
     @Bean
@@ -47,7 +47,7 @@ public class StockStepConfig {
         return new StepBuilder(StockStepConst.DOWNLOAD_STEP_NAME, jobRepository)
                 .<CurrentLibrary, StockFileData>chunk(StockStepConst.DOWNLOAD_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryStockDataReader)
-                .processor(stockFileInfoParser)
+                .processor(stockFilePathParser)
                 .writer(stockFileDownloaderWriter)
                 .build();
     }

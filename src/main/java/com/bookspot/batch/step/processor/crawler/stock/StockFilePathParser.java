@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class StockFileInfoParser implements ItemProcessor<CurrentLibrary, StockFileData> {
+public class StockFilePathParser implements ItemProcessor<CurrentLibrary, StockFileData> {
     private final NaruCrawler naruCrawler;
 
     @Override
