@@ -28,7 +28,7 @@ public class StockFilePathParser implements ItemProcessor<LibraryForFileParsing,
                 return null;
 
             return new StockFileData(
-                    item.libraryCode(),
+                    item.libraryId(),
                     currentFilePath.getPath(),
                     currentFilePath.getReferenceDate());
         } catch (ElementNotFoundException e) {
