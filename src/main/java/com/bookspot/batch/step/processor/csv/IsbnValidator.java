@@ -1,4 +1,4 @@
-package com.bookspot.batch.stock.processor;
+package com.bookspot.batch.step.processor.csv;
 
 import org.springframework.stereotype.Service;
 

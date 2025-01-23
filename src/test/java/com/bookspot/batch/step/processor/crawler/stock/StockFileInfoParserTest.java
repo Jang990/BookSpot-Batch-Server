@@ -1,10 +1,10 @@
-package com.bookspot.batch.stock.processor.file;
+package com.bookspot.batch.step.processor.crawler.stock;
 
 import com.bookspot.batch.global.crawler.naru.CsvFilePath;
 import com.bookspot.batch.global.crawler.naru.NaruCrawler;
 import com.bookspot.batch.stock.data.CurrentLibrary;
 import com.bookspot.batch.stock.data.StockFileData;
-import com.bookspot.batch.stock.processor.file.StockFileInfoParser;
+import com.bookspot.batch.step.processor.crawler.stock.StockFileInfoParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

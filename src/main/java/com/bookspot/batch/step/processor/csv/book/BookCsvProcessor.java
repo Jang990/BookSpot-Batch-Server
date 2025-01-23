@@ -1,13 +1,13 @@
-package com.bookspot.batch.book.processor;
+package com.bookspot.batch.step.processor.csv.book;
 
 import com.bookspot.batch.book.data.Book;
 import com.bookspot.batch.book.reader.BookCsvData;
-import com.bookspot.batch.stock.processor.IsbnValidator;
+import com.bookspot.batch.step.processor.csv.IsbnValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class BookCsvProcessor implements ItemProcessor<BookCsvData, Book> {
     private final YearParser yearParser;
