@@ -2,8 +2,8 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.library.data.Library;
 import com.bookspot.batch.library.data.LibraryNaruDetail;
-import com.bookspot.batch.library.reader.crawler.LibraryNaruDetailReader;
-import com.bookspot.batch.library.reader.file.LibraryFileDownloader;
+import com.bookspot.batch.step.reader.LibraryNaruDetailReader;
+import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;

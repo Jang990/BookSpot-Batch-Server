@@ -1,7 +1,7 @@
 package com.bookspot.batch.step.processor.csv.book;
 
 import com.bookspot.batch.book.data.Book;
-import com.bookspot.batch.book.reader.BookCsvData;
+import com.bookspot.batch.step.reader.file.csv.book.BookCsvData;
 import com.bookspot.batch.step.processor.csv.IsbnValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;
