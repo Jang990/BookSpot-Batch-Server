@@ -19,7 +19,7 @@ public class LibraryItemReaderConfig {
     private final DataSource dataSource;
 
     @Bean
-    public JdbcPagingItemReader<LibraryForFileParsing> libraryStockDataReader() throws Exception {
+    public JdbcPagingItemReader<LibraryForFileParsing> libraryForFileParsingReader() throws Exception {
         return new JdbcPagingItemReaderBuilder<LibraryForFileParsing>()
                 .name("libraryStockDataReader")
                 .dataSource(dataSource)

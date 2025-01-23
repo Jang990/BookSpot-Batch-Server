@@ -23,7 +23,7 @@ public class StockStepConfig {
     private final LibraryStockProcessor LibraryStockProcessor;
     private final JdbcBatchItemWriter<LibraryStock> libraryStockWriter;*/
 
-    private final JdbcPagingItemReader<LibraryForFileParsing> libraryStockDataReader;
+    private final JdbcPagingItemReader<LibraryForFileParsing> libraryForFileParsingReader;
     private final StockFilePathParser stockFilePathParser;
     private final ItemWriter<StockFileData> stockFileDownloaderWriter;
 
@@ -41,7 +41,7 @@ public class StockStepConfig {
     public Step stockFileDownloadStep() {
         return new StepBuilder(StockStepConst.DOWNLOAD_STEP_NAME, jobRepository)
                 .<LibraryForFileParsing, StockFileData>chunk(StockStepConst.DOWNLOAD_CHUNK_SIZE, platformTransactionManager)
-                .reader(libraryStockDataReader)
+                .reader(libraryForFileParsingReader)
                 .processor(stockFilePathParser)
                 .writer(stockFileDownloaderWriter)
                 .build();
