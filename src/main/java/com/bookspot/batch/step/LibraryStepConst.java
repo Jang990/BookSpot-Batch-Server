@@ -1,4 +1,4 @@
-package com.bookspot.batch.library;
+package com.bookspot.batch.step;
 
 public class LibraryStepConst {
     public static final String STEP_NAME = "libraryStep";

@@ -1,6 +1,6 @@
 package com.bookspot.batch.library.reader.crawler;
 
-import com.bookspot.batch.library.LibraryStepConst;
+import com.bookspot.batch.step.LibraryStepConst;
 import com.bookspot.batch.library.data.LibraryNaruDetail;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;

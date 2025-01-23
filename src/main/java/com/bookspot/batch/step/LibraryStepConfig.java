@@ -1,4 +1,4 @@
-package com.bookspot.batch.library;
+package com.bookspot.batch.step;
 
 import com.bookspot.batch.library.data.Library;
 import com.bookspot.batch.library.data.LibraryNaruDetail;
