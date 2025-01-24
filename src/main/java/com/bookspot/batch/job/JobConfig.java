@@ -1,8 +1,5 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.step.BookStepConst;
-import com.bookspot.batch.step.LibraryStepConst;
-import com.bookspot.batch.step.StockStepConst;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -35,10 +32,10 @@ public class JobConfig {
     }
 
     @Bean
-    public Job tempJob(Step tempStep) {
+    public Job stockFileJob(Step bookUpdateStep) {
         // 책 업데이트 -> 재고 업데이트 -> 파일 삭제 -> 크롤링 시점 업데이트
-        return new JobBuilder("tempJob", jobRepository)
-                .start(tempStep)
+        return new JobBuilder("stockFileJob", jobRepository)
+                .start(bookUpdateStep)
                 .incrementer(new RunIdIncrementer())
                 .build();
     }

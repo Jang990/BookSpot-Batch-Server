@@ -14,6 +14,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -21,12 +22,13 @@ public class TempRunner implements CommandLineRunner {
     // 임시 코드
     private final JobLauncher jobLauncher;
     private final Job bookSpot;
-    private final Job tempJob;
+    private final Job stockFileJob;
 
     @Override
     public void run(String... args) throws Exception {
-        jobLauncher.run(bookSpot, new JobParametersBuilder().toJobParameters());
-        System.out.println(bookSpot.getName());
+        jobLauncher.run(bookSpot, new JobParametersBuilder()
+                .addLocalDateTime("tempParam", LocalDateTime.now())
+                .toJobParameters());
 
         File directory = new File(StockCsvMetadataCreator.DIRECTORY_NAME);
         for (String fileName : directory.list()) {
@@ -35,10 +37,13 @@ public class TempRunner implements CommandLineRunner {
     }
 
     private void runTempJob(String filePath) throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+        System.out.println("파일 경로 => "+ filePath);
+
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString("filePath", filePath)
+                .addLocalDateTime("tempParam", LocalDateTime.now())
                 .toJobParameters();
 
-        jobLauncher.run(tempJob, jobParameters);
+        jobLauncher.run(stockFileJob, jobParameters);
     }
 }
