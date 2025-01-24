@@ -25,8 +25,8 @@ public class LibraryStockUpdateStepConfig {
     private final JdbcBatchItemWriter<LibraryStock> libraryStockWriter;
 
     @Bean
-    public Step libraryStockUpdateStep() {
-        return new StepBuilder("libraryStockUpdateStep", jobRepository)
+    public Step libraryStockSyncStep() {
+        return new StepBuilder("libraryStockSyncStep", jobRepository)
                 .<LibraryStockCsvData, LibraryStock>chunk(StockStepConst.CHUNK_SIZE, platformTransactionManager)
                 .reader(bookStockCsvFileReader)
                 .processor(libraryStockProcessor)

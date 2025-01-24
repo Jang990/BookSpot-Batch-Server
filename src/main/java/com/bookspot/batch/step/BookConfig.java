@@ -8,7 +8,6 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.file.FlatFileItemReader;
-import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -24,8 +23,8 @@ public class BookConfig {
     private final JdbcBatchItemWriter<LibraryStockCsvData> stockBookWriter;
 
     @Bean
-    public Step bookUpdateStep() {
-        return new StepBuilder("bookUpdateStep", jobRepository)
+    public Step bookSyncStep() {
+        return new StepBuilder("bookSyncStep", jobRepository)
                 .<LibraryStockCsvData, LibraryStockCsvData>chunk(BookStepConst.CHUNK_SIZE, platformTransactionManager)
                 .reader(bookStockCsvFileReader)
                 .processor(isbnValidationProcessor)

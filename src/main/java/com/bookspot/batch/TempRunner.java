@@ -24,7 +24,7 @@ public class TempRunner implements CommandLineRunner {
     // 임시 코드
     private final JobLauncher jobLauncher;
     private final Job librarySyncJob;
-    private final Job stockFileJob;
+    private final Job stockSyncJob;
 
     @Override
     public void run(String... args) throws Exception {
@@ -51,6 +51,6 @@ public class TempRunner implements CommandLineRunner {
                 .addLocalDate("referenceDate", metadata.referenceDate())
                 .toJobParameters();
 
-        jobLauncher.run(stockFileJob, jobParameters);
+        jobLauncher.run(stockSyncJob, jobParameters);
     }
 }

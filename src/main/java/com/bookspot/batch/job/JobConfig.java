@@ -17,15 +17,15 @@ public class JobConfig {
     @Bean
     public Job librarySyncJob(
             Step libraryExcelDownloadStep,
+            Step librarySyncStep,
             Step libraryExcelDeleteStep,
-            Step libraryInsertStep,
             Step libraryNaruDetailParsingStep,
             Step stockCsvDownloadStep) {
         return new JobBuilder("librarySyncJob", jobRepository)
 
                 // 도서관 파일 다운로드 -> 도서관 파일 정보 저장 -> 파일 삭제 -> naru_detail 파싱
                 .start(libraryExcelDownloadStep)
-                .next(libraryInsertStep)
+                .next(librarySyncStep)
                 .next(libraryExcelDeleteStep)
                 .next(libraryNaruDetailParsingStep)
 
@@ -35,15 +35,15 @@ public class JobConfig {
     }
 
     @Bean
-    public Job stockFileJob(
-            Step bookUpdateStep,
-            Step libraryStockUpdateStep,
+    public Job stockSyncJob(
+            Step bookSyncStep,
+            Step libraryStockSyncStep,
             Step stockCsvDeleteStep,
             Step libraryStockUpdatedAtStep) {
         // 책 업데이트 -> 재고 업데이트 -> 파일 삭제 -> 크롤링 시점 업데이트
         return new JobBuilder("stockFileJob", jobRepository)
-                .start(bookUpdateStep)
-                .next(libraryStockUpdateStep)
+                .start(bookSyncStep)
+                .next(libraryStockSyncStep)
                 .next(stockCsvDeleteStep)
                 .next(libraryStockUpdatedAtStep)
                 .build();

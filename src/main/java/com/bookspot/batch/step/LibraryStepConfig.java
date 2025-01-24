@@ -47,8 +47,8 @@ public class LibraryStepConfig {
     }
 
     @Bean
-    public Step libraryInsertStep() {
-        return new StepBuilder("libraryInsertStep", jobRepository)
+    public Step librarySyncStep() {
+        return new StepBuilder("librarySyncStep", jobRepository)
                 .<Library, Library>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryExcelReader)
                 .writer(libraryWriter)
