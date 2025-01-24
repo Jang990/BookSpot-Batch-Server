@@ -10,9 +10,9 @@ public class StockCsvMetadataCreator {
 
     public static final String DIRECTORY_NAME = BookSpotFileConst.ROOT_DIRECTORY.concat("/stock");
 
-    public static FileMetadata create(long libraryId, LocalDate date) {
+    public static FileMetadata create(long libraryId, LocalDate referenceDate) {
         return new FileMetadata(
-                String.format("%d_%s", libraryId, date),
+                StockFilenameUtil.create(new StockFilenameElement(libraryId, referenceDate)),
                 DIRECTORY_NAME,
                 FileFormat.CSV);
     }
