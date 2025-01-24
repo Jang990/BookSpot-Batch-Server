@@ -31,11 +31,17 @@ public class JobConfig {
     }
 
     @Bean
-    public Job stockFileJob(Step bookUpdateStep, Step libraryStockUpdateStep) {
+    public Job stockFileJob(
+            Step bookUpdateStep,
+            Step libraryStockUpdateStep,
+            Step stockCsvDeleteStep,
+            Step libraryStockUpdatedAtStep) {
         // 책 업데이트 -> 재고 업데이트 -> 파일 삭제 -> 크롤링 시점 업데이트
         return new JobBuilder("stockFileJob", jobRepository)
                 .start(bookUpdateStep)
                 .next(libraryStockUpdateStep)
+                .next(stockCsvDeleteStep)
+                .next(libraryStockUpdatedAtStep)
                 .build();
     }
 

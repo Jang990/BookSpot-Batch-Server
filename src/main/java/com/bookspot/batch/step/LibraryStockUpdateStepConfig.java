@@ -5,6 +5,7 @@ import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
 import com.bookspot.batch.step.processor.csv.stock.LibraryStockProcessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
@@ -25,7 +26,7 @@ public class LibraryStockUpdateStepConfig {
 
     @Bean
     public Step libraryStockUpdateStep() {
-        return new StepBuilder(StockStepConst.STEP_NAME, jobRepository)
+        return new StepBuilder("libraryStockUpdateStep", jobRepository)
                 .<LibraryStockCsvData, LibraryStock>chunk(StockStepConst.CHUNK_SIZE, platformTransactionManager)
                 .reader(bookStockCsvFileReader)
                 .processor(libraryStockProcessor)

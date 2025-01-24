@@ -25,11 +25,12 @@ public class BookConfig {
 
     @Bean
     public Step bookUpdateStep() {
-        return new StepBuilder(BookStepConst.STEP_NAME, jobRepository)
+        return new StepBuilder("bookUpdateStep", jobRepository)
                 .<LibraryStockCsvData, LibraryStockCsvData>chunk(BookStepConst.CHUNK_SIZE, platformTransactionManager)
                 .reader(bookStockCsvFileReader)
                 .processor(isbnValidationProcessor)
-                .writer(stockBookWriter)
+                .writer(stockBookWriter) // 쓰기 부분이 20~30초의 차이를 만들어 낸다.
+//                .writer(items -> items.forEach(System.out::println))
                 .build();
     }
 }
