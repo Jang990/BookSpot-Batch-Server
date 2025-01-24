@@ -9,8 +9,10 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.MethodInvokingTaskletAdapter;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.extensions.excel.poi.PoiItemReader;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -61,19 +63,19 @@ public class LibraryStepConfig {
     }
 
     @Bean
-    public MethodInvokingTaskletAdapter libraryExcelDownloadTasklet() {
-        MethodInvokingTaskletAdapter adapter = new MethodInvokingTaskletAdapter();
-        adapter.setTargetObject(downloader);
-        adapter.setTargetMethod("download");
-        return adapter;
+    public Tasklet libraryExcelDownloadTasklet() {
+        return (contribution, chunkContext) -> {
+            downloader.download();
+            return RepeatStatus.FINISHED;
+        };
     }
 
     @Bean
-    public MethodInvokingTaskletAdapter libraryExcelDeleteTasklet() {
-        MethodInvokingTaskletAdapter adapter = new MethodInvokingTaskletAdapter();
-        adapter.setTargetObject(downloader);
-        adapter.setTargetMethod("delete");
-        return adapter;
+    public Tasklet libraryExcelDeleteTasklet() {
+        return (contribution, chunkContext) -> {
+            downloader.delete();
+            return RepeatStatus.FINISHED;
+        };
     }
 
 }
