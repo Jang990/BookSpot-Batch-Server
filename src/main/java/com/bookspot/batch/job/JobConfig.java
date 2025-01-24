@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,14 +15,19 @@ public class JobConfig {
 
 
     @Bean
-    public Job bookSpot(Step stockCsvDownloadStep) {
-        return new JobBuilder("bookSpot", jobRepository)
+    public Job librarySyncJob(
+            Step libraryExcelDownloadStep,
+            Step libraryExcelDeleteStep,
+            Step libraryInsertStep,
+            Step libraryNaruDetailParsingStep,
+            Step stockCsvDownloadStep) {
+        return new JobBuilder("librarySyncJob", jobRepository)
 
                 // 도서관 파일 다운로드 -> 도서관 파일 정보 저장 -> 파일 삭제 -> naru_detail 파싱
-                /*.start(getStep(LibraryStepConst.FILE_DOWNLOAD_STEP_NAME))
-                .next(getStep(LibraryStepConst.STEP_NAME))
-                .next(getStep(LibraryStepConst.FILE_DELETE_STEP_NAME))
-                .next(getStep(LibraryStepConst.NARU_DETAIL_STEP_NAME))*/
+                .start(libraryExcelDownloadStep)
+                .next(libraryInsertStep)
+                .next(libraryExcelDeleteStep)
+                .next(libraryNaruDetailParsingStep)
 
                 // naru_detail이 있는 도서관 파일 다운로드
                 .start(stockCsvDownloadStep)
