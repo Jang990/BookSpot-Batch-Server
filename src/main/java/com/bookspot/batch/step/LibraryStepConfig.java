@@ -38,8 +38,8 @@ public class LibraryStepConfig {
     private final LibraryRepository libraryRepository;
 
     @Bean
-    public Step libraryNaruDetailStep() {
-        return new StepBuilder(LibraryStepConst.NARU_DETAIL_STEP_NAME, jobRepository)
+    public Step libraryNaruDetailParsingStep() {
+        return new StepBuilder("libraryNaruDetailParsingStep", jobRepository)
                 .<LibraryNaruDetail, LibraryNaruDetail>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
                 .reader(naruDetailReader)
                 .writer(libraryNaruDetailWriter)
@@ -47,8 +47,8 @@ public class LibraryStepConfig {
     }
 
     @Bean
-    public Step libraryStep() {
-        return new StepBuilder(LibraryStepConst.STEP_NAME, jobRepository)
+    public Step libraryInsertStep() {
+        return new StepBuilder("libraryInsertStep", jobRepository)
                 .<Library, Library>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryExcelReader)
                 .writer(libraryWriter)
@@ -57,7 +57,7 @@ public class LibraryStepConfig {
 
     @Bean
     public Step libraryExcelDownloadStep() {
-        return new StepBuilder(LibraryStepConst.FILE_DOWNLOAD_STEP_NAME, jobRepository)
+        return new StepBuilder("libraryExcelDownloadStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     downloader.download();
                     return RepeatStatus.FINISHED;
@@ -67,7 +67,7 @@ public class LibraryStepConfig {
 
     @Bean
     public Step libraryExcelDeleteStep() {
-        return new StepBuilder(LibraryStepConst.FILE_DELETE_STEP_NAME, jobRepository)
+        return new StepBuilder("libraryExcelDeleteStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     downloader.delete();
                     return RepeatStatus.FINISHED;
