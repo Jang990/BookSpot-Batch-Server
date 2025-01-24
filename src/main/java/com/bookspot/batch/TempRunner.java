@@ -1,6 +1,8 @@
 package com.bookspot.batch;
 
 import com.bookspot.batch.step.writer.file.stock.StockCsvMetadataCreator;
+import com.bookspot.batch.step.writer.file.stock.StockFilenameElement;
+import com.bookspot.batch.step.writer.file.stock.StockFilenameUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
@@ -32,16 +34,21 @@ public class TempRunner implements CommandLineRunner {
 
         File directory = new File(StockCsvMetadataCreator.DIRECTORY_NAME);
         for (String fileName : directory.list()) {
-            runTempJob(StockCsvMetadataCreator.DIRECTORY_NAME.concat("/").concat(fileName));
+            runTempJob(fileName);
         }
     }
 
-    private void runTempJob(String filePath) throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+    private void runTempJob(String fileName) throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
+        String filePath = StockCsvMetadataCreator.DIRECTORY_NAME.concat("/").concat(fileName);
+        StockFilenameElement metadata = StockFilenameUtil.parse(fileName);
         System.out.println("파일 경로 => "+ filePath);
 
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString("filePath", filePath)
                 .addLocalDateTime("tempParam", LocalDateTime.now())
+
+                .addString("filePath", filePath)
+                .addLong("libraryId", metadata.libraryId())
+                .addLocalDate("referenceDate", metadata.referenceDate())
                 .toJobParameters();
 
         jobLauncher.run(stockFileJob, jobParameters);

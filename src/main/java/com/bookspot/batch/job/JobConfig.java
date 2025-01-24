@@ -27,16 +27,15 @@ public class JobConfig {
 
                 // naru_detail이 있는 도서관 파일 다운로드
                 .start(stockCsvDownloadStep)
-                .incrementer(new RunIdIncrementer())
                 .build();
     }
 
     @Bean
-    public Job stockFileJob(Step bookUpdateStep) {
+    public Job stockFileJob(Step bookUpdateStep, Step libraryStockUpdateStep) {
         // 책 업데이트 -> 재고 업데이트 -> 파일 삭제 -> 크롤링 시점 업데이트
         return new JobBuilder("stockFileJob", jobRepository)
                 .start(bookUpdateStep)
-                .incrementer(new RunIdIncrementer())
+                .next(libraryStockUpdateStep)
                 .build();
     }
 
