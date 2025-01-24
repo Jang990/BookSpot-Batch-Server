@@ -11,8 +11,10 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.separator.DefaultRecordSeparatorPolicy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -26,10 +28,12 @@ public class StockCsvFileReaderConfig {
 
     @Bean
     @StepScope
-    public FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader() {
+    public FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader(
+            @Value("#{jobParameters['filePath']}") String filePath) {
         return new FlatFileItemReaderBuilder<LibraryStockCsvData>()
                 .name("bookStockCsvFileReader")
                 .encoding("euc-kr")
+                .resource(new FileSystemResource(filePath))
                 .lineTokenizer(new StockCsvDelimiterTokenizer())
                 .fieldSetMapper(new StockCsvDataMapper(yearParser))
 
@@ -43,28 +47,4 @@ public class StockCsvFileReaderConfig {
                 .linesToSkip(1)
                 .build();
     }
-
-    /*@Bean
-    @StepScope
-    public MultiResourceItemReader<LibraryStockCsvData> multiBookStockCsvFileReader() {
-        MultiResourceItemReader<LibraryStockCsvData> reader = new MultiResourceItemReader<>();
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-
-        try {
-
-            Resource[] resources = resolver.getResources(getFilePath());
-            reader.setResources(resources);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to load files", e);
-        }
-
-        reader.setDelegate(bookStockCsvFileReader());
-        return reader;
-    }
-
-    private static String getFilePath() {
-        // file:bookSpotFiles/stock/*.csv
-        return "file:".concat(
-                StockCsvMetadataCreator.create("*").fullName());
-    }*/
 }

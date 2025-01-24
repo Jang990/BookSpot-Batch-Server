@@ -19,7 +19,7 @@ public class StockCsvDownloadStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
-    /*private final MultiResourceItemReader<LibraryStockCsvData> multiBookStockCsvFileReader;
+    /*
     private final LibraryStockProcessor LibraryStockProcessor;
     private final JdbcBatchItemWriter<LibraryStock> libraryStockWriter;*/
 
