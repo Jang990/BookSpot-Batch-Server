@@ -26,4 +26,13 @@ class StockFilenameUtilTest {
                 StockFilenameUtil.parse("1223_2025-11-01"));
     }
 
+    @Test
+    void 파일명에_확장자가_있어도_파싱_가능() {
+        assertEquals(new StockFilenameElement(123L, LocalDate.of(1, 1, 1)),
+                StockFilenameUtil.parse("123_0001-01-01.csv"));
+
+        assertEquals(new StockFilenameElement(1223L, LocalDate.of(2025, 11, 1)),
+                StockFilenameUtil.parse("1223_2025-11-01.csv"));
+    }
+
 }
