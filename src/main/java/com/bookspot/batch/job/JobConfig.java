@@ -30,7 +30,7 @@ public class JobConfig {
                 .next(libraryNaruDetailParsingStep)
 
                 // naru_detail이 있는 도서관 파일 다운로드
-                .start(stockCsvDownloadStep)
+                .next(stockCsvDownloadStep)
                 .build();
     }
 
