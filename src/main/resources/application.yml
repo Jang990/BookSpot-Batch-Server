@@ -10,3 +10,16 @@ spring:
     hikari:
       username: root
       password: 1234
+
+management:
+  server:
+    port: 9292 # 해당 포트 접근하면 서버의 정보를 다 알 수 있음 - 보안 관련 설정
+  endpoint:
+    health:
+      # db, disk, ping 등등 자세한 정보를 볼 수 있도록 만드는 설정
+      show-details: always #  status(UP or DOWN)를 포함한 디테일한 숫자정보
+  endpoints:
+    web:
+      base-path: /my-monitor # '...:9292/my-monitor'로 요청
+      exposure:
+        include: "*" # 모든 엔드포인트 노출
