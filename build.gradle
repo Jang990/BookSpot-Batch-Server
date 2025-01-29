@@ -31,6 +31,8 @@ dependencies {
 
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.18.1'
 
+	implementation group: 'org.eclipse.collections', name: 'eclipse-collections', version: '11.1.0'
+
 	// 모니터링 설정
 	implementation 'org.springframework.boot:spring-boot-starter-actuator' // 액추에이터
 	implementation 'io.micrometer:micrometer-registry-prometheus' // 프로메테우스 마이크로미터 구현체 추가
