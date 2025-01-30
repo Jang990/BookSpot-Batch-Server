@@ -11,6 +11,7 @@ import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -25,6 +26,16 @@ public class IsbnWarmUpStepConfig {
     private final DataSource dataSource;
 
     private final IsbnMemoryRepository isbnEclipseMemoryRepository;
+
+    @Bean
+    public Step isbnMemoryClearStep() {
+        return new StepBuilder("isbnMemoryClearStep", jobRepository)
+                .tasklet((contribution, chunkContext) -> {
+                    isbnEclipseMemoryRepository.clearMemory();
+                    return RepeatStatus.FINISHED;
+                },platformTransactionManager)
+                .build();
+    }
 
     @Bean
     public Step isbnWarmUpStep(JdbcPagingItemReader<String> isbnReader) {

@@ -15,4 +15,8 @@ public class IsbnJdkMemoryRepository implements IsbnMemoryRepository {
     public boolean contains(String isbn13) {
         return store.contains(Long.parseLong(isbn13));
     }
+
+    public void clearMemory() {
+        store.clear();
+    }
 }

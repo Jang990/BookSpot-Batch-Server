@@ -25,6 +25,8 @@ public class TempRunner implements CommandLineRunner {
     private final JobLauncher jobLauncher;
     private final Job librarySyncJob;
     private final Job stockSyncJob;
+    private final Job isbnWarmUpJob;
+    private final Job isbnMemoryClearJob;
 
     @Override
     public void run(String... args) throws Exception {
@@ -32,10 +34,19 @@ public class TempRunner implements CommandLineRunner {
                 .addLocalDateTime("tempParam", LocalDateTime.now())
                 .toJobParameters());
 
+
+        jobLauncher.run(isbnWarmUpJob, new JobParametersBuilder()
+                .addLocalDateTime("tempParam", LocalDateTime.now())
+                .toJobParameters());
+
         File directory = new File(StockCsvMetadataCreator.DIRECTORY_NAME);
         for (String fileName : directory.list()) {
             runTempJob(fileName);
         }
+
+        jobLauncher.run(isbnMemoryClearJob, new JobParametersBuilder()
+                .addLocalDateTime("tempParam", LocalDateTime.now())
+                .toJobParameters());
     }
 
     private void runTempJob(String fileName) throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
