@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
+import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
 import com.bookspot.batch.step.service.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -10,12 +11,14 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 @Configuration
@@ -23,10 +26,10 @@ import java.util.List;
 public class BookConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
+    private final DataSource dataSource;
 
     private final FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader;
-    private final ItemProcessor<LibraryStockCsvData, LibraryStockCsvData> isbnValidationProcessor;
-    private final JdbcBatchItemWriter<LibraryStockCsvData> stockBookWriter;
+    private final IsbnValidationProcessor isbnValidationProcessor;
 
     private final IsbnMemoryRepository isbnMemoryRepository;
 
@@ -36,27 +39,45 @@ public class BookConfig {
                 .<LibraryStockCsvData, LibraryStockCsvData>chunk(BookStepConst.CHUNK_SIZE, platformTransactionManager)
                 .reader(bookStockCsvFileReader)
                 .processor(isbnValidationProcessor)
-                .writer(compositeBookWriter()) // 쓰기 부분이 20~30초의 차이를 만들어 낸다.
-//                .writer(items -> items.forEach(System.out::println))
+                .writer(compositeBookWriter())
                 .build();
     }
 
     @Bean
     public CompositeItemWriter<LibraryStockCsvData> compositeBookWriter() {
         CompositeItemWriter<LibraryStockCsvData> writer = new CompositeItemWriter<>();
-        writer.setDelegates(List.of(stockBookWriter, memoryIsbnWriter()));
+        writer.setDelegates(
+                List.of(stockBookWriter(), memoryIsbnWriter()));
         return writer;
     }
 
+    // 도서관 재고 csv -> book 테이블 저장
+    @Bean
+    public JdbcBatchItemWriter<LibraryStockCsvData> stockBookWriter() {
+        JdbcBatchItemWriter<LibraryStockCsvData> writer = new JdbcBatchItemWriterBuilder<LibraryStockCsvData>()
+                .dataSource(dataSource)
+                .sql("""
+                        INSERT IGNORE INTO book
+                        (isbn13, title, classification, volume_name)
+                        VALUES(?, ?, ?, ?);
+                        """)
+                .itemPreparedStatementSetter(
+                        (book, ps) -> {
+                            ps.setString(1, book.getIsbn());
+                            ps.setString(2, book.getTitle());
+                            ps.setString(3, book.getSubjectCode());
+                            ps.setString(4, book.getVolume());
+                        })
+                .assertUpdates(false)
+                .build();
+        return writer;
+    }
+
+    // 새로 등록된 책을 메모리에 등록
     @Bean
     public ItemWriter<LibraryStockCsvData> memoryIsbnWriter() {
-        return new ItemWriter<LibraryStockCsvData>() {
-            @Override
-            public void write(Chunk<? extends LibraryStockCsvData> chunk) throws Exception {
-                chunk.getItems().stream()
-                        .map(LibraryStockCsvData::getIsbn)
-                        .forEach(isbnMemoryRepository::add);
-            }
-        };
+        return chunk -> chunk.getItems().stream()
+                .map(LibraryStockCsvData::getIsbn)
+                .forEach(isbnMemoryRepository::add);
     }
 }
