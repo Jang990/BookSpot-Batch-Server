@@ -1,5 +1,6 @@
 package com.bookspot.batch.step;
 
+import com.bookspot.batch.step.service.Isbn13MemoryData;
 import com.bookspot.batch.step.service.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -38,23 +39,23 @@ public class IsbnWarmUpStepConfig {
     }
 
     @Bean
-    public Step isbnWarmUpStep(JdbcPagingItemReader<String> isbnReader) {
+    public Step isbnWarmUpStep() throws Exception {
         return new StepBuilder("isbnWarmUpStep", jobRepository)
-                .<String, String>chunk(1000, platformTransactionManager)
-                .reader(isbnReader)
+                .<Isbn13MemoryData, Isbn13MemoryData>chunk(1000, platformTransactionManager)
+                .reader(isbnReader())
                 .writer(isbnWriter())
                     .allowStartIfComplete(true)
                 .build();
     }
 
     @Bean
-    public JdbcPagingItemReader<String> isbnReader() throws Exception {
-        return new JdbcPagingItemReaderBuilder<String>()
+    public JdbcPagingItemReader<Isbn13MemoryData> isbnReader() throws Exception {
+        return new JdbcPagingItemReaderBuilder<Isbn13MemoryData>()
                 .name("isbnReader")
                 .dataSource(dataSource)
                 .queryProvider(isbnPagingQueryProvider())
                 .pageSize(1000)
-                .rowMapper((rs, rowNum) -> rs.getString("isbn13"))
+                .rowMapper((rs, rowNum) -> new Isbn13MemoryData(rs.getString("isbn13"), rs.getLong("id")))
                 .build();
     }
 
@@ -62,15 +63,15 @@ public class IsbnWarmUpStepConfig {
     public PagingQueryProvider isbnPagingQueryProvider() throws Exception {
         SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
         factoryBean.setDataSource(dataSource);
-        factoryBean.setSelectClause("select isbn13");
+        factoryBean.setSelectClause("select id, isbn13");
         factoryBean.setFromClause("from book");
-        factoryBean.setSortKey("isbn13");
+        factoryBean.setSortKey("id");
         return factoryBean.getObject();
     }
 
     @Bean
-    public ItemWriter<String> isbnWriter() {
-        ItemWriterAdapter<String> adapter = new ItemWriterAdapter<>();
+    public ItemWriter<Isbn13MemoryData> isbnWriter() {
+        ItemWriterAdapter<Isbn13MemoryData> adapter = new ItemWriterAdapter<>();
         adapter.setTargetObject(isbnEclipseMemoryRepository);
         adapter.setTargetMethod("add");
         return adapter;

@@ -2,6 +2,8 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
 import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
+import com.bookspot.batch.step.processor.csv.stock.repository.BookRepository;
+import com.bookspot.batch.step.service.Isbn13MemoryData;
 import com.bookspot.batch.step.service.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -32,6 +34,7 @@ public class BookConfig {
     private final IsbnValidationProcessor isbnValidationProcessor;
 
     private final IsbnMemoryRepository isbnMemoryRepository;
+    private final BookRepository bookRepository;
 
     @Bean
     public Step bookSyncStep() {
@@ -78,6 +81,10 @@ public class BookConfig {
     public ItemWriter<LibraryStockCsvData> memoryIsbnWriter() {
         return chunk -> chunk.getItems().stream()
                 .map(LibraryStockCsvData::getIsbn)
-                .forEach(isbnMemoryRepository::add);
+                .forEach(isbn13 -> {
+                    Long bookId = bookRepository.findIdByIsbn13(isbn13)
+                            .orElseThrow(IllegalArgumentException::new);
+                    isbnMemoryRepository.add(new Isbn13MemoryData(isbn13, bookId));
+                });
     }
 }
