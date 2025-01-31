@@ -18,32 +18,4 @@ import java.sql.Timestamp;
 public class LibraryItemReaderConfig {
     private final DataSource dataSource;
 
-    @Bean
-    public JdbcPagingItemReader<LibraryForFileParsing> libraryForFileParsingReader() throws Exception {
-        return new JdbcPagingItemReaderBuilder<LibraryForFileParsing>()
-                .name("libraryStockDataReader")
-                .dataSource(dataSource)
-                .queryProvider(libraryStockPagingQueryProvider())
-                .pageSize(StockStepConst.DOWNLOAD_CHUNK_SIZE)
-                .rowMapper((rs, rowNum) -> {
-                    Timestamp stockUpdatedAt = rs.getTimestamp("stock_updated_at");
-                    return new LibraryForFileParsing(
-                            rs.getLong("id"),
-                            rs.getString("library_code"),
-                            rs.getString("naru_detail"),
-                            stockUpdatedAt == null ? null : stockUpdatedAt.toLocalDateTime().toLocalDate());
-                })
-                .build();
-    }
-
-    @Bean
-    public PagingQueryProvider libraryStockPagingQueryProvider() throws Exception {
-        SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
-        factoryBean.setDataSource(dataSource);
-        factoryBean.setSelectClause("select id, library_code, naru_detail, stock_updated_at");
-        factoryBean.setFromClause("from Library");
-        factoryBean.setWhereClause("where naru_detail is not null");
-        factoryBean.setSortKey("id");
-        return factoryBean.getObject();
-    }
 }

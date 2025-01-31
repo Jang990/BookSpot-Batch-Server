@@ -18,8 +18,6 @@ import javax.sql.DataSource;
 public class StockWriterConfig {
     private final DataSource dataSource;
 
-    private final StockFileDownloader stockFileDownloader;
-
     @Bean
     public JdbcBatchItemWriter<LibraryStock> libraryStockWriter() {
         JdbcBatchItemWriter<LibraryStock> writer = new JdbcBatchItemWriterBuilder<LibraryStock>()
@@ -37,13 +35,5 @@ public class StockWriterConfig {
                 .assertUpdates(false)
                 .build();
         return writer;
-    }
-
-    @Bean
-    public ItemWriter<StockFileData> stockFileDownloaderWriter() {
-        ItemWriterAdapter<StockFileData> adapter = new ItemWriterAdapter<>();
-        adapter.setTargetObject(stockFileDownloader);
-        adapter.setTargetMethod("download");
-        return adapter;
     }
 }
