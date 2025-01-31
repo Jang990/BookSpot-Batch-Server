@@ -2,6 +2,7 @@ package com.bookspot.batch.step.processor.csv.stock;
 
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
+import com.bookspot.batch.step.processor.csv.IsbnValidator;
 import com.bookspot.batch.step.service.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +12,16 @@ import org.springframework.batch.item.ItemProcessor;
 @RequiredArgsConstructor
 public class LibraryStockProcessor implements ItemProcessor<LibraryStockCsvData, LibraryStock> {
     private final IsbnMemoryRepository isbnMemoryRepository;
+    private final IsbnValidator isbnValidator;
     private final long libraryId;
 
     @Override
     public LibraryStock process(LibraryStockCsvData item) throws Exception {
+        if (isbnValidator.isInValid(item.getIsbn())) {
+            log.info("잘못된 ISBN13 -> {}", item);
+            return null;
+        }
+
         Long bookId = isbnMemoryRepository.get(item.getIsbn());
 
         if (bookId == null) {

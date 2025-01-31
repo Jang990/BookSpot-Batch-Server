@@ -2,6 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
+import com.bookspot.batch.step.processor.csv.IsbnValidator;
 import com.bookspot.batch.step.processor.csv.stock.LibraryStockProcessor;
 import com.bookspot.batch.step.service.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,8 @@ public class LibraryStockUpdateStepConfig {
     private final DataSource dataSource;
 
     private final FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader;
+
+    private final IsbnValidator isbnValidator;
     private final IsbnMemoryRepository isbnMemoryRepository;
 
     @Bean
@@ -42,7 +45,7 @@ public class LibraryStockUpdateStepConfig {
     @Bean
     @StepScope
     public LibraryStockProcessor libraryStockProcessor(@Value("#{jobParameters['libraryId']}") Long libraryId) {
-        return new LibraryStockProcessor(isbnMemoryRepository, libraryId);
+        return new LibraryStockProcessor(isbnMemoryRepository, isbnValidator, libraryId);
     }
 
     @Bean
