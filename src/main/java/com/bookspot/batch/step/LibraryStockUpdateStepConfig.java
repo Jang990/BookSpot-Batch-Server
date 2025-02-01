@@ -56,9 +56,10 @@ public class LibraryStockUpdateStepConfig {
         JdbcBatchItemWriter<LibraryStock> writer = new JdbcBatchItemWriterBuilder<LibraryStock>()
                 .dataSource(dataSource)
                 .sql("""
-                        INSERT IGNORE INTO library_stock
-                        (book_id, library_id)
-                        VALUES(?, ?);
+                        INSERT INTO library_stock
+                        (book_id, library_id, created_at, updated_at)
+                        VALUES(?, ?, NOW(), NOW())
+                        ON DUPLICATE KEY UPDATE updated_at = NOW();
                         """)
                 .itemPreparedStatementSetter(
                         (book, ps) -> {
