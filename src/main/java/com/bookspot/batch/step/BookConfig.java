@@ -26,6 +26,8 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class BookConfig {
+    private static final int BOOK_SYNC_CHUNK_SIZE = 5_000;
+
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final DataSource dataSource;
@@ -39,7 +41,7 @@ public class BookConfig {
     @Bean
     public Step bookSyncStep() {
         return new StepBuilder("bookSyncStep", jobRepository)
-                .<LibraryStockCsvData, LibraryStockCsvData>chunk(BookStepConst.CHUNK_SIZE, platformTransactionManager)
+                .<LibraryStockCsvData, LibraryStockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(bookStockCsvFileReader)
                 .processor(isbnValidationProcessor)
                 .writer(compositeBookWriter())

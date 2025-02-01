@@ -22,6 +22,8 @@ import javax.sql.DataSource;
 @Configuration
 @RequiredArgsConstructor
 public class IsbnWarmUpStepConfig {
+    private static final int WARM_UP_CHUNK_SIZE = 10_000;
+
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final DataSource dataSource;
@@ -41,7 +43,7 @@ public class IsbnWarmUpStepConfig {
     @Bean
     public Step isbnWarmUpStep() throws Exception {
         return new StepBuilder("isbnWarmUpStep", jobRepository)
-                .<Isbn13MemoryData, Isbn13MemoryData>chunk(1000, platformTransactionManager)
+                .<Isbn13MemoryData, Isbn13MemoryData>chunk(WARM_UP_CHUNK_SIZE, platformTransactionManager)
                 .reader(isbnReader())
                 .writer(isbnWriter())
                     .allowStartIfComplete(true)
@@ -54,7 +56,7 @@ public class IsbnWarmUpStepConfig {
                 .name("isbnReader")
                 .dataSource(dataSource)
                 .queryProvider(isbnPagingQueryProvider())
-                .pageSize(1000)
+                .pageSize(WARM_UP_CHUNK_SIZE)
                 .rowMapper((rs, rowNum) -> new Isbn13MemoryData(rs.getString("isbn13"), rs.getLong("id")))
                 .build();
     }

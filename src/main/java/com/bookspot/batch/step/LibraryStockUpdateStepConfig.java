@@ -23,6 +23,8 @@ import javax.sql.DataSource;
 @Configuration
 @RequiredArgsConstructor
 public class LibraryStockUpdateStepConfig {
+    private static final int STOCK_SYNC_CHUNK_SIZE = 5_000;
+
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final DataSource dataSource;
@@ -32,10 +34,11 @@ public class LibraryStockUpdateStepConfig {
     private final IsbnValidator isbnValidator;
     private final IsbnMemoryRepository isbnMemoryRepository;
 
+
     @Bean
     public Step libraryStockSyncStep() {
         return new StepBuilder("libraryStockSyncStep", jobRepository)
-                .<LibraryStockCsvData, LibraryStock>chunk(StockStepConst.CHUNK_SIZE, platformTransactionManager)
+                .<LibraryStockCsvData, LibraryStock>chunk(STOCK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(bookStockCsvFileReader)
                 .processor(libraryStockProcessor(null))
                 .writer(libraryStockWriter())

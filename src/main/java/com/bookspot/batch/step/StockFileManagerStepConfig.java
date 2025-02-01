@@ -30,6 +30,8 @@ import java.sql.Timestamp;
 @Configuration
 @RequiredArgsConstructor
 public class StockFileManagerStepConfig {
+    private static final int STOCK_CSV_DOWNLOAD_CHUNK_SIZE = 10;
+
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final DataSource dataSource;
@@ -39,8 +41,8 @@ public class StockFileManagerStepConfig {
 
     @Bean
     public Step stockCsvDownloadStep() throws Exception {
-        return new StepBuilder(StockStepConst.DOWNLOAD_STEP_NAME, jobRepository)
-                .<LibraryForFileParsing, StockFileData>chunk(StockStepConst.DOWNLOAD_CHUNK_SIZE, platformTransactionManager)
+        return new StepBuilder("stockCsvDownloadStep", jobRepository)
+                .<LibraryForFileParsing, StockFileData>chunk(STOCK_CSV_DOWNLOAD_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryForFileParsingReader())
                 .processor(stockFilePathParser)
                 .writer(stockFileDownloaderWriter())
@@ -71,7 +73,7 @@ public class StockFileManagerStepConfig {
                 .name("libraryStockDataReader")
                 .dataSource(dataSource)
                 .queryProvider(libraryStockPagingQueryProvider())
-                .pageSize(StockStepConst.DOWNLOAD_CHUNK_SIZE)
+                .pageSize(STOCK_CSV_DOWNLOAD_CHUNK_SIZE)
                 .rowMapper((rs, rowNum) -> {
                     Timestamp stockUpdatedAt = rs.getTimestamp("stock_updated_at");
                     return new LibraryForFileParsing(
