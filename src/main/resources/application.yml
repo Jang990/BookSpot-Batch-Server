@@ -10,6 +10,12 @@ spring:
     hikari:
       username: root
       password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
 
 management:
   server:
