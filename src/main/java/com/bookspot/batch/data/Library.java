@@ -4,14 +4,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 import org.locationtech.jts.geom.Point;
 
 import java.time.LocalDate;
 
 @Entity
-@Data
-//@AllArgsConstructor
+@Getter
+@ToString
 public class Library {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
