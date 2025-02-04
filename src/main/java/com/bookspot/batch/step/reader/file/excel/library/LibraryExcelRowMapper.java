@@ -1,10 +1,16 @@
 package com.bookspot.batch.step.reader.file.excel.library;
 
 import com.bookspot.batch.data.Library;
+import com.bookspot.batch.global.LocationCreator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.batch.extensions.excel.RowMapper;
 import org.springframework.batch.extensions.excel.support.rowset.RowSet;
+import org.springframework.stereotype.Service;
 
+@Service
+@RequiredArgsConstructor
 public class LibraryExcelRowMapper implements RowMapper<Library> {
+    private final LocationCreator creator;
     @Override
     public Library mapRow(RowSet rs) throws Exception {
         String[] row = rs.getCurrentRow();
@@ -13,8 +19,10 @@ public class LibraryExcelRowMapper implements RowMapper<Library> {
                 getString(row, LibraryExcelSpec.NAME),
                 getAddress(row),
                 getString(row, LibraryExcelSpec.TEL),
-                Double.parseDouble(getString(row, LibraryExcelSpec.LATITUDE)),
-                Double.parseDouble(getString(row, LibraryExcelSpec.LONGITUDE)),
+                creator.create(
+                        Double.parseDouble(getString(row, LibraryExcelSpec.LATITUDE)),
+                        Double.parseDouble(getString(row, LibraryExcelSpec.LONGITUDE))
+                ),
                 getString(row, LibraryExcelSpec.HOMEPAGE),
                 getString(row, LibraryExcelSpec.CLOSED),
                 getString(row, LibraryExcelSpec.OPERATING_INFO)

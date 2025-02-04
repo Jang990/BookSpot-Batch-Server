@@ -31,6 +31,8 @@ public class LibraryStepConfig {
     private final PlatformTransactionManager platformTransactionManager;
     private final DataSource dataSource;
 
+    private final LibraryExcelRowMapper libraryExcelRowMapper;
+
     @Bean
     public Step librarySyncStep() {
         return new StepBuilder("librarySyncStep", jobRepository)
@@ -46,7 +48,7 @@ public class LibraryStepConfig {
         reader.setName("libraryExcelReader");
         reader.setResource(new FileSystemResource(LibraryExcelConst.metadata.absolutePath()));
         reader.setLinesToSkip(8);
-        reader.setRowMapper(new LibraryExcelRowMapper());
+        reader.setRowMapper(libraryExcelRowMapper);
         return reader;
     }
 

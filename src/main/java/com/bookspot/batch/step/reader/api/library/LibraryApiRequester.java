@@ -1,6 +1,7 @@
 package com.bookspot.batch.step.reader.api.library;
 
 import com.bookspot.batch.data.Library;
+import com.bookspot.batch.global.LocationCreator;
 import com.bookspot.batch.global.openapi.ApiRequester;
 import com.bookspot.batch.global.openapi.naru.NaruApiUrlCreator;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import java.util.List;
 public class LibraryApiRequester {
     private final ApiRequester apiRequester;
     private final NaruApiUrlCreator naruApiUrlCreator;
+    private final LocationCreator locationCreator;
     
     private static final Pageable ONLY_HEADER_PAGE = PageRequest.of(0, 1);
 
@@ -42,8 +44,10 @@ public class LibraryApiRequester {
                 lib.getLibName(),
                 lib.getAddress(),
                 lib.getTel(),
-                Double.parseDouble(lib.getLatitude()),
-                Double.parseDouble(lib.getLongitude()),
+                locationCreator.create(
+                        Double.parseDouble(lib.getLatitude()),
+                        Double.parseDouble(lib.getLongitude())
+                ),
                 lib.getHomepage(),
                 lib.getClosed(),
                 lib.getOperatingTime()
