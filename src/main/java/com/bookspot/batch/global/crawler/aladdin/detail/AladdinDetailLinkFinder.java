@@ -1,4 +1,4 @@
-package com.bookspot.batch.global.crawler.aladdin.bookid;
+package com.bookspot.batch.global.crawler.aladdin.detail;
 
 import com.bookspot.batch.global.crawler.common.CrawlingResult;
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
@@ -7,11 +7,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AladdinBookIdFinder {
+public class AladdinDetailLinkFinder {
     private final JsoupCrawler jsoupCrawler;
 
-    public String findBookDetail(String isbn) {
-        CrawlingResult result = jsoupCrawler.get(BookLinkConst.BOOK_SEARCH_URL + isbn);
+    public String find(String isbn) {
+        CrawlingResult result = jsoupCrawler.get(DetailLinkConst.BOOK_SEARCH_URL + isbn);
 
         if(parseSearchCount(result) != 1)
             throw new IllegalArgumentException("검색 결과가 두 개 이상"); // TODO: 커스텀 예외 필요?
@@ -20,10 +20,10 @@ public class AladdinBookIdFinder {
     }
 
     private String findBookDetailPageHref(CrawlingResult result) {
-        return result.findElementAttribute(BookLinkConst.PAGE_LINK.cssSelector(), "href");
+        return result.findElementAttribute(DetailLinkConst.PAGE_LINK.cssSelector(), "href");
     }
 
     private int parseSearchCount(CrawlingResult result) {
-        return Integer.parseInt(result.findElementText(BookLinkConst.SEARCH_RESULT_COUNT.cssSelector()));
+        return Integer.parseInt(result.findElementText(DetailLinkConst.SEARCH_RESULT_COUNT.cssSelector()));
     }
 }

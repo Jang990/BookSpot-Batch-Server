@@ -1,6 +1,6 @@
 package com.bookspot.batch.global.crawler.aladdin;
 
-import com.bookspot.batch.global.crawler.aladdin.bookid.AladdinBookIdFinder;
+import com.bookspot.batch.global.crawler.aladdin.detail.AladdinDetailLinkFinder;
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,19 +16,20 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class AladdinCrawlerTest {
 
-    @Mock AladdinBookIdFinder aladdinBookIdFinder;
+    @Mock
+    AladdinDetailLinkFinder aladdinDetailLinkFinder;
     JsoupCrawler jsoupCrawler = new JsoupCrawler();
     AladdinCrawler aladdinCrawler;
 
     @BeforeEach
     void beforeEach() {
-        aladdinCrawler = new AladdinCrawler(jsoupCrawler, aladdinBookIdFinder);
+        aladdinCrawler = new AladdinCrawler(jsoupCrawler, aladdinDetailLinkFinder);
     }
 
     @Test
     void 책의_디테일_정보_파싱가능() {
         String isbn = "9788998139766";
-        when(aladdinBookIdFinder.findBookDetail(anyString()))
+        when(aladdinDetailLinkFinder.find(anyString()))
                 .thenReturn("https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=60550259");
 
         AladdinBookDetail result = aladdinCrawler.findBookDetail(isbn);
