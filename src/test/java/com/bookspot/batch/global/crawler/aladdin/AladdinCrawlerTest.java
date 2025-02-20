@@ -1,30 +1,47 @@
 package com.bookspot.batch.global.crawler.aladdin;
 
+import com.bookspot.batch.global.crawler.aladdin.bookid.AladdinBookIdFinder;
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class AladdinCrawlerTest {
-    AladdinCrawler aladdinCrawler = new AladdinCrawler(new JsoupCrawler());
+
+    @Mock AladdinBookIdFinder aladdinBookIdFinder;
+    JsoupCrawler jsoupCrawler = new JsoupCrawler();
+    AladdinCrawler aladdinCrawler;
+
+    @BeforeEach
+    void beforeEach() {
+        aladdinCrawler = new AladdinCrawler(jsoupCrawler, aladdinBookIdFinder);
+    }
 
     @Test
-    void test() {
+    void 책의_디테일_정보_파싱가능() {
         String isbn = "9788998139766";
+        when(aladdinBookIdFinder.findBookDetail(anyString()))
+                .thenReturn("https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=60550259");
+
         AladdinBookDetail result = aladdinCrawler.findBookDetail(isbn);
 
-        assertEquals("60550259", result.getAladdinItemId());
         assertEquals("https://image.aladin.co.kr/product/6055/2/cover500/8998139766_1.jpg", result.getImage());
-        assertEquals(isbn,result.getIsbn());
+        assertEquals(isbn, result.getIsbn());
         assertEquals("객체지향의 사실과 오해", result.getTitle());
         assertEquals("- 역할, 책임, 협력 관점에서 본 객체지향", result.getSubTitle());
         assertEquals("조영호", result.getAuthor());
         assertEquals("위키북스", result.getPublisher());
 //        assertEquals(description, result.getDescription());
 //        assertEquals(tableContent, result.getTableOfContents());
-        assertEquals(LocalDate.of(2015, 6,17), result.getPublishedDate());
+        assertEquals(LocalDate.of(2015, 6, 17), result.getPublishedDate());
         assertEquals(260, result.getPageCount());
     }
 

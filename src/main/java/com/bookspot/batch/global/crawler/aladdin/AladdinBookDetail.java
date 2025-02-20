@@ -12,7 +12,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AladdinBookDetail {
-    private String aladdinItemId;
     private String isbn;
     private String image;
     private String title;

@@ -9,7 +9,6 @@ public enum BookDetailConst {
     PAGE_COUNT("#Ere_prod_allwrap > div.Ere_prod_middlewrap > div:nth-child(1) > div.Ere_prod_mconts_R > div.conts_info_list1 > ul > li:nth-child(1)"),
     BOOK_METADATA("#Ere_prod_allwrap > div.Ere_prod_topwrap > div.Ere_prod_titlewrap > div.left > div > ul > li.Ere_sub2_title");
 
-    protected static final String BOOK_DETAIL_URL = "https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=";
     private final String cssSelector;
     BookDetailConst(String selector) {
         this.cssSelector = selector;

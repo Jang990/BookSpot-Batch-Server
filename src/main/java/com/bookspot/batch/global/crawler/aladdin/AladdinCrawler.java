@@ -1,5 +1,6 @@
 package com.bookspot.batch.global.crawler.aladdin;
 
+import com.bookspot.batch.global.crawler.aladdin.bookid.AladdinBookIdFinder;
 import com.bookspot.batch.global.crawler.common.CrawlingResult;
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
 import lombok.RequiredArgsConstructor;
@@ -12,13 +13,12 @@ import java.time.format.DateTimeFormatter;
 @RequiredArgsConstructor
 public class AladdinCrawler {
     private final JsoupCrawler jsoupCrawler;
+    private final AladdinBookIdFinder aladdinBookIdFinder;
 
     public AladdinBookDetail findBookDetail(String isbn) {
-        String itemId = "60550259";
-        CrawlingResult result = jsoupCrawler.get(BookDetailConst.BOOK_DETAIL_URL + itemId);
+        CrawlingResult result = jsoupCrawler.get(aladdinBookIdFinder.findBookDetail(isbn));
 
         AladdinBookDetail detail = new AladdinBookDetail(
-                itemId,
                 isbn,
                 result.findElementAttribute(BookDetailConst.IMAGE.cssSelector(), "src"),
                 result.findElementText(BookDetailConst.TITLE.cssSelector()),
