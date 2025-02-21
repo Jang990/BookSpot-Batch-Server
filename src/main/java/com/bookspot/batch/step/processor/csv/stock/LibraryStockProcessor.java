@@ -3,7 +3,7 @@ package com.bookspot.batch.step.processor.csv.stock;
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
 import com.bookspot.batch.step.processor.csv.IsbnValidator;
-import com.bookspot.batch.step.service.IsbnMemoryRepository;
+import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;

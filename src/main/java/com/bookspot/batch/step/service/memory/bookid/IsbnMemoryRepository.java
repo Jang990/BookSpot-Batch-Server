@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.service;
+package com.bookspot.batch.step.service.memory.bookid;
 
 public interface IsbnMemoryRepository {
     void add(Isbn13MemoryData data);

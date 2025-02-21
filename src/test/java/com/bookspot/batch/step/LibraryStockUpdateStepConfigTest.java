@@ -1,8 +1,7 @@
 package com.bookspot.batch.step;
 
-import com.bookspot.batch.step.service.Isbn13MemoryData;
-import com.bookspot.batch.step.service.IsbnEclipseMemoryRepository;
-import org.assertj.core.api.Assertions;
+import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
+import com.bookspot.batch.step.service.memory.bookid.IsbnEclipseMemoryRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

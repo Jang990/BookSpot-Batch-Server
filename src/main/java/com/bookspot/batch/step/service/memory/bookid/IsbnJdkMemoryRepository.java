@@ -1,9 +1,6 @@
-package com.bookspot.batch.step.service;
-
-import org.springframework.stereotype.Service;
+package com.bookspot.batch.step.service.memory.bookid;
 
 import java.util.HashMap;
-import java.util.HashSet;
 
 //@Service
 public class IsbnJdkMemoryRepository implements IsbnMemoryRepository {

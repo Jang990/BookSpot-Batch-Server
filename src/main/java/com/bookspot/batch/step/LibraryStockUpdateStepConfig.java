@@ -4,7 +4,7 @@ import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
 import com.bookspot.batch.step.processor.csv.IsbnValidator;
 import com.bookspot.batch.step.processor.csv.stock.LibraryStockProcessor;
-import com.bookspot.batch.step.service.IsbnMemoryRepository;
+import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;

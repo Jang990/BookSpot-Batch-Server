@@ -1,7 +1,6 @@
-package com.bookspot.batch.step.service;
+package com.bookspot.batch.step.service.memory.bookid;
 
 import org.eclipse.collections.impl.map.mutable.primitive.LongLongHashMap;
-import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
 import org.springframework.stereotype.Service;
 
 @Service

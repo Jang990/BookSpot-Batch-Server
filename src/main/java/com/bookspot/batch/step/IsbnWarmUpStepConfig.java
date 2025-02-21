@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
-import com.bookspot.batch.step.service.Isbn13MemoryData;
-import com.bookspot.batch.step.service.IsbnMemoryRepository;
+import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
+import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
