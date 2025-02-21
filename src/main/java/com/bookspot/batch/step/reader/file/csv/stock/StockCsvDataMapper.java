@@ -18,9 +18,14 @@ public class StockCsvDataMapper implements FieldSetMapper<LibraryStockCsvData> {
 
     @Override
     public LibraryStockCsvData mapFieldSet(FieldSet fieldSet) throws BindException {
-        LibraryStockCsvData result = new LibraryStockCsvData();
+        LibraryStockCsvData result = new LibraryStockCsvData(
+                read(fieldSet, LibraryStockCsvSpec.ISBN),
+                read(fieldSet, LibraryStockCsvSpec.SUBJECT_CODE),
+                toInt(read(fieldSet, LibraryStockCsvSpec.NUMBER_OF_BOOKS)),
+                toInt(read(fieldSet, LibraryStockCsvSpec.LOAN_COUNT))
+        );
 
-        result.setId(toInt(read(fieldSet, LibraryStockCsvSpec.ID)));
+        /*result.setId(toInt(read(fieldSet, LibraryStockCsvSpec.ID)));
         result.setTitle(read(fieldSet, LibraryStockCsvSpec.TITLE));
         result.setAuthor(read(fieldSet, LibraryStockCsvSpec.AUTHOR));
         result.setPublisher(read(fieldSet, LibraryStockCsvSpec.PUBLISHER));
@@ -32,7 +37,7 @@ public class StockCsvDataMapper implements FieldSetMapper<LibraryStockCsvData> {
         result.setSubjectCode(read(fieldSet, LibraryStockCsvSpec.SUBJECT_CODE));
         result.setNumberOfBooks(toInt(read(fieldSet, LibraryStockCsvSpec.NUMBER_OF_BOOKS)));
         result.setLoanCount(toInt(read(fieldSet, LibraryStockCsvSpec.LOAN_COUNT)));
-        result.setRegistrationDate(LocalDate.parse(read(fieldSet, LibraryStockCsvSpec.REGISTRATION_DATE), formatter));
+        result.setRegistrationDate(LocalDate.parse(read(fieldSet, LibraryStockCsvSpec.REGISTRATION_DATE), formatter));*/
 
         return result;
     }

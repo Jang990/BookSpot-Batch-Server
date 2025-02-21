@@ -63,15 +63,13 @@ public class BookConfig {
                 .dataSource(dataSource)
                 .sql("""
                         INSERT IGNORE INTO book
-                        (isbn13, title, classification, volume_name)
-                        VALUES(?, ?, ?, ?);
+                        (isbn13, classification)
+                        VALUES(?, ?);
                         """)
                 .itemPreparedStatementSetter(
                         (book, ps) -> {
                             ps.setString(1, book.getIsbn());
-                            ps.setString(2, book.getTitle());
-                            ps.setString(3, book.getSubjectCode());
-                            ps.setString(4, book.getVolume());
+                            ps.setString(2, book.getSubjectCode());
                         })
                 .assertUpdates(false)
                 .build();
