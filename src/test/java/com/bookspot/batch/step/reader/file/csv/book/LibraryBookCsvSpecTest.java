@@ -8,7 +8,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BookCsvSpecTest {
+class LibraryBookCsvSpecTest {
 
     @Test
     public void CSV_파일_데이터_순서가_변경되지_않으면_순서는_고정돼야_함() {

@@ -3,6 +3,7 @@ package com.bookspot.batch.data.file.csv;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Deprecated
 @Data
 @NoArgsConstructor
 public class BookCsvData {
