@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-public class Book_ {
+public class Book {
     private long dbBookId;
     private String isbn;
     private String image;
@@ -18,7 +18,7 @@ public class Book_ {
     private LocalDate publishedDate;
     private int pageCount;
 
-    public Book_(
+    public Book(
             long dbBookId, String isbn, String image,
             String title, String subTitle, String author,
             String publisher, LocalDate publishedDate, int pageCount) {
