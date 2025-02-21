@@ -39,8 +39,8 @@ public class BookConfig {
     private final BookRepository bookRepository;
 
     @Bean
-    public Step bookSyncStep() {
-        return new StepBuilder("bookSyncStep", jobRepository)
+    public Step libraryBookSyncStep() {
+        return new StepBuilder("libraryBookSyncStep", jobRepository)
                 .<LibraryStockCsvData, LibraryStockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(bookStockCsvFileReader)
                 .processor(isbnValidationProcessor)
