@@ -28,6 +28,30 @@ public class StockCsvFileReaderConfig {
 
     @Bean
     @StepScope
+    public MultiResourceItemReader<LibraryStockCsvData> multiBookStockCsvFileReader() {
+        MultiResourceItemReader<LibraryStockCsvData> reader = new MultiResourceItemReader<>();
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+
+        try {
+            Resource[] resources = resolver.getResources(StockCsvMetadataCreator.MULTI_CSV_FILE_PATH);
+            reader.setResources(resources);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load files", e);
+        }
+
+        reader.setDelegate(new FlatFileItemReaderBuilder<LibraryStockCsvData>()
+                .name("bookStockCsvFileReader")
+                .encoding("euc-kr")
+                .lineTokenizer(new StockCsvDelimiterTokenizer())
+                .fieldSetMapper(new StockCsvDataMapper(yearParser))
+                .recordSeparatorPolicy(new DefaultRecordSeparatorPolicy())
+                .linesToSkip(1)
+                .build());
+        return reader;
+    }
+
+    @Bean
+    @StepScope
     public FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader(
             @Value("#{jobParameters['filePath']}") String filePath) {
         return new FlatFileItemReaderBuilder<LibraryStockCsvData>()

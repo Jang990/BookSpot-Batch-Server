@@ -36,15 +36,13 @@ public class JobConfig {
 
     @Bean
     public Job stockSyncJob(
-            Step libraryBookSyncStep,
             Step libraryStockSyncStep,
             Step missingStockDeleteStep,
             Step stockCsvDeleteStep,
             Step libraryStockUpdatedAtStep) {
-        // 책 업데이트 -> 재고 업데이트 -> 사라진 재고 정보 삭제 -> 파일 삭제 -> 크롤링 시점 업데이트
+        // 재고 업데이트 -> 사라진 재고 정보 삭제 -> 파일 삭제 -> 크롤링 시점 업데이트
         return new JobBuilder("stockFileJob", jobRepository)
-                .start(libraryBookSyncStep)
-                .next(libraryStockSyncStep)
+                .start(libraryStockSyncStep)
                 .next(missingStockDeleteStep)
                 .next(stockCsvDeleteStep)
                 .next(libraryStockUpdatedAtStep)

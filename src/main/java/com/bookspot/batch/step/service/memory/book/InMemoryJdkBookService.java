@@ -1,8 +1,12 @@
 package com.bookspot.batch.step.service.memory.book;
 
-import java.util.HashMap;
+import org.springframework.stereotype.Service;
 
-//@Service
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+@Service
 public class InMemoryJdkBookService implements InMemoryBookService {
     private static HashMap<Long, BookMemoryData> store = new HashMap<>();
 
@@ -21,5 +25,9 @@ public class InMemoryJdkBookService implements InMemoryBookService {
 
     public void clearAll() {
         store.clear();
+    }
+
+    public Iterator<Map.Entry<Long, BookMemoryData>> getDataIterator() {
+        return store.entrySet().iterator();
     }
 }

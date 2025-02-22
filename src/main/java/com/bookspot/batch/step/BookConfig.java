@@ -3,6 +3,9 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
 import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
 import com.bookspot.batch.step.processor.csv.stock.repository.BookRepository;
+import com.bookspot.batch.step.service.memory.book.BookMemoryData;
+import com.bookspot.batch.step.service.memory.book.InMemoryBookService;
+import com.bookspot.batch.step.service.memory.book.InMemoryJdkBookService;
 import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +16,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,33 +32,23 @@ public class BookConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
-    private final DataSource dataSource;
 
-    private final FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader;
+    private final MultiResourceItemReader<LibraryStockCsvData> multiBookStockCsvFileReader;
     private final IsbnValidationProcessor isbnValidationProcessor;
 
-    private final IsbnMemoryRepository isbnMemoryRepository;
-    private final BookRepository bookRepository;
+    private final InMemoryBookService bookService;
 
     @Bean
     public Step libraryBookSyncStep() {
         return new StepBuilder("libraryBookSyncStep", jobRepository)
                 .<LibraryStockCsvData, LibraryStockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
-                .reader(bookStockCsvFileReader)
+                .reader(multiBookStockCsvFileReader)
                 .processor(isbnValidationProcessor)
-                .writer(compositeBookWriter())
+                .writer(memoryIsbnWriter())
                 .build();
     }
 
-    @Bean
-    public CompositeItemWriter<LibraryStockCsvData> compositeBookWriter() {
-        CompositeItemWriter<LibraryStockCsvData> writer = new CompositeItemWriter<>();
-        writer.setDelegates(
-                List.of(stockBookWriter(), memoryIsbnWriter()));
-        return writer;
-    }
-
-    // 도서관 재고 csv -> book 테이블 저장
+    /*// 도서관 재고 csv -> book 테이블 저장
     @Bean
     public JdbcBatchItemWriter<LibraryStockCsvData> stockBookWriter() {
         JdbcBatchItemWriter<LibraryStockCsvData> writer = new JdbcBatchItemWriterBuilder<LibraryStockCsvData>()
@@ -72,17 +66,15 @@ public class BookConfig {
                 .assertUpdates(false)
                 .build();
         return writer;
-    }
+    }*/
 
     // 새로 등록된 책을 메모리에 등록
     @Bean
     public ItemWriter<LibraryStockCsvData> memoryIsbnWriter() {
         return chunk -> chunk.getItems().stream()
-                .map(LibraryStockCsvData::getIsbn)
-                .forEach(isbn13 -> {
-                    Long bookId = bookRepository.findIdByIsbn13(isbn13)
-                            .orElseThrow(IllegalArgumentException::new);
-                    isbnMemoryRepository.add(new Isbn13MemoryData(isbn13, bookId));
+                .forEach(book -> {
+                    int loanCount = book.getLoanCount() == null ? 0 : book.getLoanCount();
+                    bookService.add(book.getIsbn(), new BookMemoryData(book.getSubjectCode(), loanCount));
                 });
     }
 }
