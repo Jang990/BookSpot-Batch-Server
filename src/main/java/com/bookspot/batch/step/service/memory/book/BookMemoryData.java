@@ -8,4 +8,8 @@ import lombok.Getter;
 public class BookMemoryData {
     private String subjectCode;
     private int loanCount;
+
+    public void increase(int loanCount) {
+        this.loanCount += loanCount;
+    }
 }

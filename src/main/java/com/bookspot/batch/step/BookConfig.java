@@ -36,7 +36,7 @@ public class BookConfig {
     private final MultiResourceItemReader<LibraryStockCsvData> multiBookStockCsvFileReader;
     private final IsbnValidationProcessor isbnValidationProcessor;
 
-    private final InMemoryBookService bookService;
+    private final InMemoryJdkBookService bookService;
 
     @Bean
     public Step libraryBookSyncStep() {
@@ -74,7 +74,11 @@ public class BookConfig {
         return chunk -> chunk.getItems().stream()
                 .forEach(book -> {
                     int loanCount = book.getLoanCount() == null ? 0 : book.getLoanCount();
-                    bookService.add(book.getIsbn(), new BookMemoryData(book.getSubjectCode(), loanCount));
+
+                    if(bookService.contains(book.getIsbn()))
+                        bookService.increase(book.getIsbn(), loanCount);
+                    else
+                        bookService.add(book.getIsbn(), new BookMemoryData(book.getSubjectCode(), loanCount));
                 });
     }
 }

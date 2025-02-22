@@ -10,7 +10,6 @@ public class StockCsvMetadataCreator {
 
     public static final String DIRECTORY_NAME = BookSpotFileConst.ROOT_DIRECTORY.concat("/stock");
     public static final String MULTI_CSV_FILE_PATH = "file:".concat(DIRECTORY_NAME).concat("/*.csv");
-
 //    public static final String DIRECTORY_NAME = BookSpotFileConst.ROOT_DIRECTORY.concat("/temp_directory");
 
     public static FileMetadata create(long libraryId, LocalDate referenceDate) {

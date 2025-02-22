@@ -3,7 +3,6 @@ package com.bookspot.batch.step.service.memory.book;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 @Service
@@ -27,7 +26,14 @@ public class InMemoryJdkBookService implements InMemoryBookService {
         store.clear();
     }
 
-    public Iterator<Map.Entry<Long, BookMemoryData>> getDataIterator() {
-        return store.entrySet().iterator();
+    public Map<Long, BookMemoryData> getData() {
+        return store;
+    }
+
+    public void increase(String isbn, int loanCount) {
+        BookMemoryData data = get(isbn);
+        if(data == null)
+            throw new IllegalArgumentException("찾을 수 없는 ISBN");
+        data.increase(loanCount);
     }
 }
