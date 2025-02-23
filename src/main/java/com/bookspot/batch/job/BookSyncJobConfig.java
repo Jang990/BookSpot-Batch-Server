@@ -23,12 +23,12 @@ public class BookSyncJobConfig {
     private final UniqueBooksCsvWriter uniqueBooksCsvWriter;
 
     @Bean
-    public Job aggregateBookFileJob(Step libraryBookSyncStep) {
+    public Job aggregateBookFileJob(Step libraryBookSyncStep, Step syncAggregatedBookStep) {
         return new JobBuilder("aggregateBookFileJob", jobRepository)
                 .start(libraryBookSyncStep) // 도서관 재고 정보 파일 읽기
                 .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
                 .next(clearBookMemoryStep()) // 도서 정보 인메모리 clearAll();
-                //- 저장한 파일을 DB에 반영 - 새로 나온 책 + 최근 대출 횟수 반영
+                .next(syncAggregatedBookStep) //- 저장한 파일을 DB에 반영 - 새로 나온 책 + 최근 대출 횟수 반영
                 .build();
     }
 
