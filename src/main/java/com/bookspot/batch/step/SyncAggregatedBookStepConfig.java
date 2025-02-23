@@ -1,9 +1,9 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.AggregatedBook;
+import com.bookspot.batch.global.file.spec.AggregatedBooksCsvSpec;
 import com.bookspot.batch.step.reader.file.csv.book.AggregatedBookCsvDataMapper;
 import com.bookspot.batch.step.reader.file.csv.book.AggregatedBookCsvDelimiterTokenizer;
-import com.bookspot.batch.step.writer.file.book.UniqueBooksCsvMetadata;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -44,7 +44,7 @@ public class SyncAggregatedBookStepConfig {
         return new FlatFileItemReaderBuilder<AggregatedBook>()
                 .name("aggregatedBookCsvFileReader")
                 .encoding("UTF-8")
-                .resource(new FileSystemResource(UniqueBooksCsvMetadata.FILE_PATH))
+                .resource(new FileSystemResource(AggregatedBooksCsvSpec.FILE_PATH))
                 .lineTokenizer(new AggregatedBookCsvDelimiterTokenizer())
                 .fieldSetMapper(new AggregatedBookCsvDataMapper())
                 .build();

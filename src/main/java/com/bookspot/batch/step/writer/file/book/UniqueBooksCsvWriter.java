@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.writer.file.book;
 
+import com.bookspot.batch.global.file.spec.AggregatedBooksCsvSpec;
 import com.bookspot.batch.step.service.memory.Isbn13Convertor;
 import com.bookspot.batch.step.service.memory.book.BookMemoryData;
 import lombok.RequiredArgsConstructor;
@@ -16,14 +17,14 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UniqueBooksCsvWriter {
     public void saveToCsv(Map<Long, BookMemoryData> map) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(UniqueBooksCsvMetadata.FILE_PATH, false))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(AggregatedBooksCsvSpec.FILE_PATH, false))) {
             // 헤더?
             /*writer.write("id,title,author");
             writer.newLine();*/
 
             for (Map.Entry<Long, BookMemoryData> data : map.entrySet()) {
                 BookMemoryData memoryData = data.getValue();
-                String line = UniqueBooksCsvMetadata.createLine(
+                String line = AggregatedBooksCsvSpec.createLine(
                         Isbn13Convertor.convert(data.getKey()),
                         memoryData.getSubjectCode(),
                         memoryData.getLoanCount()
