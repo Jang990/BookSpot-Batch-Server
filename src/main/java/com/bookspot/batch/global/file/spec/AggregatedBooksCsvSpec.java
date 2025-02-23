@@ -23,7 +23,6 @@ public enum AggregatedBooksCsvSpec {
         return fieldName;
     }
 
-
     public static String createLine(String isbn13, String subjectCode, int loanCount) {
         return String.format("\"%s\",\"%s\",\"%s\"",
                 isbn13,

@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.reader.file.csv.stock;
 
+import com.bookspot.batch.global.file.spec.LibraryStockCsvSpec;
 import lombok.SneakyThrows;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;

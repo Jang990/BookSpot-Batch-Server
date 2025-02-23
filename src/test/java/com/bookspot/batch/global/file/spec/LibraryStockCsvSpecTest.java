@@ -1,6 +1,5 @@
-package com.bookspot.batch.step.reader.file.csv.stock;
+package com.bookspot.batch.global.file.spec;
 
-import com.bookspot.batch.step.reader.file.csv.stock.LibraryStockCsvSpec;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

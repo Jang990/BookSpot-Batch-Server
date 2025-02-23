@@ -1,6 +1,6 @@
-package com.bookspot.batch.step.reader.file.csv.stock;
+package com.bookspot.batch.global.file.spec;
 
-enum LibraryStockCsvSpec {
+public enum LibraryStockCsvSpec {
     ID("id"),
     TITLE("title"),
     AUTHOR("author"),
