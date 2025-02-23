@@ -1,7 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.step.service.memory.book.InMemoryJdkBookService;
-import com.bookspot.batch.step.writer.file.book.UniqueBooksCsvWriter;
+import com.bookspot.batch.step.writer.file.book.AggregatedBooksCsvWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -20,7 +20,7 @@ public class BookSyncJobConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final InMemoryJdkBookService inMemoryBookService;
-    private final UniqueBooksCsvWriter uniqueBooksCsvWriter;
+    private final AggregatedBooksCsvWriter aggregatedBooksCsvWriter;
 
     @Bean
     public Job aggregateBookFileJob(Step libraryBookSyncStep, Step syncAggregatedBookStep) {
@@ -52,7 +52,7 @@ public class BookSyncJobConfig {
     @Bean
     public Tasklet aggregateBookFileTasklet() {
         return (contribution, chunkContext) -> {
-            uniqueBooksCsvWriter.saveToCsv(inMemoryBookService.getData());
+            aggregatedBooksCsvWriter.saveToCsv(inMemoryBookService.getData());
             return RepeatStatus.FINISHED;
         };
     }

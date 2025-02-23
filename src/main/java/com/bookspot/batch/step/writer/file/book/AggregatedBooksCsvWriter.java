@@ -15,7 +15,7 @@ import java.util.Map;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UniqueBooksCsvWriter {
+public class AggregatedBooksCsvWriter {
     public void saveToCsv(Map<Long, BookMemoryData> map) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(AggregatedBooksCsvSpec.FILE_PATH, false))) {
             // 헤더?
