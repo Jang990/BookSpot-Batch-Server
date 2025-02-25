@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class ConvertedLibraryStockCsvData {
+public class ConvertedStockCsvData {
     private String isbn;
     private Integer subjectCodePrefix;
     private int numberOfBooks;
