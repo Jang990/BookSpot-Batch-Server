@@ -1,6 +1,6 @@
 package com.bookspot.batch.step.processor.csv.stock;
 
-import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
+import com.bookspot.batch.data.file.csv.StockCsvData;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -16,7 +16,7 @@ class BookClassificationProcessorTest {
     @ParameterizedTest
     @MethodSource("args")
     void 책_분류코드의_의미있는_앞의_숫자파싱(String code, Integer expected) throws Exception {
-        LibraryStockCsvData data = new LibraryStockCsvData("something", code, 0, 0);
+        StockCsvData data = new StockCsvData("something", code, 0, 0);
         assertEquals(expected, processor.process(data).getSubjectCodePrefix());
     }
 

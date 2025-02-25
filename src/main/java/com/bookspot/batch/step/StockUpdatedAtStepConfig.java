@@ -17,14 +17,14 @@ import java.time.LocalDate;
 
 @Configuration
 @RequiredArgsConstructor
-public class LibraryStockUpdatedAtStepConfig {
+public class StockUpdatedAtStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final LibraryRepository libraryRepository;
 
     @Bean
-    public Step libraryStockUpdatedAtStep() {
-        return new StepBuilder("libraryStockUpdatedAtStep", jobRepository)
+    public Step stockUpdatedAtStep() {
+        return new StepBuilder("stockUpdatedAtStep", jobRepository)
                 .tasklet(libraryStockUpdatedAtTasklet(null, null), platformTransactionManager)
                 .build();
     }

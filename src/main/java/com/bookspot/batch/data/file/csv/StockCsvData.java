@@ -2,10 +2,8 @@ package com.bookspot.batch.data.file.csv;
 
 import lombok.Data;
 
-import java.time.LocalDate;
-
 @Data
-public class LibraryStockCsvData {
+public class StockCsvData {
 //    private int id;                // 줄 번호
 //    private String title;           // 도서명
 //    private String author;          // 저자
@@ -21,7 +19,7 @@ public class LibraryStockCsvData {
 //    private LocalDate registrationDate; // 등록일자
 
 
-    public LibraryStockCsvData(
+    public StockCsvData(
             String isbn,
             String subjectCode,
             Integer numberOfBooks,

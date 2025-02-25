@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
-import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
+import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.csv.IsbnValidator;
 import com.bookspot.batch.step.processor.csv.stock.LibraryStockProcessor;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
@@ -22,24 +22,24 @@ import javax.sql.DataSource;
 
 @Configuration
 @RequiredArgsConstructor
-public class LibraryStockUpdateStepConfig {
+public class StockUpdateStepConfig {
     private static final int STOCK_SYNC_CHUNK_SIZE = 5_000;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final DataSource dataSource;
 
-    private final FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader;
+    private final FlatFileItemReader<StockCsvData> stockCsvFileReader;
 
     private final IsbnValidator isbnValidator;
     private final IsbnMemoryRepository isbnMemoryRepository;
 
 
     @Bean
-    public Step libraryStockSyncStep() {
-        return new StepBuilder("libraryStockSyncStep", jobRepository)
-                .<LibraryStockCsvData, LibraryStock>chunk(STOCK_SYNC_CHUNK_SIZE, platformTransactionManager)
-                .reader(bookStockCsvFileReader)
+    public Step stockSyncStep() {
+        return new StepBuilder("stockSyncStep", jobRepository)
+                .<StockCsvData, LibraryStock>chunk(STOCK_SYNC_CHUNK_SIZE, platformTransactionManager)
+                .reader(stockCsvFileReader)
                 .processor(libraryStockProcessor(null))
                 .writer(libraryStockWriter())
                 .build();

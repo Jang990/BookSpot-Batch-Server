@@ -4,7 +4,7 @@ import com.bookspot.batch.step.processor.csv.book.YearParser;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDataMapper;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDelimiterTokenizer;
 import com.bookspot.batch.step.writer.file.stock.StockCsvMetadataCreator;
-import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
+import com.bookspot.batch.data.file.csv.StockCsvData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -28,8 +28,8 @@ public class StockCsvFileReaderConfig {
 
     @Bean
     @StepScope
-    public MultiResourceItemReader<LibraryStockCsvData> multiBookStockCsvFileReader() {
-        MultiResourceItemReader<LibraryStockCsvData> reader = new MultiResourceItemReader<>();
+    public MultiResourceItemReader<StockCsvData> multiStockCsvFileReader() {
+        MultiResourceItemReader<StockCsvData> reader = new MultiResourceItemReader<>();
         ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
 
         try {
@@ -39,8 +39,8 @@ public class StockCsvFileReaderConfig {
             throw new RuntimeException("Failed to load files", e);
         }
 
-        reader.setDelegate(new FlatFileItemReaderBuilder<LibraryStockCsvData>()
-                .name("bookStockCsvFileReader")
+        reader.setDelegate(new FlatFileItemReaderBuilder<StockCsvData>()
+                .name("stockCsvFileReader")
                 .encoding("euc-kr")
                 .lineTokenizer(new StockCsvDelimiterTokenizer())
                 .fieldSetMapper(new StockCsvDataMapper(yearParser))
@@ -52,10 +52,10 @@ public class StockCsvFileReaderConfig {
 
     @Bean
     @StepScope
-    public FlatFileItemReader<LibraryStockCsvData> bookStockCsvFileReader(
+    public FlatFileItemReader<StockCsvData> stockCsvFileReader(
             @Value("#{jobParameters['filePath']}") String filePath) {
-        return new FlatFileItemReaderBuilder<LibraryStockCsvData>()
-                .name("bookStockCsvFileReader")
+        return new FlatFileItemReaderBuilder<StockCsvData>()
+                .name("stockCsvFileReader")
                 .encoding("euc-kr")
                 .resource(new FileSystemResource(filePath))
                 .lineTokenizer(new StockCsvDelimiterTokenizer())
