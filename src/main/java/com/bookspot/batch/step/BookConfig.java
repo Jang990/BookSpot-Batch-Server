@@ -38,26 +38,6 @@ public class BookConfig {
                 .build();
     }
 
-    /*// 도서관 재고 csv -> book 테이블 저장
-    @Bean
-    public JdbcBatchItemWriter<LibraryStockCsvData> stockBookWriter() {
-        JdbcBatchItemWriter<LibraryStockCsvData> writer = new JdbcBatchItemWriterBuilder<LibraryStockCsvData>()
-                .dataSource(dataSource)
-                .sql("""
-                        INSERT IGNORE INTO book
-                        (isbn13, classification)
-                        VALUES(?, ?);
-                        """)
-                .itemPreparedStatementSetter(
-                        (book, ps) -> {
-                            ps.setString(1, book.getIsbn());
-                            ps.setString(2, book.getSubjectCode());
-                        })
-                .assertUpdates(false)
-                .build();
-        return writer;
-    }*/
-
     // 새로 등록된 책을 메모리에 등록
     @Bean
     public ItemWriter<ConvertedStockCsvData> memoryIsbnWriter() {

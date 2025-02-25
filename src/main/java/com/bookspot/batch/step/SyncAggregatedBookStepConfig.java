@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.context.annotation.Bean;
@@ -31,11 +33,7 @@ public class SyncAggregatedBookStepConfig {
         return new StepBuilder("syncAggregatedBookStep", jobRepository)
                 .<AggregatedBook, AggregatedBook>chunk(CHUNK_SIZE, transactionManager)
                 .reader(aggregatedBookCsvFileReader())
-                .writer(chunk -> {
-                    for (AggregatedBook item : chunk.getItems()) {
-                        System.out.println(item);
-                    }
-                })
+                .writer(stockBookWriter())
                 .build();
     }
 
@@ -48,5 +46,28 @@ public class SyncAggregatedBookStepConfig {
                 .lineTokenizer(new AggregatedBookCsvDelimiterTokenizer())
                 .fieldSetMapper(new AggregatedBookCsvDataMapper())
                 .build();
+    }
+
+    @Bean
+    public JdbcBatchItemWriter<AggregatedBook> stockBookWriter() {
+        JdbcBatchItemWriter<AggregatedBook> writer = new JdbcBatchItemWriterBuilder<AggregatedBook>()
+                .dataSource(dataSource)
+                .sql("""
+                        INSERT INTO book
+                        (isbn13, classification, loan_count)
+                        VALUES(?, ?, ?)
+                        ON DUPLICATE KEY UPDATE
+                            loan_count = VALUES(loan_count)
+                        """)
+//                monthlyLoanIncrease = loan_count + VALUES(loan_count);
+                .itemPreparedStatementSetter(
+                        (book, ps) -> {
+                            ps.setString(1, book.isbn13());
+                            ps.setInt(2, book.subjectCode());
+                            ps.setInt(3, book.loanCount());
+                        })
+                .assertUpdates(false)
+                .build();
+        return writer;
     }
 }
