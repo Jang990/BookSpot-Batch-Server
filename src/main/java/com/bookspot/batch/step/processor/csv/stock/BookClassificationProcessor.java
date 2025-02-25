@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.processor.csv.stock;
 
+import com.bookspot.batch.data.file.csv.ConvertedLibraryStockCsvData;
 import com.bookspot.batch.data.file.csv.LibraryStockCsvData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
@@ -7,15 +8,15 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class BookClassificationProcessor implements ItemProcessor<LibraryStockCsvData, LibraryStockCsvData> {
+public class BookClassificationProcessor implements ItemProcessor<LibraryStockCsvData, ConvertedLibraryStockCsvData> {
     private static final char[] PREFIX_DELIMITER = {'.', ','};
     private static final int MAX_PREFIX_LEN = 3;
 
     @Override
-    public LibraryStockCsvData process(LibraryStockCsvData item) throws Exception {
+    public ConvertedLibraryStockCsvData process(LibraryStockCsvData item) throws Exception {
         String subjectCode = item.getSubjectCode();
 
-        return new LibraryStockCsvData(
+        return new ConvertedLibraryStockCsvData(
                 item.getIsbn(),
                 parsePrefix(subjectCode),
                 item.getNumberOfBooks(),
@@ -23,7 +24,7 @@ public class BookClassificationProcessor implements ItemProcessor<LibraryStockCs
         );
     }
 
-    private String parsePrefix(String subjectCode) {
+    private Integer parsePrefix(String subjectCode) {
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < subjectCode.length(); i++) {
@@ -46,7 +47,7 @@ public class BookClassificationProcessor implements ItemProcessor<LibraryStockCs
             return null;
         }
 
-        return sb.toString();
+        return Integer.parseInt(sb.toString());
     }
 
     private boolean isDelimiter(char c) {
