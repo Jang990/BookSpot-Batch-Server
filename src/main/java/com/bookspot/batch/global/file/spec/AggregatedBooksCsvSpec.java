@@ -23,16 +23,17 @@ public enum AggregatedBooksCsvSpec {
         return fieldName;
     }
 
-    public static String createLine(String isbn13, String subjectCode, int loanCount) {
-        return String.format("\"%s\",\"%s\",\"%s\"",
+    public static String createLine(String isbn13, Integer subjectCodePrefix, int loanCount) {
+        return String.format("\"%s\",\"%s\",\"%d\"",
                 isbn13,
-                escapeCsv(subjectCode),
-                escapeCsv(String.valueOf(loanCount))
+                convertNull(subjectCodePrefix),
+                loanCount
         );
     }
 
-    private static String escapeCsv(String value) {
-        if (value == null) return "";
-        return value.contains(",") ? "\"" + value.replace("\"", "\"\"") + "\"" : value;
+    private static String convertNull(Integer value) {
+        if(value == null)
+            return "";
+        return String.valueOf(value);
     }
 }

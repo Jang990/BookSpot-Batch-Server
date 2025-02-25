@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class BookMemoryData {
-    private String subjectCode;
+    private Integer subjectCode;
     private int loanCount;
 
     public void increase(int loanCount) {
