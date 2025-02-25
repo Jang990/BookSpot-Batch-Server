@@ -45,15 +45,10 @@ public class BookSyncJobConfig {
     @Bean
     public Step aggregateBookFileStep() {
         return new StepBuilder("aggregateBookFileStep", jobRepository)
-                .tasklet(aggregateBookFileTasklet(), transactionManager)
+                .tasklet((contribution, chunkContext) -> {
+                    aggregatedBooksCsvWriter.saveToCsv(inMemoryBookService.getData());
+                    return RepeatStatus.FINISHED;
+                }, transactionManager)
                 .build();
-    }
-
-    @Bean
-    public Tasklet aggregateBookFileTasklet() {
-        return (contribution, chunkContext) -> {
-            aggregatedBooksCsvWriter.saveToCsv(inMemoryBookService.getData());
-            return RepeatStatus.FINISHED;
-        };
     }
 }
