@@ -2,7 +2,6 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.ConvertedStockCsvData;
 import com.bookspot.batch.data.file.csv.StockCsvData;
-import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
 import com.bookspot.batch.step.service.memory.book.BookMemoryData;
 import com.bookspot.batch.step.service.memory.book.InMemoryJdkBookService;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +29,8 @@ public class BookConfig {
     private final InMemoryJdkBookService bookService;
 
     @Bean
-    public Step libraryBookSyncStep() {
-        return new StepBuilder("libraryBookSyncStep", jobRepository)
+    public Step loadBookToMemoryStep() {
+        return new StepBuilder("loadBookToMemoryStep", jobRepository)
                 .<StockCsvData, ConvertedStockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(multiBookStockCsvFileReader)
                 .processor(stockCsvDataProcessor)
