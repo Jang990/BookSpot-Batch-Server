@@ -25,8 +25,10 @@ public class BookClassificationProcessor implements ItemProcessor<StockCsvData, 
     }
 
     private Integer parsePrefix(String subjectCode) {
-        StringBuilder sb = new StringBuilder();
+        if(subjectCode == null || subjectCode.isBlank())
+            return null;
 
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < subjectCode.length(); i++) {
             char c = subjectCode.charAt(i);
 

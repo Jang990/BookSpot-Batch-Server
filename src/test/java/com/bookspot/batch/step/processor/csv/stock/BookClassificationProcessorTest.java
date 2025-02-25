@@ -28,7 +28,11 @@ class BookClassificationProcessorTest {
                 Arguments.of("345.678", 345),
                 Arguments.of("901,123", 901), // 콤마까진 정상처리
                 Arguments.of("ab901,123", null),
-                Arguments.of("901?123", null)
+                Arguments.of("901?123", null),
+
+                Arguments.of("", null),
+                Arguments.of(null, null)
+
         );
     }
 
