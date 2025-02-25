@@ -73,7 +73,7 @@ public class BookConfig {
     public ItemWriter<LibraryStockCsvData> memoryIsbnWriter() {
         return chunk -> chunk.getItems().stream()
                 .forEach(book -> {
-                    int loanCount = book.getLoanCount() == null ? 0 : book.getLoanCount();
+                    int loanCount = book.getLoanCount();
 
                     if(bookService.contains(book.getIsbn()))
                         bookService.increase(book.getIsbn(), loanCount);
