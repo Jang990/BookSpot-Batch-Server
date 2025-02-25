@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 public class BookClassificationProcessor implements ItemProcessor<LibraryStockCsvData, LibraryStockCsvData> {
-    private static final char[] delimiter = {'.', ','};
+    private static final char[] PREFIX_DELIMITER = {'.', ','};
     private static final int MAX_PREFIX_LEN = 3;
 
     @Override
@@ -17,26 +17,47 @@ public class BookClassificationProcessor implements ItemProcessor<LibraryStockCs
 
         return new LibraryStockCsvData(
                 item.getIsbn(),
-                getSubjectCodePrefix(subjectCode),
+                parsePrefix(subjectCode),
                 item.getNumberOfBooks(),
                 item.getLoanCount()
         );
     }
 
-    private String getSubjectCodePrefix(String subjectCode) {
-        if(hasPrefixNumber(subjectCode))
-            return parsePrefix(subjectCode);
-        return null;
-    }
-
     private String parsePrefix(String subjectCode) {
-        return subjectCode.substring(0, MAX_PREFIX_LEN);
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < subjectCode.length(); i++) {
+            char c = subjectCode.charAt(i);
+
+            if (isDigit(c)) {
+                sb.append(c);
+                continue;
+            }
+
+            if(isDelimiter(c))
+                break;
+
+            log.trace("숫자와 구분자가 아닌 문자가 포함된 분류번호 : {}", subjectCode);
+            return null;
+        }
+
+        if (sb.length() > MAX_PREFIX_LEN) {
+            log.trace("너무 긴 도서 분류 번호 : {}", subjectCode);
+            return null;
+        }
+
+        return sb.toString();
     }
 
-    private boolean hasPrefixNumber(String subjectCode) {
-        if(subjectCode == null || subjectCode.isBlank())
-            return false;
+    private boolean isDelimiter(char c) {
+        for (char delimiter : PREFIX_DELIMITER) {
+            if(c == delimiter)
+                return true;
+        }
+        return false;
+    }
 
-        return parsePrefix(subjectCode).length() <= MAX_PREFIX_LEN;
+    private boolean isDigit(char c) {
+        return '0' <= c && c <= '9';
     }
 }
