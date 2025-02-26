@@ -22,9 +22,9 @@ public class BookLoanCountSyncJobConfig {
     private final AggregatedBooksCsvWriter aggregatedBooksCsvWriter;
 
     @Bean
-    public Job bookLoanCountSyncJob(Step loadBookToMemoryStep, Step syncAggregatedBookStep) {
+    public Job bookLoanCountSyncJob(Step loadLoanCountToMemoryStep, Step syncAggregatedBookStep) {
         return new JobBuilder("bookLoanCountSyncJob", jobRepository)
-                .start(loadBookToMemoryStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
+                .start(loadLoanCountToMemoryStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
                 .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
                 .next(clearBookMemoryStep()) // 도서 정보 인메모리 clearAll();
                 .next(syncAggregatedBookStep) //- 저장한 파일을 DB에 반영 - 새로 나온 책 + 최근 대출 횟수 반영

@@ -3,7 +3,6 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
 import com.bookspot.batch.step.service.memory.book.InMemoryLoanCountService;
-import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -16,7 +15,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class BookConfig {
+public class LoadLoanCountToMemoryStepConfig {
     private static final int BOOK_SYNC_CHUNK_SIZE = 5_000;
 
     private final JobRepository jobRepository;
@@ -28,7 +27,7 @@ public class BookConfig {
     private final InMemoryLoanCountService bookService;
 
     @Bean
-    public Step loadBookToMemoryStep() {
+    public Step loadLoanCountToMemoryStep() {
         return new StepBuilder("loadBookToMemoryStep", jobRepository)
                 .<StockCsvData, StockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(multiBookStockCsvFileReader)
