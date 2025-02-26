@@ -23,9 +23,6 @@ public enum AggregatedBooksCsvSpec {
     }
 
     public static String createLine(String isbn13, int loanCount) {
-        return String.format("\"%s\", \"%d\"",
-                isbn13,
-                loanCount
-        );
+        return String.format("%s,%d", isbn13, loanCount);
     }
 }
