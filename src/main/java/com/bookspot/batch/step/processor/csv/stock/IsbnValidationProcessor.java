@@ -12,12 +12,18 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class IsbnValidationProcessor implements ItemProcessor<StockCsvData, StockCsvData> {
-    private final IsbnValidator validator;
+    private final IsbnValidator isbnValidator;
     private final IsbnMemoryRepository isbnMemoryRepository;
+
     @Override
     public StockCsvData process(StockCsvData item) throws Exception {
-        if (validator.isInValid(item.getIsbn())) {
+        if (isbnValidator.isInValid(item.getIsbn())) {
             log.info("잘못된 ISBN13 -> {}", item);
+            return null;
+        }
+
+        if (!isbnValidator.isBookType(item.getIsbn())) {
+            log.info("책 이외의 자료 ISBN -> {}", item);
             return null;
         }
 
@@ -25,6 +31,7 @@ public class IsbnValidationProcessor implements ItemProcessor<StockCsvData, Stoc
             log.trace("이미 존재하는 ISBN13 -> {}", item);
             return null;
         }
+
         return item;
     }
 }
