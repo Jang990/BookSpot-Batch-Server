@@ -9,7 +9,7 @@ import org.springframework.batch.item.ItemProcessor;
 
 @Slf4j
 @RequiredArgsConstructor
-public class LibraryStockProcessor implements ItemProcessor<StockCsvData, LibraryStock> {
+public class StockProcessor implements ItemProcessor<StockCsvData, LibraryStock> {
     private final IsbnMemoryRepository isbnMemoryRepository;
     private final long libraryId;
 

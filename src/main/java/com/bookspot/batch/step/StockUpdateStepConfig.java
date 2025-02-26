@@ -3,7 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
-import com.bookspot.batch.step.processor.csv.stock.LibraryStockProcessor;
+import com.bookspot.batch.step.processor.csv.stock.StockProcessor;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -33,38 +33,39 @@ public class StockUpdateStepConfig {
 
     private final FlatFileItemReader<StockCsvData> stockCsvFileReader;
 
-    private final IsbnValidationProcessor isbnValidationProcessor;
     private final IsbnMemoryRepository isbnMemoryRepository;
 
 
     @Bean
-    public Step stockSyncStep() {
+    public Step stockSyncStep(CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor) {
         return new StepBuilder("stockSyncStep", jobRepository)
                 .<StockCsvData, LibraryStock>chunk(STOCK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(stockCsvFileReader)
-                .processor(libraryStockProcessor(null))
-                .writer(libraryStockWriter())
+                .processor(stockCompositeItemProcessor)
+                .writer(stockWriter())
                 .build();
     }
 
     @Bean
-    public CompositeItemProcessor<StockCsvData, LibraryStock> libraryStockCompositeItemProcessor() {
+    public CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor(
+            IsbnValidationProcessor isbnValidationProcessor,
+            StockProcessor stockProcessor) {
         return new CompositeItemProcessor<>(
                 List.of(
                         isbnValidationProcessor,
-                        libraryStockProcessor(null)
+                        stockProcessor
                 )
         );
     }
 
     @Bean
     @StepScope
-    public LibraryStockProcessor libraryStockProcessor(@Value("#{jobParameters['libraryId']}") Long libraryId) {
-        return new LibraryStockProcessor(isbnMemoryRepository, libraryId);
+    public StockProcessor stockProcessor(@Value("#{jobParameters['libraryId']}") Long libraryId) {
+        return new StockProcessor(isbnMemoryRepository, libraryId);
     }
 
     @Bean
-    public JdbcBatchItemWriter<LibraryStock> libraryStockWriter() {
+    public JdbcBatchItemWriter<LibraryStock> stockWriter() {
         JdbcBatchItemWriter<LibraryStock> writer = new JdbcBatchItemWriterBuilder<LibraryStock>()
                 .dataSource(dataSource)
                 .sql("""
