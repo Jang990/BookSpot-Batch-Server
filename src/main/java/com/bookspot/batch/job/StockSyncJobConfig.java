@@ -10,29 +10,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class JobConfig {
+public class StockSyncJobConfig {
     private final JobRepository jobRepository;
-
-
-    @Bean
-    public Job librarySyncJob(
-            Step libraryExcelDownloadStep,
-            Step librarySyncStep,
-            Step libraryExcelDeleteStep,
-            Step libraryNaruDetailParsingStep,
-            Step stockCsvDownloadStep) {
-        return new JobBuilder("librarySyncJob", jobRepository)
-
-                // 도서관 파일 다운로드 -> 도서관 파일 정보 저장 -> 파일 삭제 -> naru_detail 파싱
-                .start(libraryExcelDownloadStep)
-                .next(librarySyncStep)
-                .next(libraryExcelDeleteStep)
-                .next(libraryNaruDetailParsingStep)
-
-                // naru_detail이 있는 도서관 파일 다운로드
-                .next(stockCsvDownloadStep)
-                .build();
-    }
 
     @Bean
     public Job stockSyncJob(
