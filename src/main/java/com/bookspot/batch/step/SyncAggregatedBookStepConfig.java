@@ -2,8 +2,6 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.AggregatedBook;
 import com.bookspot.batch.global.file.spec.AggregatedBooksCsvSpec;
-import com.bookspot.batch.step.reader.file.csv.book.AggregatedBookCsvDataMapper;
-import com.bookspot.batch.step.reader.file.csv.book.AggregatedBookCsvDelimiterTokenizer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -18,6 +16,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
@@ -43,14 +42,24 @@ public class SyncAggregatedBookStepConfig {
                 .name("aggregatedBookCsvFileReader")
                 .encoding("UTF-8")
                 .resource(new FileSystemResource(AggregatedBooksCsvSpec.FILE_PATH))
-                .lineTokenizer(new AggregatedBookCsvDelimiterTokenizer())
-                .fieldSetMapper(new AggregatedBookCsvDataMapper())
+                .delimited()
+                .names(
+                        Arrays.stream(AggregatedBooksCsvSpec.values())
+                                .map(AggregatedBooksCsvSpec::value)
+                                .toArray(String[]::new)
+                )
+                .fieldSetMapper(fieldSet ->
+                     new AggregatedBook(
+                             fieldSet.readString(AggregatedBooksCsvSpec.ISBN13.value()),
+                             fieldSet.readInt(AggregatedBooksCsvSpec.LOAN_COUNT.value())
+                     )
+                )
                 .build();
     }
 
     @Bean
     public JdbcBatchItemWriter<AggregatedBook> stockBookWriter() {
-        JdbcBatchItemWriter<AggregatedBook> writer = new JdbcBatchItemWriterBuilder<AggregatedBook>()
+        return new JdbcBatchItemWriterBuilder<AggregatedBook>()
                 .dataSource(dataSource)
                 .sql("""
                         INSERT INTO book
@@ -67,6 +76,5 @@ public class SyncAggregatedBookStepConfig {
                         })
                 .assertUpdates(false)
                 .build();
-        return writer;
     }
 }
