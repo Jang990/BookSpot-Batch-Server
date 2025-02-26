@@ -4,7 +4,6 @@ import com.bookspot.batch.BookSpotFileConst;
 
 public enum AggregatedBooksCsvSpec {
     ISBN13("isbn13"),
-    SUBJECT_CODE("subjectCode"),
     LOAN_COUNT("loanCount");
 
     private static final String DIRECTORY_NAME = "book";
@@ -23,17 +22,10 @@ public enum AggregatedBooksCsvSpec {
         return fieldName;
     }
 
-    public static String createLine(String isbn13, Integer subjectCodePrefix, int loanCount) {
-        return String.format("\"%s\",\"%s\",\"%d\"",
+    public static String createLine(String isbn13, int loanCount) {
+        return String.format("\"%s\", \"%d\"",
                 isbn13,
-                convertNull(subjectCodePrefix),
                 loanCount
         );
-    }
-
-    private static String convertNull(Integer value) {
-        if(value == null)
-            return "";
-        return String.valueOf(value);
     }
 }

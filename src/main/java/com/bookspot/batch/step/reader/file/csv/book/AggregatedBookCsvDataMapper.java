@@ -18,7 +18,6 @@ public class AggregatedBookCsvDataMapper implements FieldSetMapper<AggregatedBoo
     public AggregatedBook mapFieldSet(FieldSet fieldSet) throws BindException {
         return new AggregatedBook(
                 read(fieldSet, AggregatedBooksCsvSpec.ISBN13),
-                toInt(read(fieldSet, AggregatedBooksCsvSpec.SUBJECT_CODE)),
                 toInt(read(fieldSet, AggregatedBooksCsvSpec.LOAN_COUNT))
         );
     }

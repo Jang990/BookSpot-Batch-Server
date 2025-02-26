@@ -6,15 +6,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Service
-public class InMemoryJdkBookService implements InMemoryBookService {
-    private static HashMap<Long, BookMemoryData> store = new HashMap<>();
+public class InMemoryLoanCountService {
+    private static Map<Long, Integer> store = new HashMap<>();
 
-    public void add(String isbn13, BookMemoryData data) {
-        store.put(Long.parseLong(isbn13), data);
+
+    public void add(String isbn13, int loanCount) {
+        store.put(Long.parseLong(isbn13), loanCount);
     }
 
-    @Override
-    public BookMemoryData get(String isbn13) {
+    public Integer get(String isbn13) {
         return store.get(Long.parseLong(isbn13));
     }
 
@@ -26,14 +26,14 @@ public class InMemoryJdkBookService implements InMemoryBookService {
         store.clear();
     }
 
-    public Map<Long, BookMemoryData> getData() {
+    public Map<Long, Integer> getData() {
         return store;
     }
 
     public void increase(String isbn, int loanCount) {
-        BookMemoryData data = get(isbn);
-        if(data == null)
+        Integer currentLoanCount = get(isbn);
+        if(currentLoanCount == null)
             throw new IllegalArgumentException("찾을 수 없는 ISBN");
-        data.increase(loanCount);
+        add(isbn, currentLoanCount + loanCount);
     }
 }

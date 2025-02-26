@@ -2,7 +2,6 @@ package com.bookspot.batch.step.writer.file.book;
 
 import com.bookspot.batch.global.file.spec.AggregatedBooksCsvSpec;
 import com.bookspot.batch.step.service.memory.Isbn13Convertor;
-import com.bookspot.batch.step.service.memory.book.BookMemoryData;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,18 +15,16 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class AggregatedBooksCsvWriter {
-    public void saveToCsv(Map<Long, BookMemoryData> map) {
+    public void saveToCsv(Map<Long, Integer> map) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(AggregatedBooksCsvSpec.FILE_PATH, false))) {
             // 헤더?
             /*writer.write("id,title,author");
             writer.newLine();*/
 
-            for (Map.Entry<Long, BookMemoryData> data : map.entrySet()) {
-                BookMemoryData memoryData = data.getValue();
+            for (Map.Entry<Long, Integer> data : map.entrySet()) {
                 String line = AggregatedBooksCsvSpec.createLine(
                         Isbn13Convertor.convert(data.getKey()),
-                        memoryData.getSubjectCode(),
-                        memoryData.getLoanCount()
+                        data.getValue()
                 );
                 writer.write(line);
                 writer.newLine();

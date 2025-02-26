@@ -1,6 +1,6 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.step.service.memory.book.InMemoryJdkBookService;
+import com.bookspot.batch.step.service.memory.book.InMemoryLoanCountService;
 import com.bookspot.batch.step.writer.file.book.AggregatedBooksCsvWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -18,13 +18,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class BookLoanCountSyncJobConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    private final InMemoryJdkBookService inMemoryBookService;
+    private final InMemoryLoanCountService inMemoryBookService;
     private final AggregatedBooksCsvWriter aggregatedBooksCsvWriter;
 
     @Bean
     public Job bookLoanCountSyncJob(Step loadBookToMemoryStep, Step syncAggregatedBookStep) {
         return new JobBuilder("bookLoanCountSyncJob", jobRepository)
-                .start(loadBookToMemoryStep) // 도서관 재고 정보 파일 읽기
+                .start(loadBookToMemoryStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
                 .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
                 .next(clearBookMemoryStep()) // 도서 정보 인메모리 clearAll();
                 .next(syncAggregatedBookStep) //- 저장한 파일을 DB에 반영 - 새로 나온 책 + 최근 대출 횟수 반영

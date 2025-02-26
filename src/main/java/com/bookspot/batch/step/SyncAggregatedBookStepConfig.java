@@ -54,8 +54,8 @@ public class SyncAggregatedBookStepConfig {
                 .dataSource(dataSource)
                 .sql("""
                         INSERT INTO book
-                        (isbn13, classification, loan_count)
-                        VALUES(?, ?, ?)
+                        (isbn13, loan_count)
+                        VALUES(?, ?)
                         ON DUPLICATE KEY UPDATE
                             loan_count = VALUES(loan_count)
                         """)
@@ -63,8 +63,7 @@ public class SyncAggregatedBookStepConfig {
                 .itemPreparedStatementSetter(
                         (book, ps) -> {
                             ps.setString(1, book.isbn13());
-                            ps.setInt(2, book.subjectCode());
-                            ps.setInt(3, book.loanCount());
+                            ps.setInt(2, book.loanCount());
                         })
                 .assertUpdates(false)
                 .build();
