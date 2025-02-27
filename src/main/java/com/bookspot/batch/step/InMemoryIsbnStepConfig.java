@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
-import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
+import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -10,8 +10,6 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.adapter.ItemWriterAdapter;
-import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +20,10 @@ import javax.sql.DataSource;
 @Configuration
 @RequiredArgsConstructor
 public class InMemoryIsbnStepConfig {
-    private static final int CHUNK_SIZE = 10_000;
+    public static final int CHUNK_SIZE = 10_000;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
-    private final DataSource dataSource;
 
     private final IsbnSet isbnSet;
 
@@ -42,24 +39,13 @@ public class InMemoryIsbnStepConfig {
 
     @Bean
     public Step inMemoryIsbnWarmUpStep(
-            JdbcPagingItemReader<String> isbnReader,
+            IsbnReader isbnReader,
             ItemWriter<String> inMemoryIsbnWriter) throws Exception {
         return new StepBuilder("inMemoryIsbnWarmUpStep", jobRepository)
                 .<String, String>chunk(CHUNK_SIZE, platformTransactionManager)
                 .reader(isbnReader)
                 .writer(inMemoryIsbnWriter)
                 .allowStartIfComplete(true)
-                .build();
-    }
-
-    @Bean
-    public JdbcPagingItemReader<String> isbnReader(IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory) throws Exception {
-        return new JdbcPagingItemReaderBuilder<String>()
-                .name("isbnIdReader")
-                .dataSource(dataSource)
-                .queryProvider(isbnIdPagingQueryProviderFactory.getObject())
-                .pageSize(CHUNK_SIZE)
-                .rowMapper((rs, rowNum) -> rs.getString("isbn13"))
                 .build();
     }
 

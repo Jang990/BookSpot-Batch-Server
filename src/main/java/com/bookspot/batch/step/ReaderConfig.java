@@ -1,10 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.step.processor.csv.book.YearParser;
-import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
-import com.bookspot.batch.step.reader.IsbnIdReader;
-import com.bookspot.batch.step.reader.MultiStockCsvFileReader;
-import com.bookspot.batch.step.reader.StockCsvFileReader;
+import com.bookspot.batch.step.reader.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +26,17 @@ public class ReaderConfig {
     @Bean
     public MultiStockCsvFileReader multiStockCsvFileReader(YearParser yearParser) throws IOException {
         return new MultiStockCsvFileReader(yearParser);
+    }
+
+    @Bean
+    public IsbnReader isbnReader(
+            DataSource dataSource,
+            IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory) throws Exception {
+        return new IsbnReader(
+                dataSource,
+                isbnIdPagingQueryProviderFactory.getObject(),
+                InMemoryIsbnStepConfig.CHUNK_SIZE
+        );
     }
 
     @Bean
