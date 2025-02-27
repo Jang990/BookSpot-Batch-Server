@@ -1,4 +1,4 @@
-package com.bookspot.batch.step;
+package com.bookspot.batch.step.reader.config;
 
 import com.bookspot.batch.step.processor.csv.book.YearParser;
 import com.bookspot.batch.step.reader.*;
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 
 @Configuration

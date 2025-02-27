@@ -1,5 +1,7 @@
-package com.bookspot.batch.step;
+package com.bookspot.batch.step.reader.config;
 
+import com.bookspot.batch.step.InMemoryIsbnIdStepConfig;
+import com.bookspot.batch.step.InMemoryIsbnStepConfig;
 import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.reader.IsbnReader;

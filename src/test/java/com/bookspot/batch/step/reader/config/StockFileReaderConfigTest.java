@@ -1,4 +1,4 @@
-package com.bookspot.batch.step;
+package com.bookspot.batch.step.reader.config;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.csv.book.YearParser;
@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-class StockCsvStockFileReaderConfigTest {
+class StockFileReaderConfigTest {
     StockFileReaderConfig config = new StockFileReaderConfig();
     Map<String, StockCsvData> repository = new HashMap<>();
 
