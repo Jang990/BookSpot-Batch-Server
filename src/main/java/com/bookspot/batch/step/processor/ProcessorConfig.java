@@ -3,6 +3,8 @@ package com.bookspot.batch.step.processor;
 import com.bookspot.batch.step.processor.csv.StockCsvToBookConvertor;
 import com.bookspot.batch.step.processor.csv.book.BookClassificationParser;
 import com.bookspot.batch.step.processor.csv.book.YearParser;
+import com.bookspot.batch.step.processor.memory.InMemoryIsbnFilter;
+import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,11 +12,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 public class ProcessorConfig {
-    private final BookClassificationParser classificationParser;
-    private final YearParser yearParser;
 
     @Bean
-    public StockCsvToBookConvertor stockCsvToBookConvertor() {
+    public StockCsvToBookConvertor stockCsvToBookConvertor(
+            BookClassificationParser classificationParser,
+            YearParser yearParser) {
         return new StockCsvToBookConvertor(classificationParser, yearParser);
     }
+
+    @Bean
+    public InMemoryIsbnFilter inMemoryIsbnFilter(IsbnSet isbnSet) {
+        return new InMemoryIsbnFilter(isbnSet);
+    }
+
 }

@@ -46,13 +46,4 @@ public class InMemoryIsbnStepConfig {
                 .build();
     }
 
-    @Bean
-    public ItemProcessor<StockCsvData, StockCsvData> inMemoryIsbnFilter() {
-        return item -> {
-            if(isbnSet.contains(item.getIsbn()))
-                return null;
-            return item;
-        };
-    }
-
 }
