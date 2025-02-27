@@ -27,19 +27,4 @@ public class StockSyncJobConfig {
                 .next(stockUpdatedAtStep)
                 .build();
     }
-
-    @Bean
-    public Job isbnWarmUpJob(Step isbnWarmUpStep) {
-        return new JobBuilder("isbnWarmUpJob", jobRepository)
-                .start(isbnWarmUpStep)
-                .build();
-    }
-
-    @Bean
-    public Job isbnMemoryClearJob(Step isbnMemoryClearStep) {
-        return new JobBuilder("isbnMemoryClearJob", jobRepository)
-                .start(isbnMemoryClearStep)
-                .build();
-    }
-
 }
