@@ -3,6 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
+import com.bookspot.batch.step.writer.memory.InMemoryIsbnIdWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -23,7 +24,6 @@ public class InMemoryIsbnIdStepConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
-    private final DataSource dataSource;
 
     private final IsbnMemoryRepository isbnEclipseMemoryRepository;
 
@@ -38,20 +38,14 @@ public class InMemoryIsbnIdStepConfig {
     }
 
     @Bean
-    public Step inMemoryIsbnIdWarmUpStep(IsbnIdReader isbnIdReader) throws Exception {
+    public Step inMemoryIsbnIdWarmUpStep(
+            IsbnIdReader isbnIdReader,
+            InMemoryIsbnIdWriter inMemoryIsbnIdWriter) {
         return new StepBuilder("inMemoryIsbnIdWarmUpStep", jobRepository)
                 .<Isbn13MemoryData, Isbn13MemoryData>chunk(WARM_UP_CHUNK_SIZE, platformTransactionManager)
                 .reader(isbnIdReader)
-                .writer(inMemoryIsbnIdWriter())
-                    .allowStartIfComplete(true)
+                .writer(inMemoryIsbnIdWriter)
+                .allowStartIfComplete(true)
                 .build();
-    }
-
-    @Bean
-    public ItemWriter<Isbn13MemoryData> inMemoryIsbnIdWriter() {
-        ItemWriterAdapter<Isbn13MemoryData> adapter = new ItemWriterAdapter<>();
-        adapter.setTargetObject(isbnEclipseMemoryRepository);
-        adapter.setTargetMethod("add");
-        return adapter;
     }
 }
