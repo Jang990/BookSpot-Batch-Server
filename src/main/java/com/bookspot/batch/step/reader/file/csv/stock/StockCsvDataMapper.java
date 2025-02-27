@@ -1,7 +1,6 @@
 package com.bookspot.batch.step.reader.file.csv.stock;
 
 import com.bookspot.batch.global.file.spec.LibraryStockCsvSpec;
-import com.bookspot.batch.step.processor.csv.book.YearParser;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.file.mapping.FieldSetMapper;
@@ -14,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 public class StockCsvDataMapper implements FieldSetMapper<StockCsvData> {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private final YearParser yearParser;
 
     @Override
     public StockCsvData mapFieldSet(FieldSet fieldSet) throws BindException {
@@ -36,6 +34,7 @@ public class StockCsvDataMapper implements FieldSetMapper<StockCsvData> {
                 read(fieldSet, LibraryStockCsvSpec.TITLE),
                 read(fieldSet, LibraryStockCsvSpec.AUTHOR),
                 read(fieldSet, LibraryStockCsvSpec.PUBLISHER),
+                read(fieldSet, LibraryStockCsvSpec.PUBLICATION_YEAR),
                 read(fieldSet, LibraryStockCsvSpec.ISBN),
                 read(fieldSet, LibraryStockCsvSpec.VOLUME),
                 read(fieldSet, LibraryStockCsvSpec.SUBJECT_CODE),

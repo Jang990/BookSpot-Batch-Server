@@ -1,9 +1,7 @@
 package com.bookspot.batch.step.processor.csv.book;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-@Slf4j
 @Service
 public class BookClassificationParser {
     private static final char[] PREFIX_DELIMITER = {'.', ','};
@@ -25,12 +23,10 @@ public class BookClassificationParser {
             if(isDelimiter(c))
                 break;
 
-            log.trace("숫자와 구분자가 아닌 문자가 포함된 분류번호 : {}", subjectCode);
             return null;
         }
 
         if (sb.length() > MAX_PREFIX_LEN) {
-            log.trace("너무 긴 도서 분류 번호 : {}", subjectCode);
             return null;
         }
 

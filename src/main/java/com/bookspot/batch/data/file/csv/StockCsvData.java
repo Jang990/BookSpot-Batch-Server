@@ -8,7 +8,7 @@ public class StockCsvData {
     private String title;           // 도서명
     private String author;          // 저자
     private String publisher;       // 출판사
-//    private Integer publicationYear; // 발행년도
+    private String publicationYear; // 발행년도
     private String isbn;            // ISBN
     //    private String setIsbn;         // 세트 ISBN
 //    private String additionalCode;  // 부가기호
@@ -21,8 +21,8 @@ public class StockCsvData {
 
     public StockCsvData(
             String title, String author, String publisher,
-            String isbn, String volume, String subjectCode,
-            int numberOfBooks, int loanCount) {
+            String publicationYear, String isbn, String volume,
+            String subjectCode, int numberOfBooks, int loanCount) {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
