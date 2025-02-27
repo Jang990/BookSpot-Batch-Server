@@ -2,7 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
-import com.bookspot.batch.step.service.memory.book.InMemoryLoanCountService;
+import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;

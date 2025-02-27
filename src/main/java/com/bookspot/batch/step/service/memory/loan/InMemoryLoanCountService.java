@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.service.memory.book;
+package com.bookspot.batch.step.service.memory.loan;
 
 import org.springframework.stereotype.Service;
 

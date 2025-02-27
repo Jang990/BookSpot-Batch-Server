@@ -1,6 +1,6 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.step.service.memory.book.InMemoryLoanCountService;
+import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
 import com.bookspot.batch.step.writer.file.book.AggregatedBooksCsvWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
