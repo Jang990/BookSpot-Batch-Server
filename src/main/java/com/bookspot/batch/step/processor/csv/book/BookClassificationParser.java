@@ -1,30 +1,15 @@
-package com.bookspot.batch.step.processor.csv.stock;
+package com.bookspot.batch.step.processor.csv.book;
 
-import com.bookspot.batch.data.file.csv.ConvertedStockCsvData;
-import com.bookspot.batch.data.file.csv.StockCsvData;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class BookClassificationProcessor implements ItemProcessor<StockCsvData, ConvertedStockCsvData> {
+public class BookClassificationParser {
     private static final char[] PREFIX_DELIMITER = {'.', ','};
     private static final int MAX_PREFIX_LEN = 3;
 
-    @Override
-    public ConvertedStockCsvData process(StockCsvData item) throws Exception {
-        String subjectCode = item.getSubjectCode();
-
-        return new ConvertedStockCsvData(
-                item.getIsbn(),
-                parsePrefix(subjectCode),
-                item.getNumberOfBooks(),
-                item.getLoanCount()
-        );
-    }
-
-    private Integer parsePrefix(String subjectCode) {
+    public Integer parsePrefix(String subjectCode) {
         if(subjectCode == null || subjectCode.isBlank())
             return null;
 
