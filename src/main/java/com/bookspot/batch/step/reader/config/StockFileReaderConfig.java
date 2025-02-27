@@ -1,6 +1,5 @@
 package com.bookspot.batch.step.reader.config;
 
-import com.bookspot.batch.step.processor.csv.book.YearParser;
 import com.bookspot.batch.step.reader.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -17,13 +16,12 @@ public class StockFileReaderConfig {
     @Bean
     @StepScope
     public StockCsvFileReader stockCsvFileReader(
-            @Value("#{jobParameters['filePath']}") String filePath,
-            YearParser yearParser) throws Exception {
-        return new StockCsvFileReader(filePath, yearParser);
+            @Value("#{jobParameters['filePath']}") String filePath) throws Exception {
+        return new StockCsvFileReader(filePath);
     }
 
     @Bean
-    public MultiStockCsvFileReader multiStockCsvFileReader(YearParser yearParser) throws IOException {
-        return new MultiStockCsvFileReader(yearParser);
+    public MultiStockCsvFileReader multiStockCsvFileReader() throws IOException {
+        return new MultiStockCsvFileReader();
     }
 }

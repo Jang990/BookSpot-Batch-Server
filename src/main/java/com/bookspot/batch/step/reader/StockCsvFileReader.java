@@ -1,7 +1,6 @@
 package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
-import com.bookspot.batch.step.processor.csv.book.YearParser;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDataMapper;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDelimiterTokenizer;
 import org.springframework.batch.item.file.FlatFileItemReader;
@@ -11,7 +10,7 @@ import org.springframework.core.io.FileSystemResource;
 
 public class StockCsvFileReader extends FlatFileItemReader<StockCsvData> {
 
-    public StockCsvFileReader(String filePath , YearParser yearParser) throws Exception {
+    public StockCsvFileReader(String filePath) throws Exception {
         setName("stockCsvFileReader");
         setEncoding("euc-kr");
         setResource(new FileSystemResource(filePath));
@@ -20,7 +19,7 @@ public class StockCsvFileReader extends FlatFileItemReader<StockCsvData> {
 
         DefaultLineMapper<StockCsvData> lineMapper = new DefaultLineMapper<>();
         lineMapper.setLineTokenizer(new StockCsvDelimiterTokenizer());
-        lineMapper.setFieldSetMapper(new StockCsvDataMapper(yearParser));
+        lineMapper.setFieldSetMapper(new StockCsvDataMapper());
         setLineMapper(lineMapper);
 
         afterPropertiesSet();

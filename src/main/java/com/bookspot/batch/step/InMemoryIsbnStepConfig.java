@@ -1,6 +1,5 @@
 package com.bookspot.batch.step;
 
-import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import com.bookspot.batch.step.writer.memory.InMemoryIsbnWriter;
@@ -8,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
