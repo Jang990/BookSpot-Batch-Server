@@ -4,6 +4,7 @@ import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
 import com.bookspot.batch.step.processor.csv.stock.StockProcessor;
+import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -12,7 +13,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,13 +31,13 @@ public class StockUpdateStepConfig {
     private final PlatformTransactionManager platformTransactionManager;
     private final DataSource dataSource;
 
-    private final FlatFileItemReader<StockCsvData> stockCsvFileReader;
-
     private final IsbnMemoryRepository isbnMemoryRepository;
 
 
     @Bean
-    public Step stockSyncStep(CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor) {
+    public Step stockSyncStep(
+            StockCsvFileReader stockCsvFileReader,
+            CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor) {
         return new StepBuilder("stockSyncStep", jobRepository)
                 .<StockCsvData, LibraryStock>chunk(STOCK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(stockCsvFileReader)

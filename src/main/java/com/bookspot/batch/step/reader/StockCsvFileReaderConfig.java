@@ -49,26 +49,4 @@ public class StockCsvFileReaderConfig {
                 .build());
         return reader;
     }
-
-    @Bean
-    @StepScope
-    public FlatFileItemReader<StockCsvData> stockCsvFileReader(
-            @Value("#{jobParameters['filePath']}") String filePath) {
-        return new FlatFileItemReaderBuilder<StockCsvData>()
-                .name("stockCsvFileReader")
-                .encoding("euc-kr")
-                .resource(new FileSystemResource(filePath))
-                .lineTokenizer(new StockCsvDelimiterTokenizer())
-                .fieldSetMapper(new StockCsvDataMapper(yearParser))
-
-                /*
-                196471	"천사의 시간 : 갖고 싶은 나만의 천사, 행운과 사랑을 전하는 종이접기
-                    "	닉 로빈슨	별빛책방		9.79119E+12					1	0	2022-03-24
-                 위와 같은 줄바꿈이 있는 csv 데이터를 파싱하기 위해서는 디폴트로 설정해주어야 함.
-                 기본으로 들어가는 Simple Policy는 줄 단위로 읽어서 오류가 발생.
-                 */
-                .recordSeparatorPolicy(new DefaultRecordSeparatorPolicy())
-                .linesToSkip(1)
-                .build();
-    }
 }

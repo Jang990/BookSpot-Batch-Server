@@ -1,5 +1,6 @@
 package com.bookspot.batch.step;
 
+import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.adapter.ItemWriterAdapter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
@@ -31,7 +33,6 @@ public class InMemoryIsbnStepConfig {
     private final IsbnSet isbnSet;
 
     @Bean
-    @StepScope
     public Step inMemoryIsbnClearStep() {
         return new StepBuilder("inMemoryIsbnClearStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
@@ -70,6 +71,24 @@ public class InMemoryIsbnStepConfig {
         adapter.setTargetObject(isbnSet);
         adapter.setTargetMethod("add");
         return adapter;
+    }
+
+    @Bean
+    public ItemWriter<StockCsvData> inMemoryCsvIsbnWriter() {
+        return chunk -> {
+            chunk.getItems().forEach(
+                    stockCsv -> isbnSet.add(stockCsv.getIsbn())
+            );
+        };
+    }
+
+    @Bean
+    public ItemProcessor<StockCsvData, StockCsvData> inMemoryIsbnFilter() {
+        return item -> {
+            if(isbnSet.contains(item.getIsbn()))
+                return null;
+            return item;
+        };
     }
 
 }
