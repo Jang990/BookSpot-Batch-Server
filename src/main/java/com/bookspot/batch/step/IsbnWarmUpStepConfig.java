@@ -31,8 +31,8 @@ public class IsbnWarmUpStepConfig {
     private final IsbnMemoryRepository isbnEclipseMemoryRepository;
 
     @Bean
-    public Step isbnMemoryClearStep() {
-        return new StepBuilder("isbnMemoryClearStep", jobRepository)
+    public Step isbnIdMemoryClearStep() {
+        return new StepBuilder("isbnIdMemoryClearStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     isbnEclipseMemoryRepository.clearMemory();
                     return RepeatStatus.FINISHED;
@@ -41,8 +41,8 @@ public class IsbnWarmUpStepConfig {
     }
 
     @Bean
-    public Step isbnWarmUpStep() throws Exception {
-        return new StepBuilder("isbnWarmUpStep", jobRepository)
+    public Step isbnIdWarmUpStep() throws Exception {
+        return new StepBuilder("isbnIdWarmUpStep", jobRepository)
                 .<Isbn13MemoryData, Isbn13MemoryData>chunk(WARM_UP_CHUNK_SIZE, platformTransactionManager)
                 .reader(isbnReader())
                 .writer(isbnWriter())
