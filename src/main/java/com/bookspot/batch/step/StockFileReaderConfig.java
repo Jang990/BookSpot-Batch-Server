@@ -13,7 +13,7 @@ import java.io.IOException;
 
 @Configuration
 @RequiredArgsConstructor
-public class ReaderConfig {
+public class StockFileReaderConfig {
 
     @Bean
     @StepScope
@@ -26,32 +26,5 @@ public class ReaderConfig {
     @Bean
     public MultiStockCsvFileReader multiStockCsvFileReader(YearParser yearParser) throws IOException {
         return new MultiStockCsvFileReader(yearParser);
-    }
-
-    @Bean
-    public IsbnReader isbnReader(
-            DataSource dataSource,
-            IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory) throws Exception {
-        return new IsbnReader(
-                dataSource,
-                isbnIdPagingQueryProviderFactory.getObject(),
-                InMemoryIsbnStepConfig.CHUNK_SIZE
-        );
-    }
-
-    @Bean
-    public IsbnIdReader isbnIdReader(
-            DataSource dataSource,
-            IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory) throws Exception {
-        return new IsbnIdReader(
-                dataSource,
-                isbnIdPagingQueryProviderFactory.getObject(),
-                InMemoryIsbnIdStepConfig.WARM_UP_CHUNK_SIZE
-        );
-    }
-
-    @Bean
-    public IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory(DataSource dataSource) {
-        return new IsbnIdPagingQueryProviderFactory(dataSource);
     }
 }

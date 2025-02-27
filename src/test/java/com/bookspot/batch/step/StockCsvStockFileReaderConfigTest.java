@@ -10,10 +10,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-class StockCsvReaderConfigTest {
-    ReaderConfig config = new ReaderConfig();
+class StockCsvStockFileReaderConfigTest {
+    StockFileReaderConfig config = new StockFileReaderConfig();
     Map<String, StockCsvData> repository = new HashMap<>();
 
     @Test
