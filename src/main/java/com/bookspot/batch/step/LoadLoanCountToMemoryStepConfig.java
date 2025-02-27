@@ -2,13 +2,13 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
+import com.bookspot.batch.step.reader.MultiStockCsvFileReader;
 import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -21,13 +21,12 @@ public class LoadLoanCountToMemoryStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
-    private final MultiResourceItemReader<StockCsvData> multiBookStockCsvFileReader;
-    private final IsbnValidationProcessor isbnValidationProcessor;
-
     private final InMemoryLoanCountService bookService;
 
     @Bean
-    public Step loadLoanCountToMemoryStep() {
+    public Step loadLoanCountToMemoryStep(
+            MultiStockCsvFileReader multiBookStockCsvFileReader,
+            IsbnValidationProcessor isbnValidationProcessor) {
         return new StepBuilder("loadBookToMemoryStep", jobRepository)
                 .<StockCsvData, StockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(multiBookStockCsvFileReader)

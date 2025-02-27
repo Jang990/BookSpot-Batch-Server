@@ -25,5 +25,5 @@ public class StockCsvFileReader extends FlatFileItemReader<StockCsvData> {
 
         afterPropertiesSet();
     }
-    
+
 }

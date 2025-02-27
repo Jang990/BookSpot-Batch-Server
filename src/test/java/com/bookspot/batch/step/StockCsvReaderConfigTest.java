@@ -2,7 +2,6 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.csv.book.YearParser;
-import com.bookspot.batch.step.reader.StockCsvFileReaderConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.FlatFileItemReader;
