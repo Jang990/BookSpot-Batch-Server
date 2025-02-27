@@ -14,16 +14,16 @@ public class InMemoryJobConfig {
     private final JobRepository jobRepository;
 
     @Bean
-    public Job isbnWarmUpJob(Step isbnIdWarmUpStep) {
+    public Job isbnIdWarmUpJob(Step inMemoryIsbnIdWarmUpStep) {
         return new JobBuilder("isbnIdWarmUpJob", jobRepository)
-                .start(isbnIdWarmUpStep)
+                .start(inMemoryIsbnIdWarmUpStep)
                 .build();
     }
 
     @Bean
-    public Job isbnMemoryClearJob(Step isbnIdMemoryClearStep) {
+    public Job isbnIdMemoryClearJob(Step inMemoryIsbnIdClearStep) {
         return new JobBuilder("isbnIdMemoryClearJob", jobRepository)
-                .start(isbnIdMemoryClearStep)
+                .start(inMemoryIsbnIdClearStep)
                 .build();
     }
 }

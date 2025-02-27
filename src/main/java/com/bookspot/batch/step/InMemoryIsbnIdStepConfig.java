@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @RequiredArgsConstructor
-public class IsbnIdWarmUpStepConfig {
+public class InMemoryIsbnIdStepConfig {
     private static final int WARM_UP_CHUNK_SIZE = 10_000;
 
     private final JobRepository jobRepository;
@@ -31,8 +31,8 @@ public class IsbnIdWarmUpStepConfig {
     private final IsbnMemoryRepository isbnEclipseMemoryRepository;
 
     @Bean
-    public Step isbnIdMemoryClearStep() {
-        return new StepBuilder("isbnIdMemoryClearStep", jobRepository)
+    public Step inMemoryIsbnIdClearStep() {
+        return new StepBuilder("inMemoryIsbnIdClearStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     isbnEclipseMemoryRepository.clearMemory();
                     return RepeatStatus.FINISHED;
@@ -41,11 +41,11 @@ public class IsbnIdWarmUpStepConfig {
     }
 
     @Bean
-    public Step isbnIdWarmUpStep() throws Exception {
-        return new StepBuilder("isbnIdWarmUpStep", jobRepository)
+    public Step inMemoryIsbnIdWarmUpStep() throws Exception {
+        return new StepBuilder("inMemoryIsbnIdWarmUpStep", jobRepository)
                 .<Isbn13MemoryData, Isbn13MemoryData>chunk(WARM_UP_CHUNK_SIZE, platformTransactionManager)
                 .reader(isbnIdReader())
-                .writer(isbnIdWriter())
+                .writer(inMemoryIsbnIdWriter())
                     .allowStartIfComplete(true)
                 .build();
     }
@@ -72,7 +72,7 @@ public class IsbnIdWarmUpStepConfig {
     }
 
     @Bean
-    public ItemWriter<Isbn13MemoryData> isbnIdWriter() {
+    public ItemWriter<Isbn13MemoryData> inMemoryIsbnIdWriter() {
         ItemWriterAdapter<Isbn13MemoryData> adapter = new ItemWriterAdapter<>();
         adapter.setTargetObject(isbnEclipseMemoryRepository);
         adapter.setTargetMethod("add");
