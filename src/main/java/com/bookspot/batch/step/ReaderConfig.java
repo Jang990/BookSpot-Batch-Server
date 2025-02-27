@@ -1,6 +1,8 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.step.processor.csv.book.YearParser;
+import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
+import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.reader.MultiStockCsvFileReader;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,7 @@ import java.io.IOException;
 @Configuration
 @RequiredArgsConstructor
 public class ReaderConfig {
+
     @Bean
     @StepScope
     public StockCsvFileReader stockCsvFileReader(
@@ -26,5 +29,21 @@ public class ReaderConfig {
     @Bean
     public MultiStockCsvFileReader multiStockCsvFileReader(YearParser yearParser) throws IOException {
         return new MultiStockCsvFileReader(yearParser);
+    }
+
+    @Bean
+    public IsbnIdReader isbnIdReader(
+            DataSource dataSource,
+            IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory) throws Exception {
+        return new IsbnIdReader(
+                dataSource,
+                isbnIdPagingQueryProviderFactory.getObject(),
+                InMemoryIsbnIdStepConfig.WARM_UP_CHUNK_SIZE
+        );
+    }
+
+    @Bean
+    public IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory(DataSource dataSource) {
+        return new IsbnIdPagingQueryProviderFactory(dataSource);
     }
 }

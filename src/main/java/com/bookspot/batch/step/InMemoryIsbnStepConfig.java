@@ -1,18 +1,16 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
-import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
+import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.adapter.ItemWriterAdapter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
-import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
@@ -55,11 +53,11 @@ public class InMemoryIsbnStepConfig {
     }
 
     @Bean
-    public JdbcPagingItemReader<String> isbnReader(PagingQueryProvider isbnIdPagingQueryProvider) throws Exception {
+    public JdbcPagingItemReader<String> isbnReader(IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory) throws Exception {
         return new JdbcPagingItemReaderBuilder<String>()
                 .name("isbnIdReader")
                 .dataSource(dataSource)
-                .queryProvider(isbnIdPagingQueryProvider)
+                .queryProvider(isbnIdPagingQueryProviderFactory.getObject())
                 .pageSize(CHUNK_SIZE)
                 .rowMapper((rs, rowNum) -> rs.getString("isbn13"))
                 .build();
