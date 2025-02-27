@@ -44,25 +44,25 @@ public class IsbnIdWarmUpStepConfig {
     public Step isbnIdWarmUpStep() throws Exception {
         return new StepBuilder("isbnIdWarmUpStep", jobRepository)
                 .<Isbn13MemoryData, Isbn13MemoryData>chunk(WARM_UP_CHUNK_SIZE, platformTransactionManager)
-                .reader(isbnReader())
-                .writer(isbnWriter())
+                .reader(isbnIdReader())
+                .writer(isbnIdWriter())
                     .allowStartIfComplete(true)
                 .build();
     }
 
     @Bean
-    public JdbcPagingItemReader<Isbn13MemoryData> isbnReader() throws Exception {
+    public JdbcPagingItemReader<Isbn13MemoryData> isbnIdReader() throws Exception {
         return new JdbcPagingItemReaderBuilder<Isbn13MemoryData>()
-                .name("isbnReader")
+                .name("isbnIdReader")
                 .dataSource(dataSource)
-                .queryProvider(isbnPagingQueryProvider())
+                .queryProvider(isbnIdPagingQueryProvider())
                 .pageSize(WARM_UP_CHUNK_SIZE)
                 .rowMapper((rs, rowNum) -> new Isbn13MemoryData(rs.getString("isbn13"), rs.getLong("id")))
                 .build();
     }
 
     @Bean
-    public PagingQueryProvider isbnPagingQueryProvider() throws Exception {
+    public PagingQueryProvider isbnIdPagingQueryProvider() throws Exception {
         SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
         factoryBean.setDataSource(dataSource);
         factoryBean.setSelectClause("select id, isbn13");
@@ -72,7 +72,7 @@ public class IsbnIdWarmUpStepConfig {
     }
 
     @Bean
-    public ItemWriter<Isbn13MemoryData> isbnWriter() {
+    public ItemWriter<Isbn13MemoryData> isbnIdWriter() {
         ItemWriterAdapter<Isbn13MemoryData> adapter = new ItemWriterAdapter<>();
         adapter.setTargetObject(isbnEclipseMemoryRepository);
         adapter.setTargetMethod("add");
