@@ -7,6 +7,11 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.item.adapter.ItemWriterAdapter;
+import org.springframework.batch.item.database.JdbcPagingItemReader;
+import org.springframework.batch.item.database.PagingQueryProvider;
+import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,28 +22,54 @@ import javax.sql.DataSource;
 @Configuration
 @RequiredArgsConstructor
 public class InMemoryIsbnStepConfig {
+    private static final int CHUNK_SIZE = 10_000;
+
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
     private final DataSource dataSource;
 
-    /*@Bean
+    private final IsbnSet isbnSet;
+
+    @Bean
     @StepScope
-    public Step isbnMemoryClearStep() {
-        return new StepBuilder("isbnIdMemoryClearStep", jobRepository)
+    public Step inMemoryIsbnClearStep() {
+        return new StepBuilder("inMemoryIsbnClearStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
-                    isbnEclipseMemoryRepository.clearMemory();
+                    isbnSet.clearAll();
                     return RepeatStatus.FINISHED;
                 },platformTransactionManager)
                 .build();
     }
 
     @Bean
-    public Step isbnWarmUpStep() throws Exception {
-        return new StepBuilder("isbnIdWarmUpStep", jobRepository)
-                .<Isbn13MemoryData, Isbn13MemoryData>chunk(WARM_UP_CHUNK_SIZE, platformTransactionManager)
-                .reader(isbnReader())
-                .writer(isbnWriter())
+    public Step inMemoryIsbnWarmUpStep(
+            JdbcPagingItemReader<String> isbnReader,
+            ItemWriter<String> inMemoryIsbnWriter) throws Exception {
+        return new StepBuilder("inMemoryIsbnWarmUpStep", jobRepository)
+                .<String, String>chunk(CHUNK_SIZE, platformTransactionManager)
+                .reader(isbnReader)
+                .writer(inMemoryIsbnWriter)
                 .allowStartIfComplete(true)
                 .build();
-    }*/
+    }
+
+    @Bean
+    public JdbcPagingItemReader<String> isbnReader(PagingQueryProvider isbnIdPagingQueryProvider) throws Exception {
+        return new JdbcPagingItemReaderBuilder<String>()
+                .name("isbnIdReader")
+                .dataSource(dataSource)
+                .queryProvider(isbnIdPagingQueryProvider)
+                .pageSize(CHUNK_SIZE)
+                .rowMapper((rs, rowNum) -> rs.getString("isbn13"))
+                .build();
+    }
+
+    @Bean
+    public ItemWriter<String> inMemoryIsbnWriter() {
+        ItemWriterAdapter<String> adapter = new ItemWriterAdapter<>();
+        adapter.setTargetObject(isbnSet);
+        adapter.setTargetMethod("add");
+        return adapter;
+    }
+
 }
