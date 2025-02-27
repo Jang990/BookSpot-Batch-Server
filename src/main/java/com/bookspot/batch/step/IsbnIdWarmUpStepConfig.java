@@ -21,7 +21,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @RequiredArgsConstructor
-public class IsbnWarmUpStepConfig {
+public class IsbnIdWarmUpStepConfig {
     private static final int WARM_UP_CHUNK_SIZE = 10_000;
 
     private final JobRepository jobRepository;
