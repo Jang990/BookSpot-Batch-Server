@@ -26,4 +26,20 @@ public class InMemoryJobConfig {
                 .start(inMemoryIsbnIdClearStep)
                 .build();
     }
+
+
+
+    @Bean
+    public Job isbnWarmUpJob(Step inMemoryIsbnWarmUpStep) {
+        return new JobBuilder("inMemoryIsbnWarmUpJob", jobRepository)
+                .start(inMemoryIsbnWarmUpStep)
+                .build();
+    }
+
+    @Bean
+    public Job isbnMemoryClearJob(Step inMemoryIsbnClearStep) {
+        return new JobBuilder("inMemoryIsbnClearJob", jobRepository)
+                .start(inMemoryIsbnClearStep)
+                .build();
+    }
 }
