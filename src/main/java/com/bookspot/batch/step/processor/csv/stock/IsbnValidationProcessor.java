@@ -22,10 +22,10 @@ public class IsbnValidationProcessor implements ItemProcessor<StockCsvData, Stoc
             return null;
         }
 
-        if (!isbnValidator.isBookType(item.getIsbn())) {
+        /*if (!isbnValidator.isBookType(item.getIsbn())) {
             log.info("책 이외의 자료 ISBN -> {}", item);
             return null;
-        }
+        }*/
 
         if (isbnMemoryRepository.contains(item.getIsbn())) {
             log.trace("이미 존재하는 ISBN13 -> {}", item);
