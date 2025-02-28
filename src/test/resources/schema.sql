@@ -9,7 +9,6 @@ DROP TABLE IF EXISTS BATCH_STEP_EXECUTION_SEQ;
 DROP TABLE IF EXISTS BATCH_JOB_EXECUTION_SEQ;
 DROP TABLE IF EXISTS BATCH_JOB_SEQ;
 
-
 CREATE TABLE BATCH_JOB_INSTANCE  (
 	JOB_INSTANCE_ID BIGINT  NOT NULL PRIMARY KEY ,
 	VERSION BIGINT ,
@@ -106,3 +105,59 @@ CREATE TABLE BATCH_JOB_SEQ (
 ) ENGINE=InnoDB;
 
 INSERT INTO BATCH_JOB_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as UNIQUE_KEY) as tmp where not exists(select * from BATCH_JOB_SEQ);
+
+
+
+
+
+DROP TABLE IF EXISTS library_stock;
+DROP TABLE IF EXISTS library;
+DROP TABLE IF EXISTS book;
+
+
+-- bookspot.library definition
+CREATE TABLE `library` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `library_code` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `location` point NOT NULL /*!80003 SRID 4326 */,
+  `name` varchar(255) NOT NULL,
+  `updated_at` date DEFAULT NULL,
+  `address` varchar(255) DEFAULT NULL,
+  `naru_detail` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `stock_updated_at` date DEFAULT NULL,
+  `closed_info` varchar(255) DEFAULT NULL,
+  `contact_number` varchar(255) DEFAULT NULL,
+  `home_page` varchar(255) DEFAULT NULL,
+  `operating_info` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `library_un` (`library_code`)
+) ENGINE=InnoDB AUTO_INCREMENT=43229 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- bookspot.book definition
+CREATE TABLE `book` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `isbn13` varchar(13) NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `classification` int DEFAULT NULL,
+  `volume_name` varchar(255) DEFAULT NULL,
+  `author` varchar(255) DEFAULT NULL,
+  `publication_year` int DEFAULT NULL,
+  `publisher` varchar(255) DEFAULT NULL,
+  `loan_count` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UKdjx0bsw5qtlpa3ertiyf8j0bc` (`isbn13`)
+) ENGINE=InnoDB AUTO_INCREMENT=42569214 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- bookspot.library_stock definition
+CREATE TABLE `library_stock` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `book_id` bigint NOT NULL,
+  `library_id` bigint NOT NULL,
+  `created_at` date DEFAULT NULL,
+  `updated_at` date DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `library_stock_un` (`book_id`,`library_id`),
+  KEY `library_stock_FK_1` (`library_id`),
+  CONSTRAINT `library_stock_FK` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`),
+  CONSTRAINT `library_stock_FK_1` FOREIGN KEY (`library_id`) REFERENCES `library` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7018205 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
