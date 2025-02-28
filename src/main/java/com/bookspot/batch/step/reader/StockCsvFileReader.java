@@ -8,6 +8,9 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.separator.DefaultRecordSeparatorPolicy;
 import org.springframework.core.io.FileSystemResource;
 
+/**
+ * #{jobParameters['filePath']} 필요
+ */
 public class StockCsvFileReader extends FlatFileItemReader<StockCsvData> {
 
     public StockCsvFileReader(String filePath) throws Exception {
