@@ -11,7 +11,7 @@ public class UniqueBookInfoWriter extends JdbcBatchItemWriter<ConvertedUniqueBoo
         setSql("""
                 INSERT IGNORE INTO book
                 (isbn13, title, classification, volume_name, author, publisher)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+                VALUES (?, ?, ?, ?, ?, ?);
                 """);
         setItemPreparedStatementSetter((book, ps) -> {
             ps.setString(1, book.getIsbn13());
