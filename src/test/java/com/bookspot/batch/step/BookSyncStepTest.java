@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional(propagation = Propagation.NOT_SUPPORTED)
 class BookSyncStepTest {
     @Autowired JobRepository jobRepository;
     @Autowired IsbnSet isbnSet;
