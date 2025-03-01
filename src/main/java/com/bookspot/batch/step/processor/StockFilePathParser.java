@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.processor.crawler;
+package com.bookspot.batch.step.processor;
 
 import com.bookspot.batch.global.crawler.common.exception.ElementNotFoundException;
 import com.bookspot.batch.global.crawler.naru.CsvFilePath;

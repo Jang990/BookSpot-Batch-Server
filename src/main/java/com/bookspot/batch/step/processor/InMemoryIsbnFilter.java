@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.processor.memory;
+package com.bookspot.batch.step.processor;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;

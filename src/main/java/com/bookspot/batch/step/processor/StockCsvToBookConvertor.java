@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.processor.csv;
+package com.bookspot.batch.step.processor;
 
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.data.file.csv.StockCsvData;

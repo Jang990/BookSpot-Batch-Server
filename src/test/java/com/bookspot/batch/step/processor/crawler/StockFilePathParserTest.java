@@ -4,6 +4,7 @@ import com.bookspot.batch.global.crawler.naru.CsvFilePath;
 import com.bookspot.batch.global.crawler.naru.NaruCrawler;
 import com.bookspot.batch.data.LibraryForFileParsing;
 import com.bookspot.batch.data.crawler.StockFileData;
+import com.bookspot.batch.step.processor.StockFilePathParser;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

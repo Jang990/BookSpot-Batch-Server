@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
-import com.bookspot.batch.step.processor.csv.stock.IsbnValidationProcessor;
+import com.bookspot.batch.step.processor.IsbnValidationProcessor;
 import com.bookspot.batch.step.reader.MultiStockCsvFileReader;
 import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
 import lombok.RequiredArgsConstructor;
