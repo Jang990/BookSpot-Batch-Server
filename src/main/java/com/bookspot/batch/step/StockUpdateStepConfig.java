@@ -2,7 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.StockCsvData;
-import com.bookspot.batch.step.processor.IsbnValidationProcessor;
+import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
@@ -48,11 +48,11 @@ public class StockUpdateStepConfig {
 
     @Bean
     public CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor(
-            IsbnValidationProcessor isbnValidationProcessor,
+            IsbnValidationFilter isbnValidationFilter,
             StockProcessor stockProcessor) {
         return new CompositeItemProcessor<>(
                 List.of(
-                        isbnValidationProcessor,
+                        isbnValidationFilter,
                         stockProcessor
                 )
         );

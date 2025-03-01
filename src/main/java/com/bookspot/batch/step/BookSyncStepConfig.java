@@ -3,7 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.StockCsvToBookConvertor;
-import com.bookspot.batch.step.processor.IsbnValidationProcessor;
+import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.InMemoryIsbnFilter;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.writer.book.UniqueBookInfoWriter;
@@ -41,11 +41,11 @@ public class BookSyncStepConfig {
 
     @Bean
     public CompositeItemProcessor<StockCsvData, ConvertedUniqueBook> bookSyncProcessor(
-            IsbnValidationProcessor isbnValidationProcessor,
+            IsbnValidationFilter isbnValidationFilter,
             InMemoryIsbnFilter inMemoryIsbnFilter,
             StockCsvToBookConvertor stockCsvToBookConvertor) {
         return new CompositeItemProcessor<>(
-                isbnValidationProcessor,
+                isbnValidationFilter,
                 inMemoryIsbnFilter,
                 stockCsvToBookConvertor
         );

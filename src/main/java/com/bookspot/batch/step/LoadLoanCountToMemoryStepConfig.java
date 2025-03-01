@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
-import com.bookspot.batch.step.processor.IsbnValidationProcessor;
+import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.reader.MultiStockCsvFileReader;
 import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +26,11 @@ public class LoadLoanCountToMemoryStepConfig {
     @Bean
     public Step loadLoanCountToMemoryStep(
             MultiStockCsvFileReader multiBookStockCsvFileReader,
-            IsbnValidationProcessor isbnValidationProcessor) {
+            IsbnValidationFilter isbnValidationFilter) {
         return new StepBuilder("loadBookToMemoryStep", jobRepository)
                 .<StockCsvData, StockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(multiBookStockCsvFileReader)
-                .processor(isbnValidationProcessor)
+                .processor(isbnValidationFilter)
                 .writer(memoryIsbnWriter())
                 .build();
     }

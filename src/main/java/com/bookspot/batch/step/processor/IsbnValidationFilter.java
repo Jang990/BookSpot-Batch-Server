@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class IsbnValidationProcessor implements ItemProcessor<StockCsvData, StockCsvData> {
+public class IsbnValidationFilter implements ItemProcessor<StockCsvData, StockCsvData> {
     private final IsbnValidator isbnValidator;
     private final IsbnMemoryRepository isbnMemoryRepository;
 
