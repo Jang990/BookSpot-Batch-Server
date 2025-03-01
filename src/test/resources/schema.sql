@@ -131,7 +131,7 @@ CREATE TABLE `library` (
   `operating_info` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `library_un` (`library_code`)
-) ENGINE=InnoDB AUTO_INCREMENT=43229 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- bookspot.book definition
 CREATE TABLE `book` (
@@ -146,7 +146,7 @@ CREATE TABLE `book` (
   `loan_count` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKdjx0bsw5qtlpa3ertiyf8j0bc` (`isbn13`)
-) ENGINE=InnoDB AUTO_INCREMENT=42569214 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- bookspot.library_stock definition
 CREATE TABLE `library_stock` (
@@ -160,4 +160,4 @@ CREATE TABLE `library_stock` (
   KEY `library_stock_FK_1` (`library_id`),
   CONSTRAINT `library_stock_FK` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`),
   CONSTRAINT `library_stock_FK_1` FOREIGN KEY (`library_id`) REFERENCES `library` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7018205 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
