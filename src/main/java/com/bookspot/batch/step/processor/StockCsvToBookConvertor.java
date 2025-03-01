@@ -7,11 +7,13 @@ import com.bookspot.batch.step.processor.csv.book.YearParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.stereotype.Service;
 
 import java.time.DateTimeException;
 import java.time.Year;
 
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class StockCsvToBookConvertor implements ItemProcessor<StockCsvData, ConvertedUniqueBook> {
     private final BookClassificationParser classificationParser;
