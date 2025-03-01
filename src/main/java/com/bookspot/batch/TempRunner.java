@@ -24,9 +24,11 @@ public class TempRunner implements CommandLineRunner {
     // 임시 코드
     private final JobLauncher jobLauncher;
     private final Job librarySyncJob;
-    private final Job stockSyncJob;
-    private final Job isbnWarmUpJob;
-    private final Job isbnMemoryClearJob;
+
+    private final Job bookLoanCountSyncJob;
+
+    private final TempBookJobs tempBookJobs;
+    private final TempStockJobs tempStockJobs;
 
     @Override
     public void run(String... args) throws Exception {
@@ -34,34 +36,10 @@ public class TempRunner implements CommandLineRunner {
                 .addLocalDateTime("tempParam", LocalDateTime.now())
                 .toJobParameters());
 
-
-        jobLauncher.run(isbnWarmUpJob, new JobParametersBuilder()
+        tempBookJobs.run();
+        jobLauncher.run(bookLoanCountSyncJob, new JobParametersBuilder()
                 .addLocalDateTime("tempParam", LocalDateTime.now())
                 .toJobParameters());
-
-        File directory = new File(StockCsvMetadataCreator.DIRECTORY_NAME);
-        for (String fileName : directory.list()) {
-            runTempJob(fileName);
-        }
-
-        jobLauncher.run(isbnMemoryClearJob, new JobParametersBuilder()
-                .addLocalDateTime("tempParam", LocalDateTime.now())
-                .toJobParameters());
-    }
-
-    private void runTempJob(String fileName) throws JobExecutionAlreadyRunningException, JobRestartException, JobInstanceAlreadyCompleteException, JobParametersInvalidException {
-        String filePath = StockCsvMetadataCreator.DIRECTORY_NAME.concat("/").concat(fileName);
-        StockFilenameElement metadata = StockFilenameUtil.parse(fileName);
-        System.out.println("파일 경로 => "+ filePath);
-
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addLocalDateTime("tempParam", LocalDateTime.now())
-
-                .addString("filePath", filePath)
-                .addLong("libraryId", metadata.libraryId())
-                .addLocalDate("referenceDate", metadata.referenceDate())
-                .toJobParameters();
-
-        jobLauncher.run(stockSyncJob, jobParameters);
+        tempStockJobs.run();
     }
 }
