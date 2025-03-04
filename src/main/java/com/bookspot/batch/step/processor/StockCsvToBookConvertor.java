@@ -27,7 +27,6 @@ public class StockCsvToBookConvertor implements ItemProcessor<StockCsvData, Conv
                 item.getAuthor(),
                 item.getPublisher(),
                 item.getVolume(),
-                item.getNumberOfBooks(),
                 item.getLoanCount(),
                 parseClassificationPrefix(item),
                 parseYear(item)
