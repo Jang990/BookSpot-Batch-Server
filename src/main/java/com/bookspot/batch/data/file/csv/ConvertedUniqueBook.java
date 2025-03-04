@@ -1,13 +1,16 @@
 package com.bookspot.batch.data.file.csv;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Year;
 
 @Entity
 @Table(name="book")
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConvertedUniqueBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
