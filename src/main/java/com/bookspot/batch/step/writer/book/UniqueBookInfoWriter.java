@@ -18,8 +18,8 @@ public class UniqueBookInfoWriter extends JdbcBatchItemWriter<ConvertedUniqueBoo
             ps.setString(1, book.getIsbn13());
             ps.setString(2, book.getTitle());
             ps.setObject(3, book.getSubjectCode(), Types.INTEGER);
-            ps.setString(5, book.getAuthor());
-            ps.setString(6, book.getPublisher());
+            ps.setString(4, book.getAuthor());
+            ps.setString(5, book.getPublisher());
         });
 
     }
