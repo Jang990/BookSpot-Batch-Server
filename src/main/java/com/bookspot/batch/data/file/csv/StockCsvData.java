@@ -1,8 +1,10 @@
 package com.bookspot.batch.data.file.csv;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
+@Getter
+@ToString
 public class StockCsvData {
 //    private int id;                // 줄 번호
     private String title;           // 도서명
@@ -26,6 +28,7 @@ public class StockCsvData {
         this.title = title;
         this.author = author;
         this.publisher = publisher;
+        this.publicationYear = publicationYear;
         this.isbn = isbn;
         this.volume = volume;
         this.subjectCode = subjectCode;
