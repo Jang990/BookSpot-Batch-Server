@@ -65,8 +65,8 @@ public class LibraryStepConfig {
                         (library, ps) -> {
                             ps.setString(1, library.getName());
                             ps.setString(2, library.getLibraryCode());
-                            ps.setDouble(3, library.getLatitude());
-                            ps.setDouble(4, library.getLongitude());
+                            ps.setDouble(3, library.getLongitude());
+                            ps.setDouble(4, library.getLatitude());
                             ps.setString(5, library.getAddress());
                         })
                 .build();
