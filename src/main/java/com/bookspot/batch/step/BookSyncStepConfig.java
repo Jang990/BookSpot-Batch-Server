@@ -5,6 +5,7 @@ import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.StockCsvToBookConvertor;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.InMemoryIsbnFilter;
+import com.bookspot.batch.step.processor.TitleEllipsisConverter;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.writer.book.UniqueBookInfoWriter;
 import com.bookspot.batch.step.writer.memory.InMemoryIsbnWriterWithCsv;
@@ -43,10 +44,12 @@ public class BookSyncStepConfig {
     public CompositeItemProcessor<StockCsvData, ConvertedUniqueBook> bookSyncProcessor(
             IsbnValidationFilter isbnValidationFilter,
             InMemoryIsbnFilter inMemoryIsbnFilter,
+            TitleEllipsisConverter titleEllipsisConverter,
             StockCsvToBookConvertor stockCsvToBookConvertor) {
         return new CompositeItemProcessor<>(
                 isbnValidationFilter,
                 inMemoryIsbnFilter,
+                titleEllipsisConverter,
                 stockCsvToBookConvertor
         );
     }
