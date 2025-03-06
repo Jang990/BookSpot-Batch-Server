@@ -2,6 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.step.reader.BookRepositoryReader;
+import com.bookspot.batch.step.writer.book.BookElasticSearchWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -20,15 +21,12 @@ public class BookElasticSearchSyncStepConfig {
 
     @Bean
     public Step bookElasticSearchSyncStep(
-            BookRepositoryReader bookRepositoryReader) {
-        return new StepBuilder("bookSyncStep", jobRepository)
+            BookRepositoryReader bookRepositoryReader,
+            BookElasticSearchWriter bookElasticSearchWriter) {
+        return new StepBuilder("bookElasticSearchSyncStep", jobRepository)
                 .<ConvertedUniqueBook, ConvertedUniqueBook>chunk(CHUNK_SIZE, transactionManager)
                 .reader(bookRepositoryReader)
-                .writer(chunk -> {
-                    for (ConvertedUniqueBook convertedUniqueBook : chunk) {
-                        System.out.println(convertedUniqueBook.getId() + " " + convertedUniqueBook.getLoanCount());
-                    }
-                })
+                .writer(bookElasticSearchWriter)
                 .build();
     }
 }
