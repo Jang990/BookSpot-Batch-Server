@@ -2,6 +2,7 @@ package com.bookspot.batch.step.processor.crawler.book;
 
 import com.bookspot.batch.data.Book;
 import com.bookspot.batch.data.BookUniqueInfo;
+import com.bookspot.batch.data.mapper.BookDataMapper;
 import com.bookspot.batch.global.crawler.aladdin.AladdinCrawler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.item.ItemProcessor;

@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.processor.crawler.book;
+package com.bookspot.batch.data.mapper;
 
 import com.bookspot.batch.data.Book;
 import com.bookspot.batch.global.crawler.aladdin.AladdinBookDetail;
