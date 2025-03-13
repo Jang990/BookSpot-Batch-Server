@@ -1,9 +1,6 @@
 package com.bookspot.batch.data;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.ToString;
 import org.locationtech.jts.geom.Point;
@@ -21,6 +18,7 @@ public class Library {
     private String libraryCode;
     private String name;
     private String address;
+    @Transient
     private String contactNumber;
     private Point location;
     private String homePage;
