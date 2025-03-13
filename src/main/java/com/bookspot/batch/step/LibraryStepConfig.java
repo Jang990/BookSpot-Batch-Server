@@ -57,9 +57,11 @@ public class LibraryStepConfig {
         return new JdbcBatchItemWriterBuilder<Library>()
                 .dataSource(dataSource)
                 .sql("""
-                        INSERT INTO library (name, library_code, location, address, updated_at) VALUES
-                        (?, ?, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')'), 4326), ?, NOW())
-                        ON DUPLICATE KEY UPDATE name = VALUES(name), location = VALUES(location), address = VALUES(address), updated_at = NOW();
+                        INSERT INTO library (name, library_code, location, address, updated_at, operating_info, closed_info, home_page) VALUES
+                        (?, ?, ST_GeomFromText(CONCAT('POINT(', ?, ' ', ?, ')'), 4326), ?, NOW(), ?, ?, ?)
+                        ON DUPLICATE KEY UPDATE
+                            name = VALUES(name), location = VALUES(location), address = VALUES(address), updated_at = NOW(),
+                            operating_info = VALUES(operating_info), closed_info = VALUES(closed_info), home_page = VALUES(home_page);
                         """)
                 .itemPreparedStatementSetter(
                         (library, ps) -> {
@@ -68,6 +70,9 @@ public class LibraryStepConfig {
                             ps.setDouble(3, library.getLongitude());
                             ps.setDouble(4, library.getLatitude());
                             ps.setString(5, library.getAddress());
+                            ps.setString(6, library.getOperatingInfo());
+                            ps.setString(7, library.getClosedInfo());
+                            ps.setString(8, library.getHomePage());
                         })
                 .build();
     }
