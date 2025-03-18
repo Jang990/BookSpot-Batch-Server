@@ -13,15 +13,22 @@ class KdcCrawlerTest {
     @Test
     void test() {
         List<KdcCode> result = crawler.findAll();
-        System.out.println(result);
 
-        assertEquals(new KdcCode(0, "총류", null), result.getFirst());
-        assertEquals(new KdcCode(1, "지식 및 학문 일반", 0), result.get(1));
-        assertEquals(new KdcCode(3, "이론 체계 및 시스템", 0), result.get(2));
-        assertEquals(new KdcCode(4, "컴퓨터과학", 0), result.get(3));
-        assertEquals(new KdcCode(5, "프로그래밍, 프로그램, 데이터", 0), result.get(4));
+        assertEquals(910, result.size());
 
-        assertEquals(new KdcCode(990, "전기", 900), result.get(901));
+        assertEquals(new KdcCode(0, "총류", null), result.get(0));
+        assertEquals(new KdcCode(100, "철학", null), result.get(1));
+        assertEquals(new KdcCode(200, "종교", null), result.get(2));
+        assertEquals(new KdcCode(300, "사회과학", null), result.get(3));
+        assertEquals(new KdcCode(400, "자연과학", null), result.get(4));
+        assertEquals(new KdcCode(500, "기술과학", null), result.get(5));
+        assertEquals(new KdcCode(600, "예술", null), result.get(6));
+        assertEquals(new KdcCode(700, "언어", null), result.get(7));
+        assertEquals(new KdcCode(800, "문학", null), result.get(8));
+        assertEquals(new KdcCode(900, "역사", null), result.get(9));
+        assertEquals(new KdcCode(10, "도서학, 서지학", 0), result.get(10));
+        assertEquals(new KdcCode(20, "문헌정보학", 0), result.get(11));
+
         assertEquals(new KdcCode(996, "오세아니아와 양극 전기", 990), result.get(907));
         assertEquals(new KdcCode(998, "주제별 전기", 990), result.get(908));
         assertEquals(new KdcCode(999, "계보, 족보", 990), result.get(909));

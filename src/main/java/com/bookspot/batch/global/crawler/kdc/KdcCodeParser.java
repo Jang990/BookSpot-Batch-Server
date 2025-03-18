@@ -69,36 +69,15 @@ public class KdcCodeParser {
 
         return result;
     }
-
-
-    protected KdcCode parseTopCode(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
+    
+    private KdcCode parseTopCode(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
         String topLevelSelector = KdcCssSelector.generateTopLevel(cssTarget);
         return parseKdcCode(crawlingResult, topLevelSelector, null);
     }
 
-    protected KdcCode parseMidCode(CrawlingResult crawlingResult, KdcCssTarget cssTarget, KdcCode topCode) {
+    private KdcCode parseMidCode(CrawlingResult crawlingResult, KdcCssTarget cssTarget, KdcCode topCode) {
         String midLevelSelector = KdcCssSelector.generateMidLevel(cssTarget);
         return parseKdcCode(crawlingResult, midLevelSelector, topCode);
-    }
-
-    protected List<KdcCode> parseLeafCodes(CrawlingResult crawlingResult, KdcCssTarget cssTarget, KdcCode midCode) {
-        List<KdcCode> result = new LinkedList<>();
-
-        while (true) {
-            try {
-                String leafSelector = KdcCssSelector.generateLeafLevel(cssTarget);
-                KdcCode kdcCode = parseKdcCode(crawlingResult, leafSelector, midCode);
-                if (kdcCode != null)
-                    result.add(kdcCode);
-                if(!cssTarget.hasNextLeaf())
-                    break;
-                cssTarget.nextLeaf();
-            } catch (ElementNotFoundException e) {
-                break;
-            }
-        }
-
-        return result;
     }
 
     private @Nullable KdcCode parseKdcCode(CrawlingResult crawlingResult, String cssSelector, @Nullable KdcCode parent) {

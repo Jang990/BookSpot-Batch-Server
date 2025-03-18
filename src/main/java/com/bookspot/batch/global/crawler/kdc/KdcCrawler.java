@@ -20,40 +20,45 @@ public class KdcCrawler {
 
     public List<KdcCode> findAll() {
         CrawlingResult crawlingResult = jsoupCrawler.get(KDC_WIKI_URL);
-
-        KdcCssTarget cssTarget = new KdcCssTarget();
         List<KdcCode> result = new LinkedList<>();
 
-        while (true) {
-            KdcCode topCode = kdcCodeParser.parseTopCode(crawlingResult, cssTarget);
-            if (topCode == null) {
-                cssTarget.nextTop();
-                continue;
-            }
+        result.addAll(kdcCodeParser.parseTopCodes(crawlingResult, new KdcCssTarget()));
+        result.addAll(findMidCodes(crawlingResult));
+        result.addAll(findLeafCodes(crawlingResult));
+        return result;
+    }
 
-            result.add(topCode);
-            result.addAll(findMidWithLeaf(crawlingResult, cssTarget, topCode));
+    private List<KdcCode> findMidCodes(CrawlingResult crawlingResult) {
+        List<KdcCode> result = new LinkedList<>();
+        KdcCssTarget cssTarget = new KdcCssTarget();
+        while (true) {
+            List<KdcCode> midCodes = kdcCodeParser.parseMidCodes(crawlingResult, cssTarget);
+            result.addAll(midCodes);
+            if(!cssTarget.hasNextTop())
+                break;
+            cssTarget.nextTop();
+        }
+        return result;
+    }
+
+    private List<KdcCode> findLeafCodes(CrawlingResult crawlingResult) {
+        List<KdcCode> result = new LinkedList<>();
+        KdcCssTarget cssTarget = new KdcCssTarget();
+        while (true) {
+            result.addAll(findLeafCodesInMidLevel(crawlingResult, cssTarget));
 
             if(!cssTarget.hasNextTop())
                 break;
             cssTarget.nextTop();
         }
-
         return result;
     }
 
-    private List<KdcCode> findMidWithLeaf(CrawlingResult crawlingResult, KdcCssTarget cssTarget, KdcCode topCode) {
+    private List<KdcCode> findLeafCodesInMidLevel(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
         List<KdcCode> result = new LinkedList<>();
         while (true) {
-            KdcCode midCode = kdcCodeParser.parseMidCode(crawlingResult, cssTarget, topCode);
-
-            if (midCode != null) {
-                if(midCode.code() != topCode.code())
-                    result.add(midCode);
-                List<KdcCode> leafCodes = kdcCodeParser.parseLeafCodes(crawlingResult, cssTarget, midCode);
-                result.addAll(leafCodes);
-            }
-
+            List<KdcCode> leafCodes = kdcCodeParser.parseLeafCodes(crawlingResult, cssTarget);
+            result.addAll(leafCodes);
             if(!cssTarget.hasNextMid())
                 break;
             cssTarget.nextMid();
