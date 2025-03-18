@@ -17,6 +17,60 @@ public class KdcCodeParser {
     private static final String unused_code_text = "[미사용]";
     private final KdcTextParser kdcTextParser;
 
+    protected List<KdcCode> parseTopCodes(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
+        List<KdcCode> result = new LinkedList<>();
+        while (true) {
+            KdcCode topCode = parseTopCode(crawlingResult, cssTarget);
+            if (topCode == null) {
+                cssTarget.nextTop();
+                continue;
+            }
+
+            result.add(topCode);
+            if(!cssTarget.hasNextTop())
+                break;
+            cssTarget.nextTop();
+        }
+
+        return result;
+    }
+
+    protected List<KdcCode> parseMidCodes(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
+        List<KdcCode> result = new LinkedList<>();
+        while (true) {
+            KdcCode midCode = parseMidCode(crawlingResult, cssTarget, null);
+
+            if (midCode != null && midCode.code() % 100 != 0)
+                result.add(new KdcCode(midCode.code(), midCode.name(), midCode.code() / 100 * 100));
+
+            if(!cssTarget.hasNextMid())
+                break;
+            cssTarget.nextMid();
+        }
+        return result;
+    }
+
+    protected List<KdcCode> parseLeafCodes(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
+        List<KdcCode> result = new LinkedList<>();
+
+        while (true) {
+            try {
+                String leafSelector = KdcCssSelector.generateLeafLevel(cssTarget);
+                KdcCode kdcCode = parseKdcCode(crawlingResult, leafSelector, null);
+                if (kdcCode != null)
+                    result.add(new KdcCode(kdcCode.code(), kdcCode.name(), kdcCode.code() / 10 * 10));
+                if(!cssTarget.hasNextLeaf())
+                    break;
+                cssTarget.nextLeaf();
+            } catch (ElementNotFoundException e) {
+                break;
+            }
+        }
+
+        return result;
+    }
+
+
     protected KdcCode parseTopCode(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
         String topLevelSelector = KdcCssSelector.generateTopLevel(cssTarget);
         return parseKdcCode(crawlingResult, topLevelSelector, null);

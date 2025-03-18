@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class KdcCrawler {
-    private static final String KDC_WIKI_URL = "https://ko.wikipedia.org/wiki/%ED%95%9C%EA%B5%AD%EC%8B%AD%EC%A7%84%EB%B6%84%EB%A5%98%EB%B2%95";
+    public static final String KDC_WIKI_URL = "https://ko.wikipedia.org/wiki/%ED%95%9C%EA%B5%AD%EC%8B%AD%EC%A7%84%EB%B6%84%EB%A5%98%EB%B2%95";
 
     private final JsoupCrawler jsoupCrawler;
     private final KdcCodeParser kdcCodeParser;
