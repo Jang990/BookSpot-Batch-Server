@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class KdcCodeParser {
-    private static final String unused_code_text = "[미사용]";
+    private static final String UNUSED_CODE_TEXT = "[미사용]";
     private final KdcTextParser kdcTextParser;
 
     protected List<KdcCode> parseTopCodes(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
@@ -38,10 +38,10 @@ public class KdcCodeParser {
     protected List<KdcCode> parseMidCodes(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
         List<KdcCode> result = new LinkedList<>();
         while (true) {
-            KdcCode midCode = parseMidCode(crawlingResult, cssTarget, null);
+            KdcCode midCode = parseMidCode(crawlingResult, cssTarget);
 
             if (midCode != null && midCode.code() % 100 != 0)
-                result.add(new KdcCode(midCode.code(), midCode.name(), midCode.code() / 100 * 100));
+                result.add(midCode);
 
             if(!cssTarget.hasNextMid())
                 break;
@@ -56,9 +56,9 @@ public class KdcCodeParser {
         while (true) {
             try {
                 String leafSelector = KdcCssSelector.generateLeafLevel(cssTarget);
-                KdcCode kdcCode = parseKdcCode(crawlingResult, leafSelector, null);
-                if (kdcCode != null)
-                    result.add(new KdcCode(kdcCode.code(), kdcCode.name(), kdcCode.code() / 10 * 10));
+                KdcCode leafCode = parseKdcCode(crawlingResult, leafSelector);
+                if (leafCode != null)
+                    result.add(leafCode);
                 if(!cssTarget.hasNextLeaf())
                     break;
                 cssTarget.nextLeaf();
@@ -69,23 +69,21 @@ public class KdcCodeParser {
 
         return result;
     }
-    
+
     private KdcCode parseTopCode(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
         String topLevelSelector = KdcCssSelector.generateTopLevel(cssTarget);
-        return parseKdcCode(crawlingResult, topLevelSelector, null);
+        return parseKdcCode(crawlingResult, topLevelSelector);
     }
 
-    private KdcCode parseMidCode(CrawlingResult crawlingResult, KdcCssTarget cssTarget, KdcCode topCode) {
+    private KdcCode parseMidCode(CrawlingResult crawlingResult, KdcCssTarget cssTarget) {
         String midLevelSelector = KdcCssSelector.generateMidLevel(cssTarget);
-        return parseKdcCode(crawlingResult, midLevelSelector, topCode);
+        return parseKdcCode(crawlingResult, midLevelSelector);
     }
 
-    private @Nullable KdcCode parseKdcCode(CrawlingResult crawlingResult, String cssSelector, @Nullable KdcCode parent) {
-        KdcCode result = kdcTextParser.parse(
-                crawlingResult.findElementText(cssSelector),
-                parent
-        );
-        if(unused_code_text.equals(result.name()))
+    private @Nullable KdcCode parseKdcCode(CrawlingResult crawlingResult, String cssSelector) {
+        KdcCode result = kdcTextParser.parse(crawlingResult.findElementText(cssSelector));
+
+        if(UNUSED_CODE_TEXT.equals(result.name()))
             return null;
         return result;
     }
