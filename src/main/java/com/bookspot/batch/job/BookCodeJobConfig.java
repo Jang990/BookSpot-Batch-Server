@@ -1,9 +1,9 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.data.mapper.BookCodesMapper;
+import com.bookspot.batch.data.mapper.BookCodeMapper;
 import com.bookspot.batch.global.crawler.kdc.KdcCode;
 import com.bookspot.batch.global.crawler.kdc.KdcCrawler;
-import com.bookspot.batch.step.service.BookCodesRepository;
+import com.bookspot.batch.step.service.BookCodeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -19,27 +19,27 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-public class BookCodesJobConfig {
+public class BookCodeJobConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
     private final KdcCrawler kdcCrawler;
-    private final BookCodesMapper bookCodesMapper;
-    private final BookCodesRepository bookCodesRepository;
+    private final BookCodeMapper bookCodeMapper;
+    private final BookCodeRepository bookCodeRepository;
 
     @Bean
-    public Job bookCodesJob() {
-        return new JobBuilder("bookCodesJob", jobRepository)
-                .start(bookCodesStep())
+    public Job bookCodeJob() {
+        return new JobBuilder("bookCodeJob", jobRepository)
+                .start(bookCodeStep())
                 .build();
     }
 
     @Bean
-    public Step bookCodesStep() {
-        return new StepBuilder("bookCodesStep", jobRepository)
+    public Step bookCodeStep() {
+        return new StepBuilder("bookCodeStep", jobRepository)
                 .tasklet((contribution, chunkContext) -> {
                     List<KdcCode> codes = kdcCrawler.findAll();
-                    bookCodesRepository.saveAll(codes.stream().map(bookCodesMapper::transform).toList());
+                    bookCodeRepository.saveAll(codes.stream().map(bookCodeMapper::transform).toList());
                     return RepeatStatus.FINISHED;
                 }, platformTransactionManager)
                 .build();
