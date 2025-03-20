@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 
 class KdcTextParserTest {
-    KdcTextParser parser = new KdcTextParser();
+    KdcTextParser parser = new KdcTextParser(new KdcParentBookCodeResolver());
 
     @ParameterizedTest
     @MethodSource("args")

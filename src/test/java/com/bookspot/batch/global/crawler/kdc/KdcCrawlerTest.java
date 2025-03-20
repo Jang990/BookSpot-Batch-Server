@@ -8,7 +8,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class KdcCrawlerTest {
-    KdcCrawler crawler = new KdcCrawler(new JsoupCrawler(), new KdcCodeParser(new KdcTextParser()));
+    KdcCrawler crawler = new KdcCrawler(new JsoupCrawler(), new KdcCodeParser(new KdcTextParser(new KdcParentBookCodeResolver())));
 
     @Test
     void test() {

@@ -1,24 +1,19 @@
 package com.bookspot.batch.global.crawler.kdc;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class KdcTextParser {
-    protected KdcCode parse(String text) {
-        return new KdcCode(
-                parseCode(text),
-                parseName(text),
-                parentCode(text)
-        );
-    }
+    private final KdcParentBookCodeResolver parentCodeResolver;
 
-    private Integer parentCode(String text) {
+    protected KdcCode parse(String text) {
         int code = parseCode(text);
-        if(code % 100 == 0)
-            return null;
-        if(code % 10 == 0)
-            return code / 100 * 100;
-        return code / 10 * 10;
+        return new KdcCode(
+                code, parseName(text),
+                parentCodeResolver.resolve(code)
+        );
     }
 
     private String parseName(String text) {

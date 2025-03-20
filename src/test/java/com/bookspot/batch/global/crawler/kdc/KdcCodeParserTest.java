@@ -10,7 +10,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 class KdcCodeParserTest {
-    KdcCodeParser parser = new KdcCodeParser(new KdcTextParser());
+    KdcCodeParser parser = new KdcCodeParser(new KdcTextParser(new KdcParentBookCodeResolver()));
     CrawlingResult crawlingResult = new JsoupCrawler().get(KdcCrawler.KDC_WIKI_URL);
 
     @Test
