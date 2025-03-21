@@ -2,6 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.crawler.LibraryNaruDetail;
 import com.bookspot.batch.step.reader.LibraryNaruDetailReader;
+import com.bookspot.batch.step.writer.LibraryNaruDetailWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -19,34 +20,20 @@ import javax.sql.DataSource;
 public class LibraryNaruDetailParsingStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
-    private final DataSource dataSource;
-
-    private final LibraryNaruDetailReader naruDetailReader;
 
     @Bean
-    public Step libraryNaruDetailParsingStep() {
+    public Step libraryNaruDetailParsingStep(
+            LibraryNaruDetailReader libraryNaruDetailReader,
+            LibraryNaruDetailWriter libraryNaruDetailWriter) {
         return new StepBuilder("libraryNaruDetailParsingStep", jobRepository)
                 .<LibraryNaruDetail, LibraryNaruDetail>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
-                .reader(naruDetailReader)
-                .writer(naruDetailWriter())
+                .reader(libraryNaruDetailReader)
+                .writer(libraryNaruDetailWriter)
                 .build();
     }
 
     @Bean
-    public JdbcBatchItemWriter<LibraryNaruDetail> naruDetailWriter() {
-        return new JdbcBatchItemWriterBuilder<LibraryNaruDetail>()
-                .dataSource(dataSource)
-                .sql("""
-                        UPDATE library
-                        SET naru_detail = ?
-                        WHERE address = ? AND name = ?
-                        """)
-                .itemPreparedStatementSetter(
-                        (naruDetail, ps) -> {
-                            ps.setString(1, naruDetail.naruDetail());
-                            ps.setString(2, naruDetail.address());
-                            ps.setString(3, naruDetail.name());
-                        })
-                .build();
+    public LibraryNaruDetailWriter libraryNaruDetailWriter(DataSource dataSource) {
+        return new LibraryNaruDetailWriter(dataSource);
     }
 }
