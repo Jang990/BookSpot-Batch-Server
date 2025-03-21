@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @RequiredArgsConstructor
-public class StockFileJob {
+public class StockFileJobConfig {
     private final JobRepository jobRepository;
 
     @Bean
