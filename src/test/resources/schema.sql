@@ -110,10 +110,20 @@ INSERT INTO BATCH_JOB_SEQ (ID, UNIQUE_KEY) select * from (select 0 as ID, '0' as
 
 
 
+DROP TABLE IF EXISTS book_codes;
 DROP TABLE IF EXISTS library_stock;
 DROP TABLE IF EXISTS library;
 DROP TABLE IF EXISTS book;
 
+-- bookspot.book_codes definition
+CREATE TABLE `book_codes` (
+  `id` int NOT NULL,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `parent_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `book_codes_FK` (`parent_id`),
+  CONSTRAINT `book_codes_FK` FOREIGN KEY (`parent_id`) REFERENCES `book_codes` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- bookspot.library definition
 CREATE TABLE `library` (
