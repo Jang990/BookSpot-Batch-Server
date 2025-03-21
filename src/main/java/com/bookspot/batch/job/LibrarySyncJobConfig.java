@@ -19,15 +19,11 @@ public class LibrarySyncJobConfig {
     public Job librarySyncJob(
             LibraryFileDownloader libraryFileDownloader,
             Step librarySyncStep,
-            Step libraryNaruDetailParsingStep,
-            Step stockCsvDownloadStep) {
+            Step libraryNaruDetailParsingStep) {
         return new JobBuilder("librarySyncJob", jobRepository)
                 // 도서관 파일 정보 저장 -> naru_detail 파싱
                 .start(librarySyncStep)
                 .next(libraryNaruDetailParsingStep)
-
-                // naru_detail이 있는 도서관 파일 다운로드
-                .next(stockCsvDownloadStep)
                 .listener(new LibrarySyncJobListener(libraryFileDownloader)) // 도서관 파일 저장 및 제거
                 .build();
     }
