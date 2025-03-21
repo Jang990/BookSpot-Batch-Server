@@ -10,7 +10,7 @@ public class LibraryExcelFileReader extends PoiItemReader<Library> {
     public LibraryExcelFileReader(LibraryExcelRowMapper libraryExcelRowMapper) {
         setName("libraryExcelFileReader");
         setResource(new FileSystemResource(LibraryExcelConst.metadata.absolutePath()));
-        setLinesToSkip(8);
+        setLinesToSkip(6);
         setRowMapper(libraryExcelRowMapper);
     }
 
