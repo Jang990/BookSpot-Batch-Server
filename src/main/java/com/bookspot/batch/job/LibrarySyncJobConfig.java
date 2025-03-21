@@ -1,5 +1,7 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.job.listener.LibrarySyncJobListener;
+import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -15,21 +17,18 @@ public class LibrarySyncJobConfig {
 
     @Bean
     public Job librarySyncJob(
-            Step libraryExcelDownloadStep,
+            LibraryFileDownloader libraryFileDownloader,
             Step librarySyncStep,
-            Step libraryExcelDeleteStep,
             Step libraryNaruDetailParsingStep,
             Step stockCsvDownloadStep) {
         return new JobBuilder("librarySyncJob", jobRepository)
-
-                // 도서관 파일 다운로드 -> 도서관 파일 정보 저장 -> 파일 삭제 -> naru_detail 파싱
-                .start(libraryExcelDownloadStep)
-                .next(librarySyncStep)
-                .next(libraryExcelDeleteStep)
+                // 도서관 파일 정보 저장 -> naru_detail 파싱
+                .start(librarySyncStep)
                 .next(libraryNaruDetailParsingStep)
 
                 // naru_detail이 있는 도서관 파일 다운로드
                 .next(stockCsvDownloadStep)
+                .listener(new LibrarySyncJobListener(libraryFileDownloader)) // 도서관 파일 저장 및 제거
                 .build();
     }
 }
