@@ -27,6 +27,7 @@ public class Library {
     private String homePage;
     private String closedInfo;
     private String operatingInfo;
+    private String naruDetail;
 
     private LocalDate updatedAt;
     private LocalDate stockUpdatedAt;
