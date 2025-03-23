@@ -6,6 +6,7 @@ import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
+import com.bookspot.batch.step.writer.StockWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -37,12 +38,13 @@ public class StockUpdateStepConfig {
     @Bean
     public Step stockSyncStep(
             StockCsvFileReader stockCsvFileReader,
-            CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor) {
+            CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor,
+            StockWriter stockWriter) {
         return new StepBuilder("stockSyncStep", jobRepository)
                 .<StockCsvData, LibraryStock>chunk(STOCK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(stockCsvFileReader)
                 .processor(stockCompositeItemProcessor)
-                .writer(stockWriter())
+                .writer(stockWriter)
                 .build();
     }
 
@@ -65,22 +67,7 @@ public class StockUpdateStepConfig {
     }
 
     @Bean
-    public JdbcBatchItemWriter<LibraryStock> stockWriter() {
-        JdbcBatchItemWriter<LibraryStock> writer = new JdbcBatchItemWriterBuilder<LibraryStock>()
-                .dataSource(dataSource)
-                .sql("""
-                        INSERT INTO library_stock
-                        (book_id, library_id, created_at, updated_at)
-                        VALUES(?, ?, NOW(), NOW())
-                        ON DUPLICATE KEY UPDATE updated_at = NOW();
-                        """)
-                .itemPreparedStatementSetter(
-                        (book, ps) -> {
-                            ps.setLong(1, book.getBookId());
-                            ps.setLong(2, book.getLibraryId());
-                        })
-                .assertUpdates(false)
-                .build();
-        return writer;
+    public StockWriter stockWriter(DataSource dataSource) {
+        return new StockWriter(dataSource);
     }
 }
