@@ -1,7 +1,7 @@
 package com.bookspot.batch.step.reader.config;
 
+import com.bookspot.batch.job.listener.BookSyncJobListener;
 import com.bookspot.batch.step.InMemoryIsbnIdStepConfig;
-import com.bookspot.batch.step.InMemoryIsbnStepConfig;
 import com.bookspot.batch.step.reader.BookRepositoryReader;
 import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
 import com.bookspot.batch.step.reader.IsbnIdReader;
@@ -28,7 +28,7 @@ public class BookReaderConfig {
         return new IsbnReader(
                 dataSource,
                 isbnIdPagingQueryProviderFactory.getObject(),
-                InMemoryIsbnStepConfig.CHUNK_SIZE
+                BookSyncJobListener.ISBN_WARMUP_SIZE
         );
     }
 

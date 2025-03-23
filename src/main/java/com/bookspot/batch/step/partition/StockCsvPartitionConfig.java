@@ -1,9 +1,7 @@
 package com.bookspot.batch.step.partition;
 
-import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
-import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,11 +17,13 @@ import java.nio.file.Paths;
 
 @Configuration
 public class StockCsvPartitionConfig {
+    public static final String PARTITIONER_KEY = "file";
 
     @Bean
     @StepScope
     public MultiResourcePartitioner stockCsvPartitioner(@Value("#{jobParameters['rootDirPath']}") String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
+
 
         Path rootPath = Paths.get(root);
         Resource[] resources = Files.list(rootPath) // 루트 디렉토리의 파일 리스트 가져오기
@@ -32,7 +32,7 @@ public class StockCsvPartitionConfig {
                 .map(FileSystemResource::new) // File -> Resource 변환
                 .toArray(Resource[]::new);
 
-        partitioner.setKeyName("file");
+        partitioner.setKeyName(PARTITIONER_KEY);
         partitioner.setResources(resources);
 
         return partitioner;

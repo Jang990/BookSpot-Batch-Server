@@ -30,28 +30,23 @@ class BookSyncJobConfigTest {
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    Job bookSyncJob;
+    Job bookSyncPartitionedJob;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    @MockBean
-    IsbnSet isbnSet;
-
 
     final JobParameters parameters = new JobParametersBuilder()
-            .addString("filePath", "src/test/resources/test/stock_test.csv")
+            .addString("rootDirPath", "src/test/resources/test/books")
             .toJobParameters();
 
     @Test
     void 정상_처리() throws Exception {
-        when(isbnSet.contains("0000000000001")).thenReturn(true);
-        when(isbnSet.contains("0000000000002")).thenReturn(false);
-        when(isbnSet.contains("0000000000003")).thenReturn(true);
-        when(isbnSet.contains("0000000000004")).thenReturn(false);
-        when(isbnSet.contains("0000000000005")).thenReturn(true);
+        insertBook("0000000000001");
+        insertBook("0000000000003");
+        insertBook("0000000000005");
 
-        jobLauncherTestUtils.setJob(bookSyncJob);
+        jobLauncherTestUtils.setJob(bookSyncPartitionedJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(parameters);
 
         // TODO: 책 상세정보 검증
@@ -61,7 +56,11 @@ class BookSyncJobConfigTest {
                         jdbcTemplate.queryForList("""
                             SELECT isbn13
                             FROM book
-                        """, String.class));
+                            WHERE subject_code IS NOT NULL
+                        """, String.class)); // 임시 insert된 데이터는 subjectCode가 없음
     }
 
+    private void insertBook(String isbn) {
+        jdbcTemplate.execute("INSERT INTO book(isbn13) VALUES('%s')".formatted(isbn));
+    }
 }

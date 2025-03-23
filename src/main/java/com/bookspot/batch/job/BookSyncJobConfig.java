@@ -1,5 +1,8 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.job.listener.BookSyncJobListener;
+import com.bookspot.batch.step.reader.IsbnReader;
+import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -22,23 +25,12 @@ public class BookSyncJobConfig {
     private final JobRepository jobRepository;
 
     @Bean
-    public Job isbnWarmUpJob(Step inMemoryIsbnWarmUpStep) {
-        return new JobBuilder("inMemoryIsbnWarmUpJob", jobRepository)
-                .start(inMemoryIsbnWarmUpStep)
-                .build();
-    }
-
-    @Bean
-    public Job bookSyncJob(Step bookSyncStep) {
-        return new JobBuilder("bookSyncJob", jobRepository)
-                .start(bookSyncStep)
-                .build();
-    }
-
-    @Bean
-    public Job isbnMemoryClearJob(Step inMemoryIsbnClearStep) {
-        return new JobBuilder("inMemoryIsbnClearJob", jobRepository)
-                .start(inMemoryIsbnClearStep)
+    public Job bookSyncPartitionedJob(
+            Step bookSyncPartitionMasterStep,
+            IsbnReader isbnReader, IsbnSet isbnSet) {
+        return new JobBuilder("bookSyncPartitionedJob", jobRepository)
+                .start(bookSyncPartitionMasterStep)
+                .listener(new BookSyncJobListener(isbnReader, isbnSet))
                 .build();
     }
 }
