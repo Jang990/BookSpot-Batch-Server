@@ -1,4 +1,4 @@
-package com.bookspot.batch.job.temp;
+package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDataMapper;
@@ -8,6 +8,9 @@ import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.separator.DefaultRecordSeparatorPolicy;
 import org.springframework.core.io.Resource;
 
+/**
+ * #{stepExecutionContext['file']} Resource file 필요
+ */
 public class TempStockCsvFileReader extends FlatFileItemReader<StockCsvData> {
     public TempStockCsvFileReader(Resource resource) throws Exception {
         setName("stockCsvFileReader");

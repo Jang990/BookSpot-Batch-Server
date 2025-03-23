@@ -2,6 +2,7 @@ package com.bookspot.batch.job.temp;
 
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.step.reader.TempStockCsvFileReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
