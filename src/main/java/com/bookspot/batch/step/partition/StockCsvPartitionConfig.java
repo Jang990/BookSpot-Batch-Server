@@ -39,14 +39,6 @@ public class StockCsvPartitionConfig {
     }
 
     @Bean
-    public TaskExecutorPartitionHandler stockCsvPartitionHandler(Step tempBookSyncStep) {
-        TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
-        partitionHandler.setStep(tempBookSyncStep);
-        partitionHandler.setTaskExecutor(stockCsvTaskPool());
-        return partitionHandler;
-    }
-
-    @Bean
     public TaskExecutor stockCsvTaskPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(10);

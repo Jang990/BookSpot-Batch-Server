@@ -56,6 +56,13 @@ public class TempPartitionJobConfig {
                 .build();
     }
 
+    @Bean
+    public TaskExecutorPartitionHandler stockCsvPartitionHandler(Step tempBookSyncStep, TaskExecutor stockCsvTaskPool) {
+        TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
+        partitionHandler.setStep(tempBookSyncStep);
+        partitionHandler.setTaskExecutor(stockCsvTaskPool);
+        return partitionHandler;
+    }
 
     @Bean
     public Step tempBookSyncStep(
