@@ -23,13 +23,6 @@ public class StockFileReaderConfig {
     }
 
     @Bean
-    @StepScope
-    public StockCsvFileReader stockCsvFileReader(
-            @Value("#{jobParameters['filePath']}") String filePath) throws Exception {
-        return new StockCsvFileReader(filePath);
-    }
-
-    @Bean
     public MultiStockCsvFileReader multiStockCsvFileReader() throws IOException {
         return new MultiStockCsvFileReader();
     }
