@@ -5,7 +5,6 @@ import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.file.StockCsvMetadataHelper;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
-import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.reader.TempStockCsvFileReader;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import com.bookspot.batch.step.writer.StockWriter;
@@ -16,8 +15,6 @@ import org.springframework.batch.core.partition.support.MultiResourcePartitioner
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -31,7 +28,7 @@ import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-public class StockUpdateStepConfig {
+public class StockSyncStepConfig {
     private static final int STOCK_SYNC_CHUNK_SIZE = 5_000;
 
     private final JobRepository jobRepository;
