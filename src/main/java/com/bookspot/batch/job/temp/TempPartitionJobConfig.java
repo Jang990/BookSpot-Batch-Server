@@ -48,49 +48,12 @@ public class TempPartitionJobConfig {
     @Bean
     public Step tempPartitionMasterStep(
             Step tempBookSyncStep,
-            MultiResourcePartitioner tempPartitioner,
-            TaskExecutorPartitionHandler tempPartitionHandler) {
+            MultiResourcePartitioner stockCsvPartitioner,
+            TaskExecutorPartitionHandler stockCsvPartitionHandler) {
         return new StepBuilder("tempPartitionStep", jobRepository)
-                .partitioner(tempBookSyncStep.getName(), tempPartitioner)
-                .partitionHandler(tempPartitionHandler)
+                .partitioner(tempBookSyncStep.getName(), stockCsvPartitioner)
+                .partitionHandler(stockCsvPartitionHandler)
                 .build();
-    }
-
-    @Bean
-    @StepScope
-    public MultiResourcePartitioner tempPartitioner(@Value("#{jobParameters['rootDirPath']}") String root) throws IOException {
-        MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
-
-        Path rootPath = Paths.get(root);
-        Resource[] resources = Files.list(rootPath) // 루트 디렉토리의 파일 리스트 가져오기
-                .filter(Files::isRegularFile) // 파일만 필터링 (디렉토리 제외)
-                .map(Path::toFile) // Path -> File 변환
-                .map(FileSystemResource::new) // File -> Resource 변환
-                .toArray(Resource[]::new);
-
-        partitioner.setKeyName("file");
-        partitioner.setResources(resources);
-
-        return partitioner;
-    }
-
-    @Bean
-    public TaskExecutorPartitionHandler tempPartitionHandler(Step tempBookSyncStep) {
-        TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
-        partitionHandler.setStep(tempBookSyncStep);
-        partitionHandler.setTaskExecutor(executor());
-        return partitionHandler;
-    }
-
-    @Bean(name = JOB_NAME+"_taskPool")
-    public TaskExecutor executor() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(POOL_SIZE);
-        executor.setMaxPoolSize(POOL_SIZE);
-        executor.setThreadNamePrefix(JOB_NAME + "-part-thread");
-        executor.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
-        executor.initialize();
-        return executor;
     }
 
 
