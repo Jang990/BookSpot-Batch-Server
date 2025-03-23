@@ -11,8 +11,8 @@ import org.springframework.core.io.Resource;
 /**
  * #{stepExecutionContext['file']} Resource file 필요
  */
-public class TempStockCsvFileReader extends FlatFileItemReader<StockCsvData> {
-    public TempStockCsvFileReader(Resource resource) throws Exception {
+public class StockCsvFileReader extends FlatFileItemReader<StockCsvData> {
+    public StockCsvFileReader(Resource resource) throws Exception {
         setName("stockCsvFileReader");
         setEncoding("euc-kr");
         setResource(resource);

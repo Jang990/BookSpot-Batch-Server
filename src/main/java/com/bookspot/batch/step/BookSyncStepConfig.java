@@ -6,7 +6,7 @@ import com.bookspot.batch.step.processor.StockCsvToBookConvertor;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.InMemoryIsbnFilter;
 import com.bookspot.batch.step.processor.TitleEllipsisConverter;
-import com.bookspot.batch.step.reader.TempStockCsvFileReader;
+import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.writer.book.UniqueBookInfoWriter;
 import com.bookspot.batch.step.writer.memory.InMemoryIsbnWriterWithCsv;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +51,7 @@ public class BookSyncStepConfig {
 
     @Bean
     public Step bookSyncStep(
-            TempStockCsvFileReader stockCsvFileReader,
+            StockCsvFileReader stockCsvFileReader,
             CompositeItemProcessor<StockCsvData, ConvertedUniqueBook> bookSyncProcessor,
             CompositeItemWriter<ConvertedUniqueBook> bookSyncItemWriter) {
         return new StepBuilder("bookSyncStep", jobRepository)

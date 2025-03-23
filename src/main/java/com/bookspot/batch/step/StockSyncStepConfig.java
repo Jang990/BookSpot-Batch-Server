@@ -5,7 +5,7 @@ import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.file.StockCsvMetadataHelper;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
-import com.bookspot.batch.step.reader.TempStockCsvFileReader;
+import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import com.bookspot.batch.step.writer.StockWriter;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +58,7 @@ public class StockSyncStepConfig {
 
     @Bean
     public Step stockSyncStep(
-            TempStockCsvFileReader stockCsvFileReader,
+            StockCsvFileReader stockCsvFileReader,
             CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor,
             StockWriter stockWriter) {
         return new StepBuilder("stockSyncStep", jobRepository)
