@@ -4,6 +4,7 @@ import com.bookspot.batch.data.file.csv.StockCsvData;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.file.FlatFileItemReader;
+import org.springframework.core.io.FileSystemResource;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,8 +18,10 @@ class StockFileReaderConfigTest {
     void test() throws Exception {
         HashMap<String, Integer> map12 = new HashMap<>();
         HashMap<String, Integer> map01 = new HashMap<>();
-        FlatFileItemReader<StockCsvData> file12 = config.stockCsvFileReader("src/main/resources/mytest/1_2024-12-01.csv");
-        FlatFileItemReader<StockCsvData> file01 = config.stockCsvFileReader("src/main/resources/mytest/1_2025-01-01.csv");
+        FlatFileItemReader<StockCsvData> file12 = config.stockCsvFileReader(new FileSystemResource("src/main/resources/mytest/1_2024-12-01.csv"));
+        FlatFileItemReader<StockCsvData> file01 = config.stockCsvFileReader(new FileSystemResource("src/main/resources/mytest/1_2025-01-01.csv"));
+
+
         file12.open(new ExecutionContext());
         file01.open(new ExecutionContext());
 
