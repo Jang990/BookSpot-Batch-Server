@@ -33,7 +33,37 @@ public class TestInsertUtils {
         }
     }
 
+    public static class BookBuilder {
+        private String isbn13 = null;
+        private String title = "Sample Title";
+        private int loanCount = 0;
+
+        public BookBuilder isbn13(String isbn13) {this.isbn13 = isbn13; return this;}
+        public BookBuilder title(String title) {this.title = title; return this;}
+        public BookBuilder loanCount(int loanCount) {this.loanCount = loanCount; return this;}
+
+        public void insert(JdbcTemplate jdbcTemplate) {
+            if(isbn13 == null)
+                throw new IllegalArgumentException("책 Insert 시 ISBN13은 필수 설정");
+
+            jdbcTemplate.update("""
+                INSERT INTO bookspot_test.book
+                (isbn13, title, loan_count)
+                VALUES(?, ?, ?);
+                """, ps -> {
+                        ps.setString(1, isbn13);
+                        ps.setString(2, title);
+                        ps.setInt(3, loanCount);
+                    }
+            );
+        }
+    }
+
     public static LibraryBuilder libraryBuilder() {
         return new LibraryBuilder();
     }
+    public static BookBuilder bookBuilder() {
+        return new BookBuilder();
+    }
+
 }

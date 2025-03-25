@@ -1,17 +1,14 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
-import jakarta.persistence.EntityManager;
+import com.bookspot.batch.TestInsertUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -19,7 +16,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -42,9 +38,11 @@ class BookSyncJobConfigTest {
 
     @Test
     void 정상_처리() throws Exception {
-        insertBook("0000000000001");
-        insertBook("0000000000003");
-        insertBook("0000000000005");
+        registerExistingBooks(
+                "0000000000001",
+                "0000000000003",
+                "0000000000005"
+        );
 
         jobLauncherTestUtils.setJob(bookSyncPartitionedJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(parameters);
@@ -60,7 +58,9 @@ class BookSyncJobConfigTest {
                         """, String.class)); // 임시 insert된 데이터는 subjectCode가 없음
     }
 
-    private void insertBook(String isbn) {
-        jdbcTemplate.execute("INSERT INTO book(isbn13) VALUES('%s')".formatted(isbn));
+    private void registerExistingBooks(String... isbn13Array) {
+        for (String isbn13 : isbn13Array) {
+            TestInsertUtils.bookBuilder().isbn13(isbn13).insert(jdbcTemplate);
+        }
     }
 }
