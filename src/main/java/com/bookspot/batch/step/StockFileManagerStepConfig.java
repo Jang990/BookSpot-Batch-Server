@@ -59,7 +59,7 @@ public class StockFileManagerStepConfig {
 
     @Bean
     @StepScope
-    public Tasklet stockCsvDeleteTasklet(@Value("#{jobParameters['filePath']}") String filePath) {
+    public Tasklet stockCsvDeleteTasklet(@Value("#{jobParameters['rootDirPath']}") String filePath) {
         return (contribution, chunkContext) -> {
             Files.delete(Paths.get(filePath)); // 파일 삭제
             return RepeatStatus.FINISHED;
