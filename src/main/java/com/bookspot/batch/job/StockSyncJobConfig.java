@@ -1,5 +1,8 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.job.listener.StockSyncJobListener;
+import com.bookspot.batch.step.reader.IsbnIdReader;
+import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -13,6 +16,9 @@ import org.springframework.context.annotation.Configuration;
 public class StockSyncJobConfig {
     private final JobRepository jobRepository;
 
+    private final IsbnIdReader isbnIdReader;
+    private final IsbnMemoryRepository isbnEclipseMemoryRepository;
+
     @Bean
     public Job stockSyncJob(
             Step stockSyncPartitionMasterStep,
@@ -25,6 +31,7 @@ public class StockSyncJobConfig {
                 .next(missingStockDeleteStep)
                 .next(stockCsvDeleteStep)
                 .next(stockUpdatedAtStep)
+                .listener(new StockSyncJobListener(isbnIdReader, isbnEclipseMemoryRepository))
                 .build();
     }
 }
