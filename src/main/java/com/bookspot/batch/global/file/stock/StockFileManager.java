@@ -1,7 +1,5 @@
-package com.bookspot.batch.global.file;
+package com.bookspot.batch.global.file.stock;
 
-import com.bookspot.batch.global.file.stock.StockFilenameElement;
-import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;

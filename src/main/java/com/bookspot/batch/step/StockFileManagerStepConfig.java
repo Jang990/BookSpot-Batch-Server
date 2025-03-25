@@ -2,7 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryForFileParsing;
 import com.bookspot.batch.data.crawler.StockFileData;
-import com.bookspot.batch.global.file.StockFileManager;
+import com.bookspot.batch.global.file.stock.StockFileManager;
 import com.bookspot.batch.step.processor.StockFilePathParser;
 import com.bookspot.batch.global.file.stock.StockFileDownloader;
 import lombok.RequiredArgsConstructor;
