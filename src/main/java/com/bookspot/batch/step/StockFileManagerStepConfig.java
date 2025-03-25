@@ -2,6 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryForFileParsing;
 import com.bookspot.batch.data.crawler.StockFileData;
+import com.bookspot.batch.global.file.StockFileManager;
 import com.bookspot.batch.step.processor.StockFilePathParser;
 import com.bookspot.batch.step.writer.file.stock.StockFileDownloader;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.Timestamp;
 
 @Configuration
@@ -38,6 +37,7 @@ public class StockFileManagerStepConfig {
 
     private final StockFilePathParser stockFilePathParser;
     private final StockFileDownloader stockFileDownloader;
+    private final StockFileManager stockFileManager;
 
     @Bean
     public Step stockCsvDownloadStep() throws Exception {
@@ -61,7 +61,7 @@ public class StockFileManagerStepConfig {
     @StepScope
     public Tasklet stockCsvDeleteTasklet(@Value("#{jobParameters['rootDirPath']}") String filePath) {
         return (contribution, chunkContext) -> {
-            Files.delete(Paths.get(filePath)); // 파일 삭제
+            stockFileManager.deleteInnerFiles(filePath);
             return RepeatStatus.FINISHED;
         };
     }

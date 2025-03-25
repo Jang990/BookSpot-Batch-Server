@@ -2,12 +2,12 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.StockCsvData;
-import com.bookspot.batch.global.file.StockCsvMetadataHelper;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import com.bookspot.batch.step.writer.StockWriter;
+import com.bookspot.batch.step.writer.file.stock.StockFilenameUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -86,7 +86,7 @@ public class StockSyncStepConfig {
     public StockProcessor stockProcessor(@Value("#{stepExecutionContext['file']}") Resource file) {
         return new StockProcessor(
                 isbnMemoryRepository,
-                StockCsvMetadataHelper.parseLibraryId(file)
+                StockFilenameUtil.parse(file.getFilename()).libraryId()
         );
     }
 

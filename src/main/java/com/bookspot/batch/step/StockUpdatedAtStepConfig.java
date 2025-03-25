@@ -1,5 +1,6 @@
 package com.bookspot.batch.step;
 
+import com.bookspot.batch.global.file.StockFileManager;
 import com.bookspot.batch.step.processor.csv.stock.repository.LibraryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -13,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.time.LocalDate;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,20 +22,28 @@ public class StockUpdatedAtStepConfig {
     private final PlatformTransactionManager platformTransactionManager;
     private final LibraryRepository libraryRepository;
 
+    private final StockFileManager stockFileManager;
+
     @Bean
     public Step stockUpdatedAtStep() {
         return new StepBuilder("stockUpdatedAtStep", jobRepository)
-                .tasklet(libraryStockUpdatedAtTasklet(null, null), platformTransactionManager)
+                .tasklet(libraryStockUpdatedAtTasklet(null), platformTransactionManager)
                 .build();
     }
 
     @Bean
     @StepScope
-    public Tasklet libraryStockUpdatedAtTasklet(
-            @Value("#{jobParameters['libraryId']}") Long libraryId,
-            @Value("#{jobParameters['referenceDate']}") LocalDate referenceDate) {
+    public Tasklet libraryStockUpdatedAtTasklet(@Value("#{jobParameters['rootDirPath']}") String rootDirPath) {
         return (contribution, chunkContext) -> {
-            libraryRepository.updateStockDate(libraryId, referenceDate);
+            stockFileManager.convertInnerFiles(rootDirPath)
+                    .forEach(fileElement ->
+                            // TODO: Bulk처리 필요
+                            libraryRepository.updateStockDate(
+                                    fileElement.libraryId(),
+                                    fileElement.referenceDate()
+                            )
+                    );
+
             return RepeatStatus.FINISHED;
         };
     }
