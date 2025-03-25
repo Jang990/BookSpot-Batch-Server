@@ -52,13 +52,9 @@ class LibrarySyncJobConfigTest {
     @MockBean
     LibraryNaruDetailReader libraryNaruDetailReader;
 
-
-    private static final Path SAMPLE_FILE = Path.of("src/test/resources/test/library_list.xlsx");
-    private static final Path DEST_FILE = Path.of(LibraryExcelConst.metadata.absolutePath()); // 복사 대상
-
     @BeforeEach
     void setUp() throws Exception {
-        changeDownloadingSampleFile();
+        changeTestingFile();
 
         when(libraryNaruDetailReader.read()).thenReturn(
                 new LibraryNaruDetail("2.28도서관", "대구광역시 중구 2·28길 9", "29981"),
@@ -70,7 +66,9 @@ class LibrarySyncJobConfigTest {
         jobLauncherTestUtils.setJob(librarySyncJob);
     }
 
-    private void changeDownloadingSampleFile() throws IOException {
+    private void changeTestingFile() throws IOException {
+        final Path SAMPLE_FILE = Path.of("src/test/resources/files/librarySync/library_list.xlsx");
+        final Path DEST_FILE = Path.of(LibraryExcelConst.metadata.absolutePath()); // 복사 대상
         if(!Files.exists(SAMPLE_FILE))
             fail("테스트할 샘플 도서관 정보 엑셀 파일이 존재하지 않음");
 
