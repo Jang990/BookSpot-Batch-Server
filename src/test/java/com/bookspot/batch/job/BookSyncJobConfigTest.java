@@ -37,7 +37,7 @@ class BookSyncJobConfigTest {
 
 
     final JobParameters parameters = new JobParametersBuilder()
-            .addString("rootDirPath", "src/test/resources/test/books")
+            .addString("rootDirPath", "src/test/resources/files/booksync")
             .toJobParameters();
 
     @Test
