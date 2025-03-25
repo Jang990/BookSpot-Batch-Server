@@ -1,7 +1,8 @@
-package com.bookspot.batch.step.writer.file.stock;
+package com.bookspot.batch.global.file.spec.stock;
 
 import com.bookspot.batch.global.file.FileFormat;
 import com.bookspot.batch.global.file.FileMetadata;
+import com.bookspot.batch.global.file.stock.StockCsvMetadataCreator;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;

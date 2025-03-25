@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.writer.file.stock;
+package com.bookspot.batch.global.file.stock;
 
 import com.bookspot.batch.BookSpotFileConst;
 import com.bookspot.batch.global.file.FileFormat;
@@ -9,8 +9,8 @@ import java.time.LocalDate;
 public class StockCsvMetadataCreator {
 
     public static final String DIRECTORY_NAME = BookSpotFileConst.ROOT_DIRECTORY.concat("/stock");
+//public static final String DIRECTORY_NAME = BookSpotFileConst.ROOT_DIRECTORY.concat("/temp_directory");
     public static final String MULTI_CSV_FILE_PATH = "file:".concat(DIRECTORY_NAME).concat("/*.csv");
-//    public static final String DIRECTORY_NAME = BookSpotFileConst.ROOT_DIRECTORY.concat("/temp_directory");
 
     public static FileMetadata create(long libraryId, LocalDate referenceDate) {
         return new FileMetadata(

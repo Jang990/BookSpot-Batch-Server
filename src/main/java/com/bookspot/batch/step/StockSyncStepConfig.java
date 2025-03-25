@@ -7,7 +7,7 @@ import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import com.bookspot.batch.step.writer.StockWriter;
-import com.bookspot.batch.step.writer.file.stock.StockFilenameUtil;
+import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;

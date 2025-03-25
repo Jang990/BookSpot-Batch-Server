@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.writer.file.stock;
+package com.bookspot.batch.global.file.stock;
 
 import java.time.LocalDate;
 

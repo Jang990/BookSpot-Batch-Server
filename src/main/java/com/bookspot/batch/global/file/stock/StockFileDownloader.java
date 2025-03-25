@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.writer.file.stock;
+package com.bookspot.batch.global.file.stock;
 
 import com.bookspot.batch.global.file.NaruFileDownloader;
 import com.bookspot.batch.data.crawler.StockFileData;

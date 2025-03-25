@@ -4,7 +4,7 @@ import com.bookspot.batch.data.LibraryForFileParsing;
 import com.bookspot.batch.data.crawler.StockFileData;
 import com.bookspot.batch.global.file.StockFileManager;
 import com.bookspot.batch.step.processor.StockFilePathParser;
-import com.bookspot.batch.step.writer.file.stock.StockFileDownloader;
+import com.bookspot.batch.global.file.stock.StockFileDownloader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
