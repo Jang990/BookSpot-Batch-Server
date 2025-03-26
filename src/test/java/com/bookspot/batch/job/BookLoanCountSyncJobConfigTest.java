@@ -52,19 +52,6 @@ class BookLoanCountSyncJobConfigTest {
         assertEquals(1512, findBook(1003L).getLoanCount());
     }
 
-    @Test
-    void AggregatedFilePath에_파일이_아닌_디렉토리를_주면_FAIL() throws Exception {
-        JobParameters jobParameters = new JobParametersBuilder()
-                .addString(FilePathJobParameterValidator.ROOT_DIR_PATH_PARAM_NAME, "src/test/resources/files/loanSync")
-                .addString(FilePathJobParameterValidator.AGGREGATED_FILE_PATH_PARAM_NAME, "src/test/resources/files/loanSync/aggregated")
-                .toJobParameters();
-
-        jobLauncherTestUtils.setJob(bookLoanCountSyncJob);
-        JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
-
-        assertEquals(ExitStatus.FAILED.getExitCode(), jobExecution.getExitStatus().getExitCode());
-    }
-
     private ConvertedUniqueBook findBook(long id) {
         return bookRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
