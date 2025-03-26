@@ -1,6 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.listener.StockSyncJobListener;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class StockSyncJobConfig {
                 .next(stockCsvDeleteStep)
                 .next(stockUpdatedAtStep)
                 .listener(new StockSyncJobListener(isbnIdReader, isbnEclipseMemoryRepository))
+                .validator(FilePathJobParameterValidator.onlyRootDir())
                 .build();
     }
 }

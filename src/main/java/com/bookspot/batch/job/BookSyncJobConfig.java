@@ -1,6 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.listener.BookSyncJobListener;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class BookSyncJobConfig {
         return new JobBuilder("bookSyncPartitionedJob", jobRepository)
                 .start(bookSyncPartitionMasterStep)
                 .listener(new BookSyncJobListener(isbnReader, isbnSet))
+                .validator(FilePathJobParameterValidator.onlyRootDir())
                 .build();
     }
 }
