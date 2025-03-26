@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.partition;
 
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,8 @@ public class StockCsvPartitionConfig {
 
     @Bean
     @StepScope
-    public MultiResourcePartitioner stockCsvPartitioner(@Value("#{jobParameters['rootDirPath']}") String root) throws IOException {
+    public MultiResourcePartitioner stockCsvPartitioner(
+            @Value(FilePathJobParameterValidator.ROOT_DIR_PATH) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
 

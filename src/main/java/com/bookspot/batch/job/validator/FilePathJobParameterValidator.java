@@ -13,8 +13,11 @@ public class FilePathJobParameterValidator implements JobParametersValidator {
         return new FilePathJobParameterValidator(true, true);
     }
 
-    public static final String AGGREGATED_FILE_PATH = "aggregatedFilePath";
-    public static final String ROOT_DIR_PATH = "rootDirPath";
+    public static final String ROOT_DIR_PATH_PARAM_NAME = "rootDirPath";
+    public static final String ROOT_DIR_PATH = "#{jobParameters['rootDirPath']}";
+
+    public static final String AGGREGATED_FILE_PATH_PARAM_NAME = "aggregatedFilePath";
+    public static final String AGGREGATED_FILE_PATH = "#{jobParameters['aggregatedFilePath']}";
 
     private static final String ERROR_MESSAGE_TEMPLATE = "%s 는 필수 JobParameter입니다.";
 
@@ -29,11 +32,11 @@ public class FilePathJobParameterValidator implements JobParametersValidator {
     @Override
     public void validate(JobParameters parameters) throws JobParametersInvalidException {
         if (requireAggregatedFilePath)
-            validateFilePath(parameters, AGGREGATED_FILE_PATH);
+            validateFilePath(parameters, AGGREGATED_FILE_PATH_PARAM_NAME);
 
 
         if (requireRootDirPath)
-            validateFilePath(parameters, ROOT_DIR_PATH);
+            validateFilePath(parameters, ROOT_DIR_PATH_PARAM_NAME);
     }
 
     private void validateFilePath(JobParameters parameters, String parameterName) throws JobParametersInvalidException {

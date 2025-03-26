@@ -26,7 +26,7 @@ public class StockFileReaderConfig {
     @Bean
     @StepScope
     public MultiStockCsvFileReader multiStockCsvFileReader(
-            @Value("#{jobParameters['rootDirPath']}") String rootDirPath) throws IOException {
+            @Value(FilePathJobParameterValidator.ROOT_DIR_PATH) String rootDirPath) throws IOException {
         return new MultiStockCsvFileReader(rootDirPath);
     }
 }

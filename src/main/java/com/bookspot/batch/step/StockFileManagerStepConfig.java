@@ -3,6 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.LibraryForFileParsing;
 import com.bookspot.batch.data.crawler.StockFileData;
 import com.bookspot.batch.global.file.stock.StockFileManager;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.processor.StockFilePathParser;
 import com.bookspot.batch.global.file.stock.StockFileDownloader;
 import lombok.RequiredArgsConstructor;
@@ -59,7 +60,7 @@ public class StockFileManagerStepConfig {
 
     @Bean
     @StepScope
-    public Tasklet stockCsvDeleteTasklet(@Value("#{jobParameters['rootDirPath']}") String filePath) {
+    public Tasklet stockCsvDeleteTasklet(@Value(FilePathJobParameterValidator.ROOT_DIR_PATH) String filePath) {
         return (contribution, chunkContext) -> {
             stockFileManager.deleteInnerFiles(filePath);
             return RepeatStatus.FINISHED;

@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.global.file.stock.StockFileManager;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.processor.csv.stock.repository.LibraryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -33,7 +34,7 @@ public class StockUpdatedAtStepConfig {
 
     @Bean
     @StepScope
-    public Tasklet libraryStockUpdatedAtTasklet(@Value("#{jobParameters['rootDirPath']}") String rootDirPath) {
+    public Tasklet libraryStockUpdatedAtTasklet(@Value(FilePathJobParameterValidator.ROOT_DIR_PATH) String rootDirPath) {
         return (contribution, chunkContext) -> {
             stockFileManager.convertInnerFiles(rootDirPath)
                     .forEach(fileElement ->
