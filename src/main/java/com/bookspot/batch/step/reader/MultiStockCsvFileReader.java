@@ -17,7 +17,7 @@ public class MultiStockCsvFileReader extends MultiResourceItemReader<StockCsvDat
         setName("multiStockCsvFileReader");
         setResources(
                 new PathMatchingResourcePatternResolver()
-                        .getResources(rootDirPath) // StockCsvMetadataCreator.MULTI_CSV_FILE_PATH
+                        .getResources("file:".concat(rootDirPath).concat("/*.csv"))
         );
 
         setDelegate(

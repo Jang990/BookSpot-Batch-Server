@@ -15,7 +15,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class AggregatedBooksCsvWriter {
-    public void saveToCsv(String filePath, Map<Long, Integer> map) {
+    public void saveToCsv(String filePath, Map<Long, Integer> map) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
             // 헤더?
             /*writer.write("id,title,author");
@@ -32,6 +32,7 @@ public class AggregatedBooksCsvWriter {
 
         } catch (IOException e) {
             log.warn("유니크 도서 파일 생성 오류", e);
+            throw e;
         }
     }
 }
