@@ -1,5 +1,6 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.TestQueryUtil;
 import com.bookspot.batch.data.Library;
 import com.bookspot.batch.data.crawler.LibraryNaruDetail;
 import com.bookspot.batch.step.reader.LibraryExcelConst;
@@ -83,7 +84,7 @@ class LibrarySyncJobConfigTest {
 
         assertEquals(BatchStatus.COMPLETED, jobExecution.getStatus());
 
-        Map<String, Library> libraryMap = toMap(findLibraries());
+        Map<String, Library> libraryMap = toMap(TestQueryUtil.findLibraries(entityManager, List.of("127058", "711618", "148096")));
 
         assertLibrary(libraryMap.get("127058"), "127058", "2.28도서관", "대구광역시 중구 2·28길 9", 128.5894055, 35.8592504);
         assertLibrary(libraryMap.get("148096"), "148096", "U보라작은도서관", "경상남도 김해시 전하로176번길 71, 반도보라아파트 주민공동시설 2층", 128.874226, 35.223558);
@@ -101,15 +102,5 @@ class LibrarySyncJobConfigTest {
         assertEquals(library.getLibraryCode(), libraryCode);
         assertEquals(library.getLocation().getX(), x);
         assertEquals(library.getLocation().getY(), y);
-    }
-
-    List<Library> findLibraries() {
-        return entityManager.createQuery("""
-                        SELECT l FROM
-                        Library l
-                        Where l.libraryCode IN :codes
-                        """, Library.class)
-                .setParameter("codes", Arrays.asList("127058", "711618", "148096"))
-                .getResultList();
     }
 }
