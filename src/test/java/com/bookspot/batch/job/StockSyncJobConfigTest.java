@@ -67,18 +67,18 @@ class StockSyncJobConfigTest {
 
         assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 
-        Map<Long, List<Long>> stockResults = findStocks().stream()
+        Map<Long, List<Long>> libraryIdAndBooksId = findStocks().stream()
                 .collect(Collectors.groupingBy(
                         StockResult::getLibraryId,
                         Collectors.mapping(StockResult::getBookId, Collectors.toList())
                 ));
 
 
-        assertThat(stockResults.get(10001L))
+        assertThat(libraryIdAndBooksId.get(10001L))
                 .containsExactlyInAnyOrderElementsOf(List.of(101L, 102L));
-        assertThat(stockResults.get(10002L))
+        assertThat(libraryIdAndBooksId.get(10002L))
                 .containsExactlyInAnyOrderElementsOf(List.of(104L, 105L, 106L));
-        assertThat(stockResults.get(10003L))
+        assertThat(libraryIdAndBooksId.get(10003L))
                 .containsExactlyInAnyOrderElementsOf(List.of(101L, 103L, 105L));
     }
 
