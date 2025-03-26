@@ -2,6 +2,11 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestFileUtil;
 import com.bookspot.batch.TestInsertUtils;
+import com.bookspot.batch.TestQueryUtil;
+import com.bookspot.batch.data.Library;
+import com.bookspot.batch.data.LibraryStock;
+import com.bookspot.batch.global.JobParameterHelper;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.*;
@@ -10,9 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,9 +37,14 @@ class StockSyncJobConfigTest {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    EntityManager em;
+
     final String TARGET_DIR = "src/test/resources/files/stockSync";
-    final JobParameters parameters = new JobParametersBuilder()
-            .addString("rootDirPath", TARGET_DIR)
+    final JobParameters parameters = JobParameterHelper.addRootDirPath(
+                new JobParametersBuilder(),
+                TARGET_DIR
+            )
             .toJobParameters();
 
     @BeforeEach
@@ -56,12 +70,27 @@ class StockSyncJobConfigTest {
 
         assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 
-        Map<Long, List<Long>> libraryIdAndBooksId = findStocks().stream()
-                .collect(Collectors.groupingBy(
-                        StockResult::getLibraryId,
-                        Collectors.mapping(StockResult::getBookId, Collectors.toList())
-                ));
+        assertEmptyDirectory(TARGET_DIR);
+        assertLibraryStockUpdatedAt();
+        assertStockData();
+    }
 
+    private void assertEmptyDirectory(String directory) throws IOException {
+        Path dirPath = Path.of(directory);
+
+        try (Stream<Path> files = Files.list(dirPath)) {
+            assertTrue(files.findAny().isEmpty());
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    private void assertStockData() {
+        Map<Long, List<Long>> libraryIdAndBooksId = TestQueryUtil.findStocks(jdbcTemplate).stream()
+                .collect(Collectors.groupingBy(
+                        LibraryStock::getLibraryId,
+                        Collectors.mapping(LibraryStock::getBookId, Collectors.toList())
+                ));
 
         assertThat(libraryIdAndBooksId.get(10001L))
                 .containsExactlyInAnyOrderElementsOf(List.of(101L, 102L));
@@ -71,33 +100,10 @@ class StockSyncJobConfigTest {
                 .containsExactlyInAnyOrderElementsOf(List.of(101L, 103L, 105L));
     }
 
-    private List<StockResult> findStocks() {
-        return jdbcTemplate.query("""
-                        SELECT library_id, book_id
-                        FROM library_stock
-                        """,
-                (rs, rowNum) -> new StockResult(
-                        rs.getLong("library_id"),
-                        rs.getLong("book_id")
-                )
-        );
-    }
+    private void assertLibraryStockUpdatedAt() {
+        List<Library> libraries = TestQueryUtil.findLibrariesByIds(em, List.of(10001L, 10002L, 10003L));
 
-    static class StockResult {
-        private Long libraryId;
-        private Long bookId;
-
-        public StockResult(Long libraryId, Long bookId) {
-            this.libraryId = libraryId;
-            this.bookId = bookId;
-        }
-
-        public Long getLibraryId() {
-            return libraryId;
-        }
-
-        public Long getBookId() {
-            return bookId;
-        }
+        for (Library library : libraries)
+            assertEquals(LocalDate.of(2025, 3, 1), library.getStockUpdatedAt());
     }
 }
