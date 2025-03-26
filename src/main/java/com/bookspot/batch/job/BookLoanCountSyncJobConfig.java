@@ -1,14 +1,18 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
 import com.bookspot.batch.step.writer.file.book.AggregatedBooksCsvWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -44,10 +48,17 @@ public class BookLoanCountSyncJobConfig {
     @Bean
     public Step aggregateBookFileStep() {
         return new StepBuilder("aggregateBookFileStep", jobRepository)
-                .tasklet((contribution, chunkContext) -> {
-                    aggregatedBooksCsvWriter.saveToCsv(inMemoryBookService.getData());
-                    return RepeatStatus.FINISHED;
-                }, transactionManager)
+                .tasklet(saveAggregatedCsvTasklet(null), transactionManager)
                 .build();
+    }
+
+    @Bean
+    @StepScope
+    private Tasklet saveAggregatedCsvTasklet(
+            @Value("#{jobParameters['" + FilePathJobParameterValidator.AGGREGATED_FILE_PATH + "']}") String aggregatedFilePath) {
+        return (contribution, chunkContext) -> {
+            aggregatedBooksCsvWriter.saveToCsv(aggregatedFilePath, inMemoryBookService.getData());
+            return RepeatStatus.FINISHED;
+        };
     }
 }

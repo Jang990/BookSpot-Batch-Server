@@ -15,8 +15,8 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class AggregatedBooksCsvWriter {
-    public void saveToCsv(Map<Long, Integer> map) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(AggregatedBooksCsvSpec.FILE_PATH, false))) {
+    public void saveToCsv(String filePath, Map<Long, Integer> map) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
             // 헤더?
             /*writer.write("id,title,author");
             writer.newLine();*/
