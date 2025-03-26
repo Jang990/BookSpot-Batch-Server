@@ -63,7 +63,7 @@ class BookSyncJobConfigTest {
         assertEquals(title, dbBookData.getTitle());
         assertEquals(author, dbBookData.getAuthor());
         assertEquals(publisher, dbBookData.getPublisher());
-//        assertEquals(year, dbBookData.getPublicationYear());
+        assertEquals(year, dbBookData.getPublicationYear());
         assertEquals(isbn13, dbBookData.getIsbn13());
         assertEquals(subjectCode, dbBookData.getSubjectCode());
 //        assertEquals(registeredDate, ...);

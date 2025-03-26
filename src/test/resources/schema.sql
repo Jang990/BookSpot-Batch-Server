@@ -150,7 +150,7 @@ CREATE TABLE `book` (
   `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `subject_code` int DEFAULT NULL,
   `author` varchar(255) DEFAULT NULL,
-  `publication_year` int DEFAULT NULL,
+  `publication_year` year DEFAULT NULL,
   `publisher` varchar(255) DEFAULT NULL,
   `loan_count` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
