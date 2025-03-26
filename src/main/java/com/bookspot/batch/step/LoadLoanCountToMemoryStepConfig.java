@@ -27,7 +27,7 @@ public class LoadLoanCountToMemoryStepConfig {
     public Step loadLoanCountToMemoryStep(
             MultiStockCsvFileReader multiBookStockCsvFileReader,
             IsbnValidationFilter isbnValidationFilter) {
-        return new StepBuilder("loadBookToMemoryStep", jobRepository)
+        return new StepBuilder("loadLoanCountToMemoryStep", jobRepository)
                 .<StockCsvData, StockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(multiBookStockCsvFileReader)
                 .processor(isbnValidationFilter)
