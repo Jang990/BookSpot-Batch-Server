@@ -13,11 +13,11 @@ import java.io.IOException;
 
 public class MultiStockCsvFileReader extends MultiResourceItemReader<StockCsvData> {
 
-    public MultiStockCsvFileReader() throws IOException {
+    public MultiStockCsvFileReader(String rootDirPath) throws IOException {
         setName("multiStockCsvFileReader");
         setResources(
                 new PathMatchingResourcePatternResolver()
-                        .getResources(StockCsvMetadataCreator.MULTI_CSV_FILE_PATH)
+                        .getResources(rootDirPath) // StockCsvMetadataCreator.MULTI_CSV_FILE_PATH
         );
 
         setDelegate(
