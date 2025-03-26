@@ -4,15 +4,10 @@ import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.step.service.BookRepository;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
-import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -21,13 +16,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@SpringBatchTest
-@ActiveProfiles("test")
+@BatchJobTest
 class BookSyncJobConfigTest {
     @Autowired
     JobLauncherTestUtils jobLauncherTestUtils;

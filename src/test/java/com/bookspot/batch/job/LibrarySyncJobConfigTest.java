@@ -8,15 +8,10 @@ import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
-import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -31,10 +26,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@SpringBatchTest
-@ActiveProfiles("test")
+@BatchJobTest
 class LibrarySyncJobConfigTest {
 
     @Autowired

@@ -2,33 +2,22 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestFileUtil;
 import com.bookspot.batch.TestInsertUtils;
-import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
-import org.springframework.batch.test.context.SpringBatchTest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
-@SpringBootTest
-@SpringBatchTest
-@ActiveProfiles("test")
+@BatchJobTest
 class StockSyncJobConfigTest {
     @Autowired
     JobLauncherTestUtils jobLauncherTestUtils;
