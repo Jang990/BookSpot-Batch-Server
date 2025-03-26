@@ -3,6 +3,11 @@ package com.bookspot.batch.job.validator;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.core.JobParametersValidator;
+import org.springframework.util.StringUtils;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class FilePathJobParameterValidator implements JobParametersValidator {
     public static FilePathJobParameterValidator onlyRootDir() {
@@ -20,6 +25,8 @@ public class FilePathJobParameterValidator implements JobParametersValidator {
     public static final String AGGREGATED_FILE_PATH = "#{jobParameters['aggregatedFilePath']}";
 
     private static final String ERROR_MESSAGE_TEMPLATE = "%s 는 필수 JobParameter입니다.";
+    private static final String DIR_ERROR_MESSAGE = "%s는 디렉토리 경로여야 합니다.".formatted(ROOT_DIR_PATH_PARAM_NAME);
+    private static final String FILE_ERROR_MESSAGE = "%s는 파일 경로여야 합니다.".formatted(AGGREGATED_FILE_PATH_PARAM_NAME);
 
     private boolean requireRootDirPath;
     private boolean requireAggregatedFilePath;
@@ -31,18 +38,37 @@ public class FilePathJobParameterValidator implements JobParametersValidator {
 
     @Override
     public void validate(JobParameters parameters) throws JobParametersInvalidException {
-        if (requireAggregatedFilePath)
-            validateFilePath(parameters, AGGREGATED_FILE_PATH_PARAM_NAME);
+        if (requireAggregatedFilePath) {
+            String filePath = parameters.getString(AGGREGATED_FILE_PATH_PARAM_NAME);
+            if(!StringUtils.hasText(filePath))
+                throw new JobParametersInvalidException(ERROR_MESSAGE_TEMPLATE.formatted(AGGREGATED_FILE_PATH_PARAM_NAME));
+            if(!isFile(filePath))
+                throw new JobParametersInvalidException(FILE_ERROR_MESSAGE);
+        }
 
 
-        if (requireRootDirPath)
-            validateFilePath(parameters, ROOT_DIR_PATH_PARAM_NAME);
+        if (requireRootDirPath) {
+            String dirPath = parameters.getString(ROOT_DIR_PATH_PARAM_NAME);
+            if(!StringUtils.hasText(dirPath))
+                throw new JobParametersInvalidException(ERROR_MESSAGE_TEMPLATE.formatted(ROOT_DIR_PATH_PARAM_NAME));
+            if(!isDirectory(dirPath))
+                throw new JobParametersInvalidException(DIR_ERROR_MESSAGE);
+        }
     }
 
-    private void validateFilePath(JobParameters parameters, String parameterName) throws JobParametersInvalidException {
-        String filePath = parameters.getString(parameterName);
+    private void validateEmptyParam(String filePath) {
 
-        if(filePath == null || filePath.isBlank())
-            throw new JobParametersInvalidException(ERROR_MESSAGE_TEMPLATE.formatted(parameterName));
     }
+
+    private boolean isFile(String pathStr) {
+        Path path = Path.of(pathStr);
+        return Files.exists(path) && Files.isRegularFile(path);
+    }
+
+    private boolean isDirectory(String pathStr) {
+        Path path = Path.of(pathStr);
+        return Files.exists(path) && Files.isDirectory(path);
+    }
+
+
 }
