@@ -26,7 +26,7 @@ public class BookClassificationParser {
             return null;
         }
 
-        if (sb.length() > MAX_PREFIX_LEN) {
+        if (sb.length() <= 0 || MAX_PREFIX_LEN < sb.length()) {
             return null;
         }
 
