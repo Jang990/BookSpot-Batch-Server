@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 @Configuration
 public class StockCsvPartitionConfig {
     public static final String PARTITIONER_KEY = "file";
+    public static final String STEP_EXECUTION_FILE = "#{stepExecutionContext['" + StockCsvPartitionConfig.PARTITIONER_KEY + "']}";
 
     @Bean
     @StepScope

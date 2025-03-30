@@ -19,7 +19,7 @@ public class StockFileReaderConfig {
     @Bean
     @StepScope
     public StockCsvFileReader stockCsvFileReader(
-            @Value("#{stepExecutionContext['" + StockCsvPartitionConfig.PARTITIONER_KEY + "']}") Resource file) throws Exception {
+            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) throws Exception {
         return new StockCsvFileReader(file);
     }
 
