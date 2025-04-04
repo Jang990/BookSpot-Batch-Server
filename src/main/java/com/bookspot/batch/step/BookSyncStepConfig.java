@@ -2,6 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.processor.StockCsvToBookConvertor;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.InMemoryIsbnFilter;
@@ -29,6 +30,7 @@ public class BookSyncStepConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    private final StepLoggingListener stepLoggingListener;
 
     @Bean
     public Step bookSyncPartitionMasterStep(
@@ -59,6 +61,7 @@ public class BookSyncStepConfig {
                 .reader(stockCsvFileReader)
                 .processor(bookSyncProcessor)
                 .writer(bookSyncItemWriter)
+                .listener(stepLoggingListener)
                 .build();
     }
 

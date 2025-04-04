@@ -3,6 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.LibraryForFileParsing;
 import com.bookspot.batch.data.crawler.StockFileData;
 import com.bookspot.batch.global.file.stock.StockFileManager;
+import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.processor.StockFilePathParser;
 import com.bookspot.batch.global.file.stock.StockFileDownloader;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,8 @@ public class StockFileManagerStepConfig {
     private final StockFileDownloader stockFileDownloader;
     private final StockFileManager stockFileManager;
 
+    private final StepLoggingListener stepLoggingListener;
+
     @Bean
     public Step stockCsvDownloadStep() throws Exception {
         return new StepBuilder("stockCsvDownloadStep", jobRepository)
@@ -42,6 +45,7 @@ public class StockFileManagerStepConfig {
                 .reader(libraryForFileParsingReader())
                 .processor(stockFilePathParser)
                 .writer(stockFileDownloaderWriter())
+                .listener(stepLoggingListener)
                 .build();
     }
 

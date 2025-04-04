@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
+import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.BookRepositoryReader;
 import com.bookspot.batch.step.writer.book.BookElasticSearchWriter;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ public class BookElasticSearchSyncStepConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    private final StepLoggingListener stepLoggingListener;
 
     @Bean
     public Step bookElasticSearchSyncStep(
@@ -27,6 +29,7 @@ public class BookElasticSearchSyncStepConfig {
                 .<ConvertedUniqueBook, ConvertedUniqueBook>chunk(CHUNK_SIZE, transactionManager)
                 .reader(bookRepositoryReader)
                 .writer(bookElasticSearchWriter)
+                .listener(stepLoggingListener)
                 .build();
     }
 }

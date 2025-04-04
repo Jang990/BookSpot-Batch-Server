@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.Library;
+import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.LibraryExcelFileReader;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryExcelRowMapper;
 import com.bookspot.batch.step.writer.LibraryWriter;
@@ -21,6 +22,7 @@ import javax.sql.DataSource;
 public class LibraryStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
+    private final StepLoggingListener stepLoggingListener;
 
     @Bean
     public Step librarySyncStep(
@@ -30,6 +32,7 @@ public class LibraryStepConfig {
                 .<Library, Library>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryExcelFileReader)
                 .writer(libraryWriter)
+                .listener(stepLoggingListener)
                 .build();
     }
 

@@ -1,5 +1,6 @@
 package com.bookspot.batch.step;
 
+import com.bookspot.batch.step.listener.StepLoggingListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -28,12 +29,15 @@ public class MissingStockDeleteStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
 
+    private final StepLoggingListener stepLoggingListener;
+
     @Bean
     public Step missingStockDeleteStep() throws Exception {
         return new StepBuilder("missingStockDeleteStep", jobRepository)
                 .<Long, Long>chunk(CHUNK_SIZE, transactionManager)
                 .reader(nonUpdatedStockIdReader(null))
                 .writer(missingStockDeleter())
+                .listener(stepLoggingListener)
                 .build();
     }
 

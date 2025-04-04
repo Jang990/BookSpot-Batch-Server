@@ -3,6 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.file.csv.AggregatedBook;
 import com.bookspot.batch.global.file.spec.AggregatedBooksCsvSpec;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
+import com.bookspot.batch.step.listener.StepLoggingListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -27,6 +28,7 @@ public class SyncAggregatedBookStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final DataSource dataSource;
+    private final StepLoggingListener stepLoggingListener;
 
     private static final int CHUNK_SIZE = 5_000;
 
@@ -36,6 +38,7 @@ public class SyncAggregatedBookStepConfig {
                 .<AggregatedBook, AggregatedBook>chunk(CHUNK_SIZE, transactionManager)
                 .reader(aggregatedBookCsvFileReader(null))
                 .writer(stockBookWriter())
+                .listener(stepLoggingListener)
                 .build();
     }
 

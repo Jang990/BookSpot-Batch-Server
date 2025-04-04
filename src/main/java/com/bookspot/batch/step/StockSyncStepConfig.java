@@ -2,6 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
@@ -35,6 +36,7 @@ public class StockSyncStepConfig {
     private final PlatformTransactionManager platformTransactionManager;
 
     private final IsbnMemoryRepository isbnMemoryRepository;
+    private final StepLoggingListener stepLoggingListener;
 
     @Bean
     public Step stockSyncPartitionMasterStep(
@@ -66,6 +68,7 @@ public class StockSyncStepConfig {
                 .reader(stockCsvFileReader)
                 .processor(stockCompositeItemProcessor)
                 .writer(stockWriter)
+                .listener(stepLoggingListener)
                 .build();
     }
 

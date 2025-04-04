@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.reader.MultiStockCsvFileReader;
 import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
@@ -22,6 +23,7 @@ public class LoadLoanCountToMemoryStepConfig {
     private final PlatformTransactionManager platformTransactionManager;
 
     private final InMemoryLoanCountService bookService;
+    private final StepLoggingListener stepLoggingListener;
 
     @Bean
     public Step loadLoanCountToMemoryStep(
@@ -32,6 +34,7 @@ public class LoadLoanCountToMemoryStepConfig {
                 .reader(multiBookStockCsvFileReader)
                 .processor(isbnValidationFilter)
                 .writer(memoryIsbnWriter())
+                .listener(stepLoggingListener)
                 .build();
     }
 
