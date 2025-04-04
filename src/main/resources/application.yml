@@ -3,6 +3,7 @@ spring:
   profiles:
     include:
       - "api"
+      - "files"
   application.name: bookspot-batch
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
