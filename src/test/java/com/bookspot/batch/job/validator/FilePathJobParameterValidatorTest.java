@@ -58,7 +58,7 @@ class FilePathJobParameterValidatorTest {
     }
 
     @Test
-    void onlyAggregatedFile에_디렉토리_정보를_넘기지_않으면_예외발생() {
+    void onlyAggregatedFile에_파일_정보를_넘기지_않으면_예외발생() {
         FilePathJobParameterValidator validator = FilePathJobParameterValidator.onlyAggregatedFile();
         JobParameters jobParameters = new JobParametersBuilder().toJobParameters();
 
@@ -68,6 +68,20 @@ class FilePathJobParameterValidatorTest {
 
     @Test
     void onlyAggregatedFile에_파일을_파라미터를_디렉토리로_넘기면_예외발생() throws JobParametersInvalidException {
+        FilePathJobParameterValidator validator = FilePathJobParameterValidator.onlyAggregatedFile();
+
+        JobParametersInvalidException exception = assertThrows(JobParametersInvalidException.class,
+                () -> validator.validate(
+                        JobParameterHelper.addAggregatedFilePath(
+                                new JobParametersBuilder(),
+                                "src/test/resources/files/sample/stockSync"
+                        ).toJobParameters())
+        );
+        assertEquals("aggregatedFilePath는 파일 경로여야 합니다.", exception.getMessage());
+    }
+
+    @Test
+    void onlyAggregatedFile에_파일을_넘기면_정상처리() throws JobParametersInvalidException {
         FilePathJobParameterValidator validator = FilePathJobParameterValidator.onlyAggregatedFile();
 
 
@@ -80,17 +94,16 @@ class FilePathJobParameterValidatorTest {
     }
 
     @Test
-    void onlyAggregatedFile에_디렉토리를_넘기면_정상처리() throws JobParametersInvalidException {
+    void onlyAggregatedFile에_존재하지_않는_파일이여도_파일형식의_Path면_정상처리() throws JobParametersInvalidException {
         FilePathJobParameterValidator validator = FilePathJobParameterValidator.onlyAggregatedFile();
 
-        JobParametersInvalidException exception = assertThrows(JobParametersInvalidException.class,
-                () -> validator.validate(
-                        JobParameterHelper.addAggregatedFilePath(
-                                new JobParametersBuilder(),
-                                "src/test/resources/files/sample/stockSync"
-                        ).toJobParameters())
+
+        validator.validate(
+                JobParameterHelper.addAggregatedFilePath(
+                        new JobParametersBuilder(),
+                        "src/test/resources/files/sample/stockSync/something.csv"
+                ).toJobParameters()
         );
-        assertEquals("aggregatedFilePath는 파일 경로여야 합니다.", exception.getMessage());
     }
 
     @Test

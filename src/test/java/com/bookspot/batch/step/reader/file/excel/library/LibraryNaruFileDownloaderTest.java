@@ -6,14 +6,6 @@ import com.bookspot.batch.global.file.NaruFileDownloader;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 
 class LibraryNaruFileDownloaderTest {
-    LibraryFileDownloader libraryFileDownloader = new LibraryFileDownloader(
-            new NaruRequestCreator(new JsoupCrawler()),
-            new NaruFileDownloader()
-    );
 
-//    @Test
-    void test() {
-        libraryFileDownloader.download();
-    }
 
 }

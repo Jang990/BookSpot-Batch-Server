@@ -27,10 +27,10 @@ public class NaruFileDownloader {
         this.webClient = WebClient.builder().build();
     }
 
-    public void downloadSync(String url, NaruCommonRequest request, FileMetadata fileMetadata) {
+    public void downloadSync(String url, NaruCommonRequest request, String downloadFilePath) {
         try {
             // 저장 경로 설정
-            Path savePath = Path.of(fileMetadata.directory(), fileMetadata.fullName());
+            Path savePath = Path.of(downloadFilePath);
 
             // 폴더가 존재하지 않으면 생성
             Files.createDirectories(savePath.getParent());
@@ -103,8 +103,8 @@ public class NaruFileDownloader {
         }
     }
 
-    public boolean deleteFile(FileMetadata metadata) {
-        File file = new File(metadata.absolutePath());
+    public boolean deleteFile(String deleteFilePath) {
+        File file = new File(deleteFilePath);
         return file.delete();
     }
 }

@@ -3,6 +3,7 @@ package com.bookspot.batch.job;
 import com.bookspot.batch.TestQueryUtil;
 import com.bookspot.batch.data.Library;
 import com.bookspot.batch.data.crawler.LibraryNaruDetail;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.LibraryExcelConst;
 import com.bookspot.batch.step.reader.LibraryNaruDetailReader;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
@@ -79,6 +80,7 @@ class LibrarySyncJobConfigTest {
     @Test
     void 정상처리() throws Exception {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(new JobParametersBuilder()
+                .addString(FilePathJobParameterValidator.AGGREGATED_FILE_PATH_PARAM_NAME, "src/test/resources/files/librarySync/my_library.csv")
                 .addLocalDateTime("temp_date", LocalDateTime.now())
                 .toJobParameters());
 

@@ -1,12 +1,17 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.global.crawler.naru.NaruRequestCreator;
+import com.bookspot.batch.global.file.NaruFileDownloader;
 import com.bookspot.batch.job.listener.LibrarySyncJobListener;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -25,6 +30,16 @@ public class LibrarySyncJobConfig {
                 .start(librarySyncStep)
                 .next(libraryNaruDetailParsingStep)
                 .listener(new LibrarySyncJobListener(libraryFileDownloader)) // 도서관 파일 저장 및 제거
+                .validator(FilePathJobParameterValidator.onlyAggregatedFile())
                 .build();
+    }
+
+    @Bean
+    @JobScope
+    public LibraryFileDownloader libraryFileDownloader(
+            NaruRequestCreator requestCreator,
+            NaruFileDownloader naruFileDownloader,
+            @Value(FilePathJobParameterValidator.AGGREGATED_FILE_PATH) String aggregatedFilePath) {
+        return new LibraryFileDownloader(requestCreator, naruFileDownloader, aggregatedFilePath);
     }
 }

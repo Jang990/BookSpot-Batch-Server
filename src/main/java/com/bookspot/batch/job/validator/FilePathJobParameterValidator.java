@@ -60,13 +60,18 @@ public class FilePathJobParameterValidator implements JobParametersValidator {
         }
     }
 
-    private void validateEmptyParam(String filePath) {
-
-    }
-
     private boolean isFile(String pathStr) {
         Path path = Path.of(pathStr);
-        return Files.exists(path) && Files.isRegularFile(path);
+        if(Files.exists(path))
+            return Files.isRegularFile(path);
+
+        return hasFileExt(pathStr);
+    }
+
+    private boolean hasFileExt(String filePathStr) {
+        String[] elements = filePathStr.split("\\.");
+        String fileExt = elements[elements.length - 1];
+        return fileExt.equals("csv") || fileExt.equals("xlsx");
     }
 
     private boolean isDirectory(String pathStr) {
