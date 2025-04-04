@@ -7,10 +7,11 @@ import org.springframework.core.io.FileSystemResource;
 
 public class LibraryExcelFileReader extends PoiItemReader<Library> {
 
-    public LibraryExcelFileReader(LibraryExcelRowMapper libraryExcelRowMapper) {
+    /* Caused by: java.lang.ArrayIndexOutOfBoundsException: Index 9 out of bounds for length 1 예외 시 setLinesToSkip 조절 필요 */
+    public LibraryExcelFileReader(LibraryExcelRowMapper libraryExcelRowMapper, String libraryFilePath) {
         setName("libraryExcelFileReader");
-        setResource(new FileSystemResource(LibraryExcelConst.metadata.absolutePath()));
-        setLinesToSkip(6);
+        setResource(new FileSystemResource(libraryFilePath));
+        setLinesToSkip(8);
         setRowMapper(libraryExcelRowMapper);
     }
 

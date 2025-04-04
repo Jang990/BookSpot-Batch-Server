@@ -2,7 +2,6 @@ package com.bookspot.batch.step.reader.file.excel.library;
 
 import com.bookspot.batch.global.crawler.naru.NaruRequestCreator;
 import com.bookspot.batch.global.file.NaruFileDownloader;
-import com.bookspot.batch.step.reader.LibraryExcelConst;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

@@ -4,7 +4,6 @@ import com.bookspot.batch.TestQueryUtil;
 import com.bookspot.batch.data.Library;
 import com.bookspot.batch.data.crawler.LibraryNaruDetail;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
-import com.bookspot.batch.step.reader.LibraryExcelConst;
 import com.bookspot.batch.step.reader.LibraryNaruDetailReader;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import jakarta.persistence.EntityManager;
@@ -20,7 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,6 +44,9 @@ class LibrarySyncJobConfigTest {
     @MockBean
     LibraryNaruDetailReader libraryNaruDetailReader;
 
+    private static String SAMPLE_FILE_PATH_STRING = "src/test/resources/files/sample/librarySync/library_list.xlsx";
+    private static String DEST_FILE_PATH_STRING = "src/test/resources/files/librarySync/library_list.xlsx";
+
     @BeforeEach
     void setUp() throws Exception {
         changeTestingFile();
@@ -61,8 +62,8 @@ class LibrarySyncJobConfigTest {
     }
 
     private void changeTestingFile() throws IOException {
-        final Path SAMPLE_FILE = Path.of("src/test/resources/files/librarySync/library_list.xlsx");
-        final Path DEST_FILE = Path.of(LibraryExcelConst.metadata.absolutePath()); // 복사 대상
+        final Path SAMPLE_FILE = Path.of(SAMPLE_FILE_PATH_STRING);
+        final Path DEST_FILE = Path.of(DEST_FILE_PATH_STRING); // 복사 대상
         if(!Files.exists(SAMPLE_FILE))
             fail("테스트할 샘플 도서관 정보 엑셀 파일이 존재하지 않음");
 
@@ -80,7 +81,7 @@ class LibrarySyncJobConfigTest {
     @Test
     void 정상처리() throws Exception {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(new JobParametersBuilder()
-                .addString(FilePathJobParameterValidator.AGGREGATED_FILE_PATH_PARAM_NAME, "src/test/resources/files/librarySync/my_library.csv")
+                .addString(FilePathJobParameterValidator.AGGREGATED_FILE_PATH_PARAM_NAME, DEST_FILE_PATH_STRING)
                 .addLocalDateTime("temp_date", LocalDateTime.now())
                 .toJobParameters());
 
