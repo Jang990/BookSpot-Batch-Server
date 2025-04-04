@@ -58,6 +58,42 @@ class FilePathJobParameterValidatorTest {
     }
 
     @Test
+    void onlyAggregatedFile에_디렉토리_정보를_넘기지_않으면_예외발생() {
+        FilePathJobParameterValidator validator = FilePathJobParameterValidator.onlyAggregatedFile();
+        JobParameters jobParameters = new JobParametersBuilder().toJobParameters();
+
+        JobParametersInvalidException exception = assertThrows(JobParametersInvalidException.class, () -> validator.validate(jobParameters));
+        assertEquals("aggregatedFilePath 는 필수 JobParameter입니다.", exception.getMessage());
+    }
+
+    @Test
+    void onlyAggregatedFile에_파일을_파라미터를_디렉토리로_넘기면_예외발생() throws JobParametersInvalidException {
+        FilePathJobParameterValidator validator = FilePathJobParameterValidator.onlyAggregatedFile();
+
+
+        validator.validate(
+                JobParameterHelper.addAggregatedFilePath(
+                        new JobParametersBuilder(),
+                        "src/test/resources/files/sample/stockSync/10001_2025-03-01.csv"
+                ).toJobParameters()
+        );
+    }
+
+    @Test
+    void onlyAggregatedFile에_디렉토리를_넘기면_정상처리() throws JobParametersInvalidException {
+        FilePathJobParameterValidator validator = FilePathJobParameterValidator.onlyAggregatedFile();
+
+        JobParametersInvalidException exception = assertThrows(JobParametersInvalidException.class,
+                () -> validator.validate(
+                        JobParameterHelper.addAggregatedFilePath(
+                                new JobParametersBuilder(),
+                                "src/test/resources/files/sample/stockSync"
+                        ).toJobParameters())
+        );
+        assertEquals("aggregatedFilePath는 파일 경로여야 합니다.", exception.getMessage());
+    }
+
+    @Test
     void dirFile에_파일이_누락되면_예외발생() {
         FilePathJobParameterValidator validator = FilePathJobParameterValidator.rootDirAndAggregatedFile();
 

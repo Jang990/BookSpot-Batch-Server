@@ -14,6 +14,10 @@ public class FilePathJobParameterValidator implements JobParametersValidator {
         return new FilePathJobParameterValidator(true, false);
     }
 
+    public static FilePathJobParameterValidator onlyAggregatedFile() {
+        return new FilePathJobParameterValidator(false, true);
+    }
+
     public static FilePathJobParameterValidator rootDirAndAggregatedFile() {
         return new FilePathJobParameterValidator(true, true);
     }
