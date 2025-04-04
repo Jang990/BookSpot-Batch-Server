@@ -2,6 +2,7 @@ package com.bookspot.batch.step.processor;
 
 import com.bookspot.batch.step.processor.csv.IsbnValidator;
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
@@ -16,8 +17,7 @@ public class IsbnValidationFilter implements ItemProcessor<StockCsvData, StockCs
     @Override
     public StockCsvData process(StockCsvData item) throws Exception {
         if (isbnValidator.isInValid(item.getIsbn())) {
-            log.info("잘못된 ISBN13 -> {}", item);
-            return null;
+            throw new InvalidIsbn13Exception();
         }
 
         /*if (!isbnValidator.isBookType(item.getIsbn())) {
