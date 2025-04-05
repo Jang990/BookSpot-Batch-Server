@@ -64,12 +64,12 @@ public class StockSyncStepConfig {
     @Bean
     public Step stockSyncStep(
             StockCsvFileReader stockCsvFileReader,
-            CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor,
+            StockProcessor stockProcessor,
             StockWriter stockWriter) {
         return new StepBuilder("stockSyncStep", jobRepository)
                 .<StockCsvData, LibraryStock>chunk(STOCK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(stockCsvFileReader)
-                .processor(stockCompositeItemProcessor)
+                .processor(stockProcessor)
                 .writer(stockWriter)
                 .listener(stepLoggingListener)
                 .listener(invalidIsbn13LoggingListener)
@@ -77,18 +77,6 @@ public class StockSyncStepConfig {
                 .skip(InvalidIsbn13Exception.class)
                 .skipLimit(50_000)
                 .build();
-    }
-
-    @Bean
-    public CompositeItemProcessor<StockCsvData, LibraryStock> stockCompositeItemProcessor(
-            IsbnValidationFilter isbnValidationFilter,
-            StockProcessor stockProcessor) {
-        return new CompositeItemProcessor<>(
-                List.of(
-                        isbnValidationFilter,
-                        stockProcessor
-                )
-        );
     }
 
     @Bean

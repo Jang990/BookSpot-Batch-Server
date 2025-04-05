@@ -1,8 +1,10 @@
 package com.bookspot.batch.step.service.memory.bookid;
 
+import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 
-//@Service
+@Service
 public class IsbnJdkMemoryRepository implements IsbnMemoryRepository {
     private static HashMap<Long, Long> store = new HashMap<>();
 
@@ -12,7 +14,12 @@ public class IsbnJdkMemoryRepository implements IsbnMemoryRepository {
 
     @Override
     public Long get(String isbn13) {
-        return store.get(Long.parseLong(isbn13));
+        try {
+            long isbn13Number = Long.parseLong(isbn13);
+            return store.get(isbn13Number);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     public boolean contains(String isbn13) {
