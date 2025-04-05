@@ -2,11 +2,13 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.step.listener.InvalidIsbn13LoggingListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.processor.StockCsvToBookConvertor;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.InMemoryIsbnFilter;
 import com.bookspot.batch.step.processor.TitleEllipsisConverter;
+import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.writer.book.UniqueBookInfoWriter;
 import com.bookspot.batch.step.writer.memory.InMemoryIsbnWriterWithCsv;
@@ -32,6 +34,7 @@ public class BookSyncStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final StepLoggingListener stepLoggingListener;
+    private final InvalidIsbn13LoggingListener invalidIsbn13Listener;
 
     @Bean
     public Step bookSyncPartitionMasterStep(
@@ -62,7 +65,11 @@ public class BookSyncStepConfig {
                 .reader(stockCsvFileReader)
                 .processor(bookSyncProcessor)
                 .writer(bookSyncItemWriter)
+                .listener(invalidIsbn13Listener)
                 .listener(stepLoggingListener)
+                .faultTolerant()
+                .skip(InvalidIsbn13Exception.class)
+                .skipLimit(50_000)
                 .build();
     }
 

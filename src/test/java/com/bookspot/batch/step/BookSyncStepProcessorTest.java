@@ -29,7 +29,7 @@ public class BookSyncStepProcessorTest {
     @Mock IsbnSet isbnSet;
     CompositeItemProcessor<StockCsvData, ConvertedUniqueBook> processor;
 
-    BookSyncStepConfig config = new BookSyncStepConfig(null, null, null);
+    BookSyncStepConfig config = new BookSyncStepConfig(null, null, null, null);
 
     @BeforeEach
     void beforeEach() {
