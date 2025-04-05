@@ -10,6 +10,7 @@ import com.bookspot.batch.step.processor.csv.book.BookClassificationParser;
 import com.bookspot.batch.step.processor.csv.book.YearParser;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.InMemoryIsbnFilter;
+import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,8 +59,12 @@ public class BookSyncStepProcessorTest {
     /** @see IsbnValidationFilter */
     @Test
     void 잘못된_ISBN은_필터링됨() throws Exception {
-        assertNull(processor.process(new StockCsvDataBuilder()
-                .isbn("xxx0000000000").build()));
+        Assertions.assertThrows(InvalidIsbn13Exception.class,
+                () -> processor.process(
+                        new StockCsvDataBuilder()
+                                .isbn("xxx0000000000")
+                                .build())
+        );
     }
 
     /** @see InMemoryIsbnFilter */
