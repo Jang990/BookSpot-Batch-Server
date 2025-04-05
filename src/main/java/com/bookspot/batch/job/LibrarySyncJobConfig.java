@@ -3,7 +3,8 @@ package com.bookspot.batch.job;
 import com.bookspot.batch.global.crawler.naru.NaruRequestCreator;
 import com.bookspot.batch.global.file.NaruFileDownloader;
 import com.bookspot.batch.job.listener.LibrarySyncJobListener;
-import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
+import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -19,6 +20,9 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class LibrarySyncJobConfig {
     private final JobRepository jobRepository;
+    private final CustomFilePathValidators customFilePathValidators;
+    public static final String LIBRARY_DIR_PARAM_NAME = "libraryDir";
+    public static final String LIBRARY_DIR_PARAM = "#{jobParameters['libraryDir']}";
 
     @Bean
     public Job librarySyncJob(
@@ -30,7 +34,7 @@ public class LibrarySyncJobConfig {
                 .start(librarySyncStep)
                 .next(libraryNaruDetailParsingStep)
                 .listener(new LibrarySyncJobListener(libraryFileDownloader)) // 도서관 파일 저장 및 제거
-                .validator(FilePathJobParameterValidator.onlyAggregatedFile())
+                .validator(temp_FilePathJobParameterValidator.REQUIRED_FILE(customFilePathValidators, LIBRARY_DIR_PARAM_NAME))
                 .build();
     }
 
@@ -39,7 +43,7 @@ public class LibrarySyncJobConfig {
     public LibraryFileDownloader libraryFileDownloader(
             NaruRequestCreator requestCreator,
             NaruFileDownloader naruFileDownloader,
-            @Value(FilePathJobParameterValidator.AGGREGATED_FILE_PATH) String aggregatedFilePath) {
-        return new LibraryFileDownloader(requestCreator, naruFileDownloader, aggregatedFilePath);
+            @Value(LIBRARY_DIR_PARAM) String libraryDirPath) {
+        return new LibraryFileDownloader(requestCreator, naruFileDownloader, libraryDirPath);
     }
 }

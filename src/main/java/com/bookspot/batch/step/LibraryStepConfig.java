@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.Library;
+import com.bookspot.batch.job.LibrarySyncJobConfig;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.LibraryExcelFileReader;
@@ -43,7 +44,7 @@ public class LibraryStepConfig {
     @StepScope
     public LibraryExcelFileReader libraryExcelFileReader(
             LibraryExcelRowMapper libraryExcelRowMapper,
-            @Value(FilePathJobParameterValidator.AGGREGATED_FILE_PATH) String filePath) {
+            @Value(LibrarySyncJobConfig.LIBRARY_DIR_PARAM) String filePath) {
         return new LibraryExcelFileReader(libraryExcelRowMapper, filePath);
     }
 

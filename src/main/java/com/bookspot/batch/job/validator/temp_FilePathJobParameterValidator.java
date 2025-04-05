@@ -20,13 +20,17 @@ public class temp_FilePathJobParameterValidator implements JobParametersValidato
         return new temp_FilePathJobParameterValidator(validators, requireParams);
     }
 
+    public static temp_FilePathJobParameterValidator REQUIRED_FILE(CustomFilePathValidators validators, String paramName) {
+        return new temp_FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.REQUIRED_FILE));
+    }
+
     @Override
     public void validate(JobParameters parameters) throws JobParametersInvalidException {
         for (Map.Entry<String, FilePathType> requiredJobParam : requiredJobParams.entrySet()) {
             String path = parameters.getString(requiredJobParam.getKey());
             if(path == null)
                 throw new JobParametersInvalidException(notFoundMessage(requiredJobParam.getKey()));
-            if(validators.valid(requiredJobParam.getValue(), path))
+            if(!validators.valid(requiredJobParam.getValue(), path))
                 throw new JobParametersInvalidException(exceptionMessage(requiredJobParam));
         }
     }
