@@ -20,6 +20,7 @@ import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.batch.item.support.CompositeItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
@@ -44,10 +45,10 @@ public class BookSyncStepConfig {
     }
 
     @Bean
-    public TaskExecutorPartitionHandler stockCsvPartitionHandler(Step bookSyncStep, TaskExecutor stockCsvTaskPool) {
+    public TaskExecutorPartitionHandler stockCsvPartitionHandler(Step bookSyncStep) {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(bookSyncStep);
-        partitionHandler.setTaskExecutor(stockCsvTaskPool);
+        partitionHandler.setTaskExecutor(new SyncTaskExecutor());
         return partitionHandler;
     }
 
