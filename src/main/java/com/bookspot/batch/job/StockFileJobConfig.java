@@ -13,6 +13,9 @@ import org.springframework.context.annotation.Configuration;
 public class StockFileJobConfig {
     private final JobRepository jobRepository;
 
+    public static final String DOWNLOAD_DIR_PARAM_NAME = "downloadDir";
+    public static final String DOWNLOAD_DIR_PARAM = "#{jobParameters['downloadDir']}";
+
     @Bean
     public Job stockFileJob(Step stockCsvDownloadStep) {
         // naru_detail이 있는 도서관 파일 다운로드

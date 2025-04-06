@@ -66,10 +66,10 @@ public class NaruFileDownloader {
     }
 
     // TODO: 리팩터링 및 성능 개선 필요
-    public void downloadSync(String url, FileMetadata fileMetadata) {
+    public void downloadSync(String sourceUrl, String outputFilePath) {
         try {
             // 저장 경로 설정
-            Path savePath = Path.of(fileMetadata.directory(), fileMetadata.fullName());
+            Path savePath = Path.of(outputFilePath);
 
             // 폴더가 존재하지 않으면 생성
             Files.createDirectories(savePath.getParent());
@@ -79,7 +79,7 @@ public class NaruFileDownloader {
                     StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 
                 webClient.get()
-                        .uri(url)
+                        .uri(sourceUrl)
                         .retrieve()
                         .bodyToFlux(DataBuffer.class) // 파일 데이터를 Flux로 받음
                         .toStream() // Flux를 Stream으로 변환 (동기 처리)

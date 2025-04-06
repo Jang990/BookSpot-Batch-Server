@@ -2,20 +2,21 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryForFileParsing;
 import com.bookspot.batch.data.crawler.StockFileData;
-import com.bookspot.batch.global.file.stock.StockFileManager;
+import com.bookspot.batch.global.file.NaruFileDownloader;
+import com.bookspot.batch.job.StockFileJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.processor.StockFilePathParser;
 import com.bookspot.batch.global.file.stock.StockFileDownloader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.ItemWriter;
-import org.springframework.batch.item.adapter.ItemWriterAdapter;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.item.database.PagingQueryProvider;
 import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder;
 import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -33,18 +34,20 @@ public class StockFileManagerStepConfig {
     private final DataSource dataSource;
 
     private final StockFilePathParser stockFilePathParser;
-    private final StockFileDownloader stockFileDownloader;
-    private final StockFileManager stockFileManager;
 
     private final StepLoggingListener stepLoggingListener;
 
     @Bean
-    public Step stockCsvDownloadStep() throws Exception {
+    public Step stockCsvDownloadStep(StockFileDownloader stockFileDownloader) throws Exception {
         return new StepBuilder("stockCsvDownloadStep", jobRepository)
                 .<LibraryForFileParsing, StockFileData>chunk(STOCK_CSV_DOWNLOAD_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryForFileParsingReader())
                 .processor(stockFilePathParser)
-                .writer(stockFileDownloaderWriter())
+                .writer(chunk -> {
+                    for (StockFileData stockFileData : chunk) {
+                        stockFileDownloader.download(stockFileData);
+                    }
+                })
                 .listener(stepLoggingListener)
                 .build();
     }
@@ -79,11 +82,10 @@ public class StockFileManagerStepConfig {
     }
 
     @Bean
-    public ItemWriter<StockFileData> stockFileDownloaderWriter() {
-        ItemWriterAdapter<StockFileData> adapter = new ItemWriterAdapter<>();
-        adapter.setTargetObject(stockFileDownloader);
-        adapter.setTargetMethod("download");
-        return adapter;
+    @StepScope
+    public StockFileDownloader stockFileDownloader(
+            NaruFileDownloader naruFileDownloader,
+            @Value(StockFileJobConfig.DOWNLOAD_DIR_PARAM) String downloadDir) {
+        return new StockFileDownloader(naruFileDownloader, downloadDir);
     }
-
 }
