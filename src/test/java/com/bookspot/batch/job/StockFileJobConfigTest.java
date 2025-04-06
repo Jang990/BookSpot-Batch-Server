@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
+import org.springframework.batch.core.JobParametersInvalidException;
 import org.springframework.batch.item.database.JdbcPagingItemReader;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,5 +46,16 @@ class StockFileJobConfigTest {
         jobLauncherTestUtils.launchJob(jobParameters);
 
         // test 주석을 해제하려면 assert문 필요
+    }
+
+    @Test
+    void 존재하지_않는_폴더를_명시하면_실행불가() throws Exception {
+        JobParameters jobParameters = new JobParametersBuilder()
+                .addString(StockFileJobConfig.DOWNLOAD_DIR_PARAM_NAME, "src/test/resources/files/delete-me")
+                .toJobParameters();
+
+        jobLauncherTestUtils.setJob(stockFileJob);
+        assertThrows(JobParametersInvalidException.class,
+                () -> jobLauncherTestUtils.launchJob(jobParameters));
     }
 }

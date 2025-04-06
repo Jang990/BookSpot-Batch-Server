@@ -1,5 +1,7 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
+import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -12,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class StockFileJobConfig {
     private final JobRepository jobRepository;
+    private final CustomFilePathValidators filePathValidators;
 
     public static final String DOWNLOAD_DIR_PARAM_NAME = "downloadDir";
     public static final String DOWNLOAD_DIR_PARAM = "#{jobParameters['downloadDir']}";
@@ -21,6 +24,12 @@ public class StockFileJobConfig {
         // naru_detail이 있는 도서관 파일 다운로드
         return new JobBuilder("stockFileJob", jobRepository)
                 .start(stockCsvDownloadStep)
+                .validator(
+                        temp_FilePathJobParameterValidator.REQUIRED_DIRECTORY(
+                                filePathValidators,
+                                DOWNLOAD_DIR_PARAM_NAME
+                        )
+                )
                 .build();
     }
 }
