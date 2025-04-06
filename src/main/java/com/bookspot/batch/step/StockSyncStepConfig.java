@@ -2,8 +2,11 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.job.StockSyncJobConfig;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.listener.InvalidIsbn13LoggingListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
@@ -22,11 +25,16 @@ import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.sql.DataSource;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Configuration
@@ -44,10 +52,9 @@ public class StockSyncStepConfig {
     @Bean
     public Step stockSyncPartitionMasterStep(
             Step stockSyncStep,
-            MultiResourcePartitioner stockCsvPartitioner,
-            TaskExecutorPartitionHandler stockSyncPartitionHandler) {
+            TaskExecutorPartitionHandler stockSyncPartitionHandler) throws IOException {
         return new StepBuilder("stockSyncPartitionMasterStep", jobRepository)
-                .partitioner(stockSyncStep.getName(), stockCsvPartitioner)
+                .partitioner(stockSyncStep.getName(), stockCsvPartitioner(null))
                 .partitionHandler(stockSyncPartitionHandler)
                 .build();
     }
@@ -91,5 +98,24 @@ public class StockSyncStepConfig {
     @Bean
     public StockWriter stockWriter(DataSource dataSource) {
         return new StockWriter(dataSource);
+    }
+
+    @Bean
+    @StepScope
+    public MultiResourcePartitioner stockCsvPartitioner(
+            @Value(StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
+        MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
+
+        Path rootPath = Paths.get(root);
+        Resource[] resources = Files.list(rootPath) // 루트 디렉토리의 파일 리스트 가져오기
+                .filter(Files::isRegularFile) // 파일만 필터링 (디렉토리 제외)
+                .map(Path::toFile) // Path -> File 변환
+                .map(FileSystemResource::new) // File -> Resource 변환
+                .toArray(Resource[]::new);
+
+        partitioner.setKeyName(StockCsvPartitionConfig.PARTITIONER_KEY);
+        partitioner.setResources(resources);
+
+        return partitioner;
     }
 }

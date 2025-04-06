@@ -1,7 +1,6 @@
 package com.bookspot.batch.job.listener;
 
 import com.bookspot.batch.global.file.stock.StockFileManager;
-import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
@@ -22,6 +21,7 @@ public class StockSyncJobListener implements JobExecutionListener {
     private final IsbnIdReader isbnIdReader;
     private final IsbnMemoryRepository isbnEclipseMemoryRepository;
     private final StockFileManager stockFileManager;
+    private final String sourceDirectoryPath;
 
     @Override
     public void beforeJob(JobExecution jobExecution) {
@@ -50,10 +50,8 @@ public class StockSyncJobListener implements JobExecutionListener {
     }
 
     private void deleteAllStockCsvFiles(JobExecution jobExecution) {
-        String rootDirPath = jobExecution.getJobParameters()
-                .getString(FilePathJobParameterValidator.ROOT_DIR_PATH_PARAM_NAME);
         try {
-            stockFileManager.deleteInnerFiles(rootDirPath);
+            stockFileManager.deleteInnerFiles(sourceDirectoryPath);
         } catch (IOException e) {
             // TODO: 알림 기능 필요
             log.error("도서관 책과 관련된 모든 과정은 성공적으로 완료됐지만 관련 파일 제거 실패", e);

@@ -2,14 +2,17 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.global.file.stock.StockFileManager;
 import com.bookspot.batch.job.listener.StockSyncJobListener;
-import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
+import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -21,6 +24,10 @@ public class StockSyncJobConfig {
     private final IsbnIdReader isbnIdReader;
     private final IsbnMemoryRepository isbnEclipseMemoryRepository;
     private final StockFileManager stockFileManager;
+    private final CustomFilePathValidators filePathValidators;
+
+    public static final String SOURCE_DIR_PARAM_NAME = "sourceDir";
+    public static final String SOURCE_DIR_PARAM = "#{jobParameters['sourceDir']}";
 
     @Bean
     public Job stockSyncJob(
@@ -32,8 +39,24 @@ public class StockSyncJobConfig {
                 .start(stockSyncPartitionMasterStep)
                 .next(missingStockDeleteStep)
                 .next(stockUpdatedAtStep)
-                .listener(new StockSyncJobListener(isbnIdReader, isbnEclipseMemoryRepository, stockFileManager))
-                .validator(FilePathJobParameterValidator.onlyRootDir())
+                .listener(stockSyncJobListener(null))
+                .validator(
+                        temp_FilePathJobParameterValidator.REQUIRED_DIRECTORY(
+                                filePathValidators,
+                                SOURCE_DIR_PARAM_NAME
+                        )
+                )
                 .build();
+    }
+
+    @Bean
+    @JobScope
+    public StockSyncJobListener stockSyncJobListener(@Value(SOURCE_DIR_PARAM) String sourceDir) {
+        return new StockSyncJobListener(
+                isbnIdReader,
+                isbnEclipseMemoryRepository,
+                stockFileManager,
+                sourceDir
+        );
     }
 }

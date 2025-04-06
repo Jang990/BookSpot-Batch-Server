@@ -22,26 +22,6 @@ public class StockCsvPartitionConfig {
     public static final String STEP_EXECUTION_FILE = "#{stepExecutionContext['" + StockCsvPartitionConfig.PARTITIONER_KEY + "']}";
 
     @Bean
-    @StepScope
-    public MultiResourcePartitioner stockCsvPartitioner(
-            @Value(FilePathJobParameterValidator.ROOT_DIR_PATH) String root) throws IOException {
-        MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
-
-
-        Path rootPath = Paths.get(root);
-        Resource[] resources = Files.list(rootPath) // 루트 디렉토리의 파일 리스트 가져오기
-                .filter(Files::isRegularFile) // 파일만 필터링 (디렉토리 제외)
-                .map(Path::toFile) // Path -> File 변환
-                .map(FileSystemResource::new) // File -> Resource 변환
-                .toArray(Resource[]::new);
-
-        partitioner.setKeyName(PARTITIONER_KEY);
-        partitioner.setResources(resources);
-
-        return partitioner;
-    }
-
-    @Bean
     public TaskExecutor stockCsvTaskPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(10);

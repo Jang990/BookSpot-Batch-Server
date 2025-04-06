@@ -41,10 +41,8 @@ class StockSyncJobConfigTest {
     EntityManager em;
 
     final String TARGET_DIR = "src/test/resources/files/stockSync";
-    final JobParameters parameters = JobParameterHelper.addRootDirPath(
-                new JobParametersBuilder(),
-                TARGET_DIR
-            )
+    final JobParameters parameters = new JobParametersBuilder()
+            .addString(StockSyncJobConfig.SOURCE_DIR_PARAM_NAME, TARGET_DIR)
             .toJobParameters();
 
     @BeforeEach
