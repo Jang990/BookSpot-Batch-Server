@@ -1,5 +1,6 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.TestFileUtil;
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.step.service.BookRepository;
@@ -33,8 +34,12 @@ class BookSyncJobConfigTest {
     BookRepository bookRepository;
 
 
+    private final String sourceDir = "src/test/resources/files/booksync";
+//    private final String moveDir = "src/test/resources/files/booksync/after";
+
     final JobParameters parameters = new JobParametersBuilder()
-            .addString("rootDirPath", "src/test/resources/files/booksync")
+            .addString(BookSyncJobConfig.SOURCE_DIR_PARAM_NAME, sourceDir)
+//            .addString(BookSyncJobConfig.MOVE_DIR_PARAM_NAME, moveDir)
             .toJobParameters();
 
     @Test
@@ -57,6 +62,9 @@ class BookSyncJobConfigTest {
         assertLibrary(bookMap.get("0000000000002"), "의사 어벤저스 (20)", "고희정 글;조승연 그림", "가나출판사", Year.of(2024), "0000000000002", 510, LocalDate.of(2024, 11, 8));
         assertLibrary(bookMap.get("0000000000004"), "낭만 강아지 봉봉 (7)","홍민정 글;김무연 그림","다산어린이",Year.of(2024),"0000000000004",813,LocalDate.of(2024, 11, 8));
         assertLibrary(bookMap.get("0000000000005"), "변호사 어벤저스 (3)","고희정 글;최미란 그림","가나출판사",Year.of(2024), "0000000000005",360,LocalDate.of(2024, 11, 8));
+
+        // 파일 초기화
+//        TestFileUtil.moveAll(moveDir, sourceDir);
     }
 
     private void assertLibrary(ConvertedUniqueBook dbBookData, String title, String author, String publisher, Year year, String isbn13, int subjectCode, LocalDate registeredDate) {

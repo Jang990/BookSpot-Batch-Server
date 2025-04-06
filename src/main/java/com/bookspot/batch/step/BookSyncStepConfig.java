@@ -2,8 +2,10 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.job.BookSyncJobConfig;
 import com.bookspot.batch.step.listener.InvalidIsbn13LoggingListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.StockCsvToBookConvertor;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.InMemoryIsbnFilter;
@@ -14,16 +16,25 @@ import com.bookspot.batch.step.writer.book.UniqueBookInfoWriter;
 import com.bookspot.batch.step.writer.memory.InMemoryIsbnWriterWithCsv;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.batch.item.support.CompositeItemWriter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Configuration
 @RequiredArgsConstructor
@@ -38,10 +49,9 @@ public class BookSyncStepConfig {
     @Bean
     public Step bookSyncPartitionMasterStep(
             Step bookSyncStep,
-            MultiResourcePartitioner stockCsvPartitioner,
-            TaskExecutorPartitionHandler bookSyncPartitionHandler) {
+            TaskExecutorPartitionHandler bookSyncPartitionHandler) throws IOException {
         return new StepBuilder("bookSyncPartitionMasterStep", jobRepository)
-                .partitioner(bookSyncStep.getName(), stockCsvPartitioner)
+                .partitioner(bookSyncStep.getName(), bookSyncCsvPartitioner(null))
                 .partitionHandler(bookSyncPartitionHandler)
                 .build();
     }
@@ -94,5 +104,24 @@ public class BookSyncStepConfig {
                 uniqueBookInfoWriter,
                 inMemoryIsbnWriterWithCsv
         );
+    }
+
+    @Bean
+    @StepScope
+    public MultiResourcePartitioner bookSyncCsvPartitioner(
+            @Value(BookSyncJobConfig.SOURCE_DIR_PARAM) String sourceDir) throws IOException {
+        MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
+
+        Path rootPath = Paths.get(sourceDir);
+        Resource[] resources = Files.list(rootPath) // 루트 디렉토리의 파일 리스트 가져오기
+                .filter(Files::isRegularFile) // 파일만 필터링 (디렉토리 제외)
+                .map(Path::toFile) // Path -> File 변환
+                .map(FileSystemResource::new) // File -> Resource 변환
+                .toArray(Resource[]::new);
+
+        partitioner.setKeyName(StockCsvPartitionConfig.PARTITIONER_KEY);
+        partitioner.setResources(resources);
+
+        return partitioner;
     }
 }

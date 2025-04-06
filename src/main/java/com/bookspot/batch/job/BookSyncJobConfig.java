@@ -2,6 +2,9 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.listener.BookSyncJobListener;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
+import com.bookspot.batch.job.validator.file.FilePathType;
+import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,8 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.util.Map;
 
 /**
  * - DB에 있는 ISBN 정보를 메모리로 불러오기
@@ -25,6 +30,14 @@ import org.springframework.context.annotation.Configuration;
 public class BookSyncJobConfig {
     private final JobRepository jobRepository;
 
+    private final CustomFilePathValidators filePathValidators;
+
+    public static final String SOURCE_DIR_PARAM_NAME = "sourceDir";
+    public static final String SOURCE_DIR_PARAM = "#{jobParameters['sourceDir']}";
+
+    /*public static final String MOVE_DIR_PARAM_NAME = "moveDir";
+    public static final String MOVE_DIR_PARAM = "#{jobParameters['moveDir']}";*/
+
     @Bean
     public Job bookSyncPartitionedJob(
             Step bookSyncPartitionMasterStep,
@@ -32,7 +45,12 @@ public class BookSyncJobConfig {
         return new JobBuilder("bookSyncPartitionedJob", jobRepository)
                 .start(bookSyncPartitionMasterStep)
                 .listener(new BookSyncJobListener(isbnReader, isbnSet))
-                .validator(FilePathJobParameterValidator.onlyRootDir())
+                .validator(
+                        temp_FilePathJobParameterValidator.REQUIRED_DIRECTORY(
+                                filePathValidators,
+                                SOURCE_DIR_PARAM_NAME
+                        )
+                )
                 .build();
     }
 }
