@@ -21,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 public class LibrarySyncJobConfig {
     private final JobRepository jobRepository;
     private final CustomFilePathValidators customFilePathValidators;
-    public static final String LIBRARY_DIR_PARAM_NAME = "libraryDir";
-    public static final String LIBRARY_DIR_PARAM = "#{jobParameters['libraryDir']}";
+    public static final String LIBRARY_FILE_PARAM_NAME = "libraryFilePath";
+    public static final String LIBRARY_FILE_PARAM = "#{jobParameters['libraryFilePath']}";
 
     @Bean
     public Job librarySyncJob(
@@ -34,7 +34,7 @@ public class LibrarySyncJobConfig {
                 .start(librarySyncStep)
                 .next(libraryNaruDetailParsingStep)
                 .listener(new LibrarySyncJobListener(libraryFileDownloader)) // 도서관 파일 저장 및 제거
-                .validator(temp_FilePathJobParameterValidator.REQUIRED_FILE(customFilePathValidators, LIBRARY_DIR_PARAM_NAME))
+                .validator(temp_FilePathJobParameterValidator.REQUIRED_FILE(customFilePathValidators, LIBRARY_FILE_PARAM_NAME))
                 .build();
     }
 
@@ -43,7 +43,7 @@ public class LibrarySyncJobConfig {
     public LibraryFileDownloader libraryFileDownloader(
             NaruRequestCreator requestCreator,
             NaruFileDownloader naruFileDownloader,
-            @Value(LIBRARY_DIR_PARAM) String libraryDirPath) {
+            @Value(LIBRARY_FILE_PARAM) String libraryDirPath) {
         return new LibraryFileDownloader(requestCreator, naruFileDownloader, libraryDirPath);
     }
 }

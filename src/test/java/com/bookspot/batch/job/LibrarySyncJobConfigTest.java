@@ -81,7 +81,7 @@ class LibrarySyncJobConfigTest {
     @Test
     void 정상처리() throws Exception {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(new JobParametersBuilder()
-                .addString(FilePathJobParameterValidator.AGGREGATED_FILE_PATH_PARAM_NAME, DEST_FILE_PATH_STRING)
+                .addString(LibrarySyncJobConfig.LIBRARY_FILE_PARAM_NAME, "src/test/resources/files/librarySync/library_list.xlsx")
                 .addLocalDateTime("temp_date", LocalDateTime.now())
                 .toJobParameters());
 

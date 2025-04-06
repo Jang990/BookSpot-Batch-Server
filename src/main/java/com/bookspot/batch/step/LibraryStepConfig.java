@@ -2,7 +2,6 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.Library;
 import com.bookspot.batch.job.LibrarySyncJobConfig;
-import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.LibraryExcelFileReader;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryExcelRowMapper;
@@ -12,8 +11,6 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,7 +41,7 @@ public class LibraryStepConfig {
     @StepScope
     public LibraryExcelFileReader libraryExcelFileReader(
             LibraryExcelRowMapper libraryExcelRowMapper,
-            @Value(LibrarySyncJobConfig.LIBRARY_DIR_PARAM) String filePath) {
+            @Value(LibrarySyncJobConfig.LIBRARY_FILE_PARAM) String filePath) {
         return new LibraryExcelFileReader(libraryExcelRowMapper, filePath);
     }
 
