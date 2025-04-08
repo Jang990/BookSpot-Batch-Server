@@ -19,14 +19,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class BookLoanCountSyncJobConfig {
+public class LoanSyncJobConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final InMemoryLoanCountService inMemoryBookService;
     private final AggregatedBooksCsvWriter aggregatedBooksCsvWriter;
 
     @Bean
-    public Job bookLoanCountSyncJob(Step loadLoanCountToMemoryStep, Step syncAggregatedBookStep) {
+    public Job loanSyncJob(Step loadLoanCountToMemoryStep, Step syncAggregatedBookStep) {
         return new JobBuilder("bookLoanCountSyncJob", jobRepository)
                 .start(loadLoanCountToMemoryStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
                 .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장

@@ -4,7 +4,6 @@ import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.service.BookRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.*;
 import org.springframework.batch.test.JobLauncherTestUtils;
@@ -14,12 +13,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import static org.junit.jupiter.api.Assertions.*;
 
 @BatchJobTest
-class BookLoanCountSyncJobConfigTest {
+class LoanSyncJobConfigTest {
     @Autowired
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    Job bookLoanCountSyncJob;
+    Job loanSyncJob;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -42,7 +41,7 @@ class BookLoanCountSyncJobConfigTest {
                 .addString(FilePathJobParameterValidator.AGGREGATED_FILE_PATH_PARAM_NAME, "src/test/resources/files/loanSync/aggregated/aggregated.csv")
                 .toJobParameters();
 
-        jobLauncherTestUtils.setJob(bookLoanCountSyncJob);
+        jobLauncherTestUtils.setJob(loanSyncJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
         assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
