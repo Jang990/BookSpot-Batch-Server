@@ -27,7 +27,7 @@ public class LoanSyncJobConfig {
                 .validator(
                         temp_FilePathJobParameterValidator.REQUIRED_FILE(
                                 filePathValidators,
-                                LoanAggregatedJobConfig.AGGREGATED_FILE_PARAM_NAME
+                                AGGREGATED_FILE_PARAM_NAME
                         )
                 )
                 .build();

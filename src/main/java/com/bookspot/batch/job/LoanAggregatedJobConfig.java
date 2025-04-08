@@ -27,8 +27,8 @@ public class LoanAggregatedJobConfig {
     public static final String DIRECTORY_PARAM_NAME = "outputDirectory";
     public static final String DIRECTORY_PATH = "#{jobParameters['outputDirectory']}";
 
-    public static final String AGGREGATED_FILE_PARAM_NAME = "aggregatedFilePath";
-    public static final String AGGREGATED_FILE_PATH = "#{jobParameters['aggregatedFilePath']}";
+    public static final String OUTPUT_FILE_PARAM_NAME = "outputFilePath";
+    public static final String OUTPUT_FILE_PATH = "#{jobParameters['outputFilePath']}";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -48,7 +48,7 @@ public class LoanAggregatedJobConfig {
                                 filePathValidators,
                                 Map.of(
                                         DIRECTORY_PARAM_NAME, FilePathType.REQUIRED_DIRECTORY,
-                                        AGGREGATED_FILE_PARAM_NAME, FilePathType.OPTIONAL_FILE
+                                        OUTPUT_FILE_PARAM_NAME, FilePathType.OPTIONAL_FILE
                                 )
                         )
                 )
@@ -75,7 +75,7 @@ public class LoanAggregatedJobConfig {
     @Bean
     @StepScope
     public Tasklet saveAggregatedCsvTasklet(
-            @Value(AGGREGATED_FILE_PATH) String aggregatedFilePath) {
+            @Value(OUTPUT_FILE_PATH) String aggregatedFilePath) {
         return (contribution, chunkContext) -> {
             aggregatedBooksCsvWriter.saveToCsv(aggregatedFilePath, inMemoryBookService.getData());
             return RepeatStatus.FINISHED;

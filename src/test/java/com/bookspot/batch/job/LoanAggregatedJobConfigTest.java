@@ -1,17 +1,13 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.file.csv.AggregatedBook;
 import com.bookspot.batch.step.reader.AggregatedLoanFileReader;
-import com.bookspot.batch.step.service.BookRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.*;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -40,7 +36,7 @@ class LoanAggregatedJobConfigTest {
     void 정상_처리() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addString(LoanAggregatedJobConfig.DIRECTORY_PARAM_NAME, sourceDirectory)
-                .addString(LoanAggregatedJobConfig.AGGREGATED_FILE_PARAM_NAME, outputFilePath)
+                .addString(LoanAggregatedJobConfig.OUTPUT_FILE_PARAM_NAME, outputFilePath)
                 .toJobParameters();
 
         jobLauncherTestUtils.setJob(loanAggregatedJob);
