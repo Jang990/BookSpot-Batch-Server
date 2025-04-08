@@ -24,8 +24,8 @@ import java.util.Map;
 @Configuration
 @RequiredArgsConstructor
 public class LoanSyncJobConfig {
-    public static final String DIRECTORY_PARAM_NAME = "rootDirPath";
-    public static final String DIRECTORY_PATH = "#{jobParameters['rootDirPath']}";
+    public static final String DIRECTORY_PARAM_NAME = "outputDirectory";
+    public static final String DIRECTORY_PATH = "#{jobParameters['outputDirectory']}";
 
     public static final String AGGREGATED_FILE_PARAM_NAME = "aggregatedFilePath";
     public static final String AGGREGATED_FILE_PATH = "#{jobParameters['aggregatedFilePath']}";

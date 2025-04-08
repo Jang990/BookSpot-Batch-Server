@@ -37,8 +37,8 @@ class LoanSyncJobConfigTest {
         setup();
 
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString(FilePathJobParameterValidator.ROOT_DIR_PATH_PARAM_NAME, "src/test/resources/files/loanSync")
-                .addString(FilePathJobParameterValidator.AGGREGATED_FILE_PATH_PARAM_NAME, "src/test/resources/files/loanSync/aggregated/aggregated.csv")
+                .addString(LoanSyncJobConfig.DIRECTORY_PARAM_NAME, "src/test/resources/files/loanSync")
+                .addString(LoanSyncJobConfig.AGGREGATED_FILE_PARAM_NAME, "src/test/resources/files/loanSync/aggregated/aggregated.csv")
                 .toJobParameters();
 
         jobLauncherTestUtils.setJob(loanSyncJob);
