@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
-public class LoanSyncJobConfig {
+public class LoanAggregatedJobConfig {
     public static final String DIRECTORY_PARAM_NAME = "outputDirectory";
     public static final String DIRECTORY_PATH = "#{jobParameters['outputDirectory']}";
 
