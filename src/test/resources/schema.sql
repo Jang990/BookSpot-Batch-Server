@@ -138,7 +138,7 @@ CREATE TABLE `library` (
   `closed_info` varchar(255) DEFAULT NULL,
   `contact_number` varchar(255) DEFAULT NULL,
   `home_page` varchar(255) DEFAULT NULL,
-  `operating_info` varchar(255) DEFAULT NULL,
+  `operating_info` varchar(300) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `library_un` (`library_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

@@ -34,7 +34,7 @@ public class LibrarySyncJobConfig {
                 .start(librarySyncStep)
                 .next(libraryNaruDetailParsingStep)
                 .listener(new LibrarySyncJobListener(libraryFileDownloader)) // 도서관 파일 저장 및 제거
-                .validator(temp_FilePathJobParameterValidator.REQUIRED_FILE(customFilePathValidators, LIBRARY_FILE_PARAM_NAME))
+                .validator(temp_FilePathJobParameterValidator.OPTIONAL_FILE(customFilePathValidators, LIBRARY_FILE_PARAM_NAME))
                 .build();
     }
 

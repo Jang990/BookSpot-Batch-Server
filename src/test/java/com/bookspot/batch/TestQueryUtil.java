@@ -9,13 +9,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class TestQueryUtil {
-    public static List<Library> findLibraries(EntityManager em, List<String> libraryCodes) {
+    public static List<Library> findLibraries(EntityManager em, List<String> libraryCodes, int limit) {
         return em.createQuery("""
                         SELECT l FROM
                         Library l
                         Where l.libraryCode IN :codes
                         """, Library.class)
                 .setParameter("codes", libraryCodes)
+                .setMaxResults(limit)
                 .getResultList();
     }
 

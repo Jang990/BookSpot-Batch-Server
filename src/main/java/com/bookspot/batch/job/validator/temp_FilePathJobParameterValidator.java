@@ -24,6 +24,10 @@ public class temp_FilePathJobParameterValidator implements JobParametersValidato
         return new temp_FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.REQUIRED_FILE));
     }
 
+    public static temp_FilePathJobParameterValidator OPTIONAL_FILE(CustomFilePathValidators validators, String paramName) {
+        return new temp_FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.OPTIONAL_FILE));
+    }
+
     public static temp_FilePathJobParameterValidator REQUIRED_DIRECTORY(CustomFilePathValidators validators, String paramName) {
         return new temp_FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.REQUIRED_DIRECTORY));
     }
