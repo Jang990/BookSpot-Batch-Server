@@ -3,7 +3,6 @@ package com.bookspot.batch.step.reader;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDataMapper;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDelimiterTokenizer;
-import com.bookspot.batch.global.file.stock.StockCsvMetadataCreator;
 import org.springframework.batch.item.file.MultiResourceItemReader;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.separator.DefaultRecordSeparatorPolicy;
