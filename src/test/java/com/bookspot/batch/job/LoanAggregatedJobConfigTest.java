@@ -1,13 +1,22 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
-import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
+import com.bookspot.batch.data.file.csv.AggregatedBook;
+import com.bookspot.batch.step.reader.AggregatedLoanFileReader;
 import com.bookspot.batch.step.service.BookRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.*;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,40 +26,46 @@ class LoanAggregatedJobConfigTest {
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    Job loanSyncJob;
+    Job loanAggregatedJob;
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+    String sourceDirectory = "src/test/resources/files/loanSync";
+    String outputFilePath = "src/test/resources/files/loanSync/result/aggregated.csv";
 
-    @Autowired
-    BookRepository bookRepository;
-
-    void setup() {
-        TestInsertUtils.bookBuilder().id(1001L).isbn13("0000000001001").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(1002L).isbn13("0000000001002").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(1003L).isbn13("0000000001003").insert(jdbcTemplate);
+    @AfterEach
+    void afterEach() throws IOException {
+        Files.delete(Path.of(outputFilePath));
     }
 
     @Test
     void 정상_처리() throws Exception {
-        setup();
-
         JobParameters jobParameters = new JobParametersBuilder()
-                .addString(LoanAggregatedJobConfig.DIRECTORY_PARAM_NAME, "src/test/resources/files/loanSync")
-                .addString(LoanAggregatedJobConfig.AGGREGATED_FILE_PARAM_NAME, "src/test/resources/files/loanSync/aggregated/aggregated.csv")
+                .addString(LoanAggregatedJobConfig.DIRECTORY_PARAM_NAME, sourceDirectory)
+                .addString(LoanAggregatedJobConfig.AGGREGATED_FILE_PARAM_NAME, outputFilePath)
                 .toJobParameters();
 
-        jobLauncherTestUtils.setJob(loanSyncJob);
+        jobLauncherTestUtils.setJob(loanAggregatedJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
         assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-
-        assertEquals(123, findBook(1001L).getLoanCount());
-        assertEquals(58, findBook(1002L).getLoanCount());
-        assertEquals(1512, findBook(1003L).getLoanCount());
+        assertFile(
+                List.of(
+                        new AggregatedBook("0000000001001", 123),
+                        new AggregatedBook("0000000001002", 58),
+                        new AggregatedBook("0000000001003", 1512)
+                ),
+                outputFilePath
+        );
+        assertTrue(Files.exists(Path.of(outputFilePath)));
     }
 
-    private ConvertedUniqueBook findBook(long id) {
-        return bookRepository.findById(id).orElseThrow(IllegalArgumentException::new);
+    private void assertFile(List<AggregatedBook> expected, String filePath) throws Exception {
+        AggregatedLoanFileReader reader = new AggregatedLoanFileReader(filePath);
+        reader.open(new ExecutionContext());
+
+        for (AggregatedBook expectedInfo : expected) {
+            AggregatedBook actual = reader.read();
+            assertEquals(expectedInfo.isbn13(), actual.isbn13());
+            assertEquals(expectedInfo.loanCount(), actual.loanCount());
+        }
     }
 }
