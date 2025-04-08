@@ -2,7 +2,6 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.listener.StepLoggingListener;
-import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.MultiStockCsvFileReader;
 import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
@@ -27,9 +26,9 @@ public class LoadLoanCountToMemoryStepConfig {
     private final StepLoggingListener stepLoggingListener;
 
     @Bean
-    public Step loadLoanCountToMemoryStep(
+    public Step loanMemoryWarmupStep(
             MultiStockCsvFileReader multiBookStockCsvFileReader) {
-        return new StepBuilder("loadLoanCountToMemoryStep", jobRepository)
+        return new StepBuilder("loanMemoryWarmupStep", jobRepository)
                 .<StockCsvData, StockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(multiBookStockCsvFileReader)
                 .writer(memoryIsbnWriter())
