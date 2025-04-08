@@ -36,6 +36,8 @@ public class StockSyncJobListener implements JobExecutionListener {
             }
         } catch (Exception e) {
             throw new RuntimeException("bookSync.ISBN 캐시 로딩 실패", e);
+        } finally {
+            isbnIdReader.close();
         }
     }
 

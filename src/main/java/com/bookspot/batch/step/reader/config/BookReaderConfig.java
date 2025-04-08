@@ -8,6 +8,7 @@ import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.service.UniqueBookRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -33,6 +34,7 @@ public class BookReaderConfig {
     }
 
     @Bean
+    @StepScope
     public IsbnIdReader isbnIdReader(
             DataSource dataSource,
             IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory) throws Exception {
