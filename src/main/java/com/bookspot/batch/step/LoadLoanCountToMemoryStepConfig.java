@@ -3,6 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
+import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.MultiStockCsvFileReader;
 import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
 import lombok.RequiredArgsConstructor;
@@ -45,10 +46,10 @@ public class LoadLoanCountToMemoryStepConfig {
                 .forEach(book -> {
                     int loanCount = book.getLoanCount();
 
-                    if(bookService.contains(book.getIsbn()))
-                        bookService.increase(book.getIsbn(), loanCount);
-                    else
-                        bookService.add(book.getIsbn(), loanCount);
+                    if(!bookService.contains(book.getIsbn()))
+                        throw new InvalidIsbn13Exception();
+
+                    bookService.increase(book.getIsbn(), loanCount);
                 });
     }
 }

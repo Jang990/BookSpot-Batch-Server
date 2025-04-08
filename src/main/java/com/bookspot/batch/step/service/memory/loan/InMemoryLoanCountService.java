@@ -2,20 +2,22 @@ package com.bookspot.batch.step.service.memory.loan;
 
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class InMemoryLoanCountService {
-    private static Map<Long, Integer> store = new HashMap<>();
+    private static Map<Long, AtomicInteger> store = new ConcurrentHashMap<>();
+    private static final int INIT_LOAN_COUNT = 0;
 
 
-    public void add(String isbn13, int loanCount) {
-        store.put(Long.parseLong(isbn13), loanCount);
+    public void add(String isbn13) {
+        store.put(Long.parseLong(isbn13), new AtomicInteger(INIT_LOAN_COUNT));
     }
 
     public Integer get(String isbn13) {
-        return store.get(Long.parseLong(isbn13));
+        return store.get(Long.parseLong(isbn13)).get();
     }
 
     public boolean contains(String isbn13) {
@@ -26,7 +28,7 @@ public class InMemoryLoanCountService {
         store.clear();
     }
 
-    public Map<Long, Integer> getData() {
+    public Map<Long, AtomicInteger> getData() {
         return store;
     }
 
@@ -34,6 +36,6 @@ public class InMemoryLoanCountService {
         Integer currentLoanCount = get(isbn);
         if(currentLoanCount == null)
             throw new IllegalArgumentException("찾을 수 없는 ISBN");
-        add(isbn, currentLoanCount + loanCount);
+        store.get(Long.parseLong(isbn)).addAndGet(loanCount);
     }
 }

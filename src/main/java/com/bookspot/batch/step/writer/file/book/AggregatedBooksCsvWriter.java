@@ -10,21 +10,22 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AggregatedBooksCsvWriter {
-    public void saveToCsv(String filePath, Map<Long, Integer> map) throws IOException {
+    public void saveToCsv(String filePath, Map<Long, AtomicInteger> map) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
             // 헤더?
             /*writer.write("id,title,author");
             writer.newLine();*/
 
-            for (Map.Entry<Long, Integer> data : map.entrySet()) {
+            for (Map.Entry<Long, AtomicInteger> data : map.entrySet()) {
                 String line = AggregatedBooksCsvSpec.createLine(
                         Isbn13Convertor.convert(data.getKey()),
-                        data.getValue()
+                        data.getValue().get()
                 );
                 writer.write(line);
                 writer.newLine();
