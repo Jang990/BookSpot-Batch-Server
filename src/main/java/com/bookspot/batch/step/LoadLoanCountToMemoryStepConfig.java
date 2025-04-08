@@ -28,12 +28,10 @@ public class LoadLoanCountToMemoryStepConfig {
 
     @Bean
     public Step loadLoanCountToMemoryStep(
-            MultiStockCsvFileReader multiBookStockCsvFileReader,
-            IsbnValidationFilter isbnValidationFilter) {
+            MultiStockCsvFileReader multiBookStockCsvFileReader) {
         return new StepBuilder("loadLoanCountToMemoryStep", jobRepository)
                 .<StockCsvData, StockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(multiBookStockCsvFileReader)
-                .processor(isbnValidationFilter)
                 .writer(memoryIsbnWriter())
                 .listener(stepLoggingListener)
                 .build();

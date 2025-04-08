@@ -1,13 +1,17 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.TestInsertUtils;
+import com.bookspot.batch.TestQueryUtil;
 import com.bookspot.batch.data.file.csv.AggregatedBook;
 import com.bookspot.batch.step.reader.AggregatedLoanFileReader;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.core.*;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,8 +28,18 @@ class LoanAggregatedJobConfigTest {
     @Autowired
     Job loanAggregatedJob;
 
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+
     String sourceDirectory = "src/test/resources/files/loanSync";
     String outputFilePath = "src/test/resources/files/loanSync/result/aggregated.csv";
+
+    @BeforeEach
+    void setup() {
+        TestInsertUtils.bookBuilder().isbn13("0000000001001").insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().isbn13("0000000001002").insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().isbn13("0000000001003").insert(jdbcTemplate);
+    }
 
     @AfterEach
     void afterEach() throws IOException {

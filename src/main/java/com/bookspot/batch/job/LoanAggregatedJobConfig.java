@@ -1,13 +1,17 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.job.listener.LoanAggregatedJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
 import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
+import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
+import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
 import com.bookspot.batch.step.writer.file.book.AggregatedBooksCsvWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
@@ -19,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import javax.sql.DataSource;
 import java.util.Map;
 
 @Configuration
@@ -30,19 +35,29 @@ public class LoanAggregatedJobConfig {
     public static final String OUTPUT_FILE_PARAM_NAME = "outputFilePath";
     public static final String OUTPUT_FILE_PATH = "#{jobParameters['outputFilePath']}";
 
+    private static final int ISBN_WARM_UP_SIZE = 5_000;
+
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final InMemoryLoanCountService inMemoryBookService;
     private final AggregatedBooksCsvWriter aggregatedBooksCsvWriter;
 
     private final CustomFilePathValidators filePathValidators;
+    private final InMemoryLoanCountService loanCountService;
 
     @Bean
-    public Job loanAggregatedJob(Step loadLoanCountToMemoryStep) {
+    public Job loanAggregatedJob(
+            Step loadLoanCountToMemoryStep,
+            IsbnIdReader isbnIdReaderForWarmup) {
         return new JobBuilder("loanAggregatedJob", jobRepository)
                 .start(loadLoanCountToMemoryStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
                 .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
-                .next(clearBookMemoryStep()) // 도서 정보 인메모리 clearAll();
+                .listener(
+                        new LoanAggregatedJobListener(
+                                isbnIdReaderForWarmup,
+                                loanCountService
+                        )
+                )
                 .validator(
                         temp_FilePathJobParameterValidator.of(
                                 filePathValidators,
@@ -52,16 +67,6 @@ public class LoanAggregatedJobConfig {
                                 )
                         )
                 )
-                .build();
-    }
-
-    @Bean
-    public Step clearBookMemoryStep() {
-        return new StepBuilder("clearBookMemoryStep", jobRepository)
-                .tasklet((contribution, chunkContext) -> {
-                    inMemoryBookService.clearAll();
-                    return RepeatStatus.FINISHED;
-                }, transactionManager)
                 .build();
     }
 
@@ -80,5 +85,17 @@ public class LoanAggregatedJobConfig {
             aggregatedBooksCsvWriter.saveToCsv(aggregatedFilePath, inMemoryBookService.getData());
             return RepeatStatus.FINISHED;
         };
+    }
+
+    @Bean
+    @JobScope
+    public IsbnIdReader isbnIdReaderForWarmup(
+            DataSource dataSource,
+            IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory) throws Exception {
+        return new IsbnIdReader(
+                dataSource,
+                isbnIdPagingQueryProviderFactory.getObject(),
+                ISBN_WARM_UP_SIZE
+        );
     }
 }
