@@ -1,6 +1,9 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
+import com.bookspot.batch.job.validator.file.FilePathType;
+import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
 import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
 import com.bookspot.batch.step.writer.file.book.AggregatedBooksCsvWriter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.util.Map;
+
 @Configuration
 @RequiredArgsConstructor
 public class LoanSyncJobConfig {
@@ -25,6 +30,8 @@ public class LoanSyncJobConfig {
     private final InMemoryLoanCountService inMemoryBookService;
     private final AggregatedBooksCsvWriter aggregatedBooksCsvWriter;
 
+    private final CustomFilePathValidators filePathValidators;
+
     @Bean
     public Job loanSyncJob(Step loadLoanCountToMemoryStep, Step syncAggregatedBookStep) {
         return new JobBuilder("bookLoanCountSyncJob", jobRepository)
@@ -32,7 +39,15 @@ public class LoanSyncJobConfig {
                 .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
                 .next(clearBookMemoryStep()) // 도서 정보 인메모리 clearAll();
                 .next(syncAggregatedBookStep) //- 저장한 파일을 DB에 반영 - 새로 나온 책 + 최근 대출 횟수 반영
-                .validator(FilePathJobParameterValidator.rootDirAndAggregatedFile())
+                .validator(
+                        temp_FilePathJobParameterValidator.of(
+                                filePathValidators,
+                                Map.of(
+                                        "rootDirPath", FilePathType.REQUIRED_DIRECTORY,
+                                        "aggregatedFilePath", FilePathType.OPTIONAL_FILE
+                                )
+                        )
+                )
                 .build();
     }
 
