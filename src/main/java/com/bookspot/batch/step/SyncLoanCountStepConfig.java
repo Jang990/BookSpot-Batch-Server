@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.AggregatedBook;
-import com.bookspot.batch.job.LoanAggregatedJobConfig;
+import com.bookspot.batch.job.LoanSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.AggregatedLoanFileReader;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ import javax.sql.DataSource;
 
 @Configuration
 @RequiredArgsConstructor
-public class SyncAggregatedBookStepConfig {
+public class SyncLoanCountStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final DataSource dataSource;
@@ -29,8 +29,8 @@ public class SyncAggregatedBookStepConfig {
     private static final int CHUNK_SIZE = 5_000;
 
     @Bean
-    public Step syncAggregatedBookStep() {
-        return new StepBuilder("syncAggregatedBookStep", jobRepository)
+    public Step syncLoanCountStep() {
+        return new StepBuilder("syncLoanCountStep", jobRepository)
                 .<AggregatedBook, AggregatedBook>chunk(CHUNK_SIZE, transactionManager)
                 .reader(aggregatedLoanFileReader(null))
                 .writer(stockBookWriter())
@@ -41,7 +41,7 @@ public class SyncAggregatedBookStepConfig {
     @Bean
     @StepScope
     public AggregatedLoanFileReader aggregatedLoanFileReader(
-            @Value(LoanAggregatedJobConfig.AGGREGATED_FILE_PATH) String aggregatedFilePath) {
+            @Value(LoanSyncJobConfig.AGGREGATED_FILE_PATH) String aggregatedFilePath) {
         return new AggregatedLoanFileReader(aggregatedFilePath);
     }
 

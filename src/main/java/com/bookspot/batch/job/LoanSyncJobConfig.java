@@ -21,9 +21,9 @@ public class LoanSyncJobConfig {
     private final CustomFilePathValidators filePathValidators;
 
     @Bean
-    public Job loanSyncJob(Step syncAggregatedBookStep) {
+    public Job loanSyncJob(Step syncLoanCountStep) {
         return new JobBuilder("loanAggregatedJob", jobRepository)
-                .start(syncAggregatedBookStep) //- 저장한 파일을 DB에 반영 - 새로 나온 책 + 최근 대출 횟수 반영
+                .start(syncLoanCountStep) //- 저장한 파일을 DB에 반영 - 새로 나온 책 + 최근 대출 횟수 반영
                 .validator(
                         temp_FilePathJobParameterValidator.REQUIRED_FILE(
                                 filePathValidators,
