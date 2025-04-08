@@ -1,6 +1,6 @@
 package com.bookspot.batch.step.reader.config;
 
-import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
+import com.bookspot.batch.job.LoanSyncJobConfig;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.reader.*;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +26,7 @@ public class StockFileReaderConfig {
     @Bean
     @StepScope
     public MultiStockCsvFileReader multiStockCsvFileReader(
-            @Value(FilePathJobParameterValidator.ROOT_DIR_PATH) String rootDirPath) throws IOException {
+            @Value(LoanSyncJobConfig.DIRECTORY_PATH) String rootDirPath) throws IOException {
         return new MultiStockCsvFileReader(rootDirPath);
     }
 }

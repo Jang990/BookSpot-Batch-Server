@@ -1,6 +1,5 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
 import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
@@ -25,6 +24,12 @@ import java.util.Map;
 @Configuration
 @RequiredArgsConstructor
 public class LoanSyncJobConfig {
+    public static final String DIRECTORY_PARAM_NAME = "rootDirPath";
+    public static final String DIRECTORY_PATH = "#{jobParameters['rootDirPath']}";
+
+    public static final String AGGREGATED_FILE_PARAM_NAME = "aggregatedFilePath";
+    public static final String AGGREGATED_FILE_PATH = "#{jobParameters['aggregatedFilePath']}";
+
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final InMemoryLoanCountService inMemoryBookService;
@@ -43,8 +48,8 @@ public class LoanSyncJobConfig {
                         temp_FilePathJobParameterValidator.of(
                                 filePathValidators,
                                 Map.of(
-                                        "rootDirPath", FilePathType.REQUIRED_DIRECTORY,
-                                        "aggregatedFilePath", FilePathType.OPTIONAL_FILE
+                                        DIRECTORY_PARAM_NAME, FilePathType.REQUIRED_DIRECTORY,
+                                        AGGREGATED_FILE_PARAM_NAME, FilePathType.OPTIONAL_FILE
                                 )
                         )
                 )
@@ -71,7 +76,7 @@ public class LoanSyncJobConfig {
     @Bean
     @StepScope
     public Tasklet saveAggregatedCsvTasklet(
-            @Value(FilePathJobParameterValidator.AGGREGATED_FILE_PATH) String aggregatedFilePath) {
+            @Value(AGGREGATED_FILE_PATH) String aggregatedFilePath) {
         return (contribution, chunkContext) -> {
             aggregatedBooksCsvWriter.saveToCsv(aggregatedFilePath, inMemoryBookService.getData());
             return RepeatStatus.FINISHED;
