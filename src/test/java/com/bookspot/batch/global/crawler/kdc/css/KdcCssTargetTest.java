@@ -19,12 +19,12 @@ class KdcCssTargetTest {
     }
 
     @Test
-    void top은_40을_초과할_수_없음() {
+    void top은_39을_초과할_수_없음() {
         KdcCssTarget target = new KdcCssTarget();
 
         next(9, v -> target.nextTop());
 
-        assertEquals(40, target.top());
+        assertEquals(39, target.top());
         assertThrows(OutOfRangeCssTargetException.class, () -> target.nextTop());
     }
 
@@ -83,16 +83,16 @@ class KdcCssTargetTest {
     }
 
     @Test
-    void top은_13에서_40까지_3씩_증가() {
+    void top은_12에서_39까지_3씩_증가() {
         KdcCssTarget target = new KdcCssTarget();
-        assertEquals(target.top(), 13);
+        assertEquals(target.top(), 12);
 
         target.nextTop();
-        assertEquals(target.top(), 16);
+        assertEquals(target.top(), 15);
 
 
         next(8, v -> target.nextTop());
-        assertEquals(target.top(), 40);
+        assertEquals(target.top(), 39);
     }
 
     private void next(int cnt, Consumer<Void> nextFunc) {

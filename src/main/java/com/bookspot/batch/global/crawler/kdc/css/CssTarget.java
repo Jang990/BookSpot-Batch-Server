@@ -8,7 +8,7 @@ public class CssTarget {
     private int value;
 
     protected static CssTarget top() {
-        return new CssTarget(13, 40, 3);
+        return new CssTarget(12, 39, 3);
     }
 
     protected static CssTarget mid() {
