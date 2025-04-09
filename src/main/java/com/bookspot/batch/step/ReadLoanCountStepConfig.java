@@ -34,8 +34,6 @@ import java.nio.file.Paths;
 @Configuration
 @RequiredArgsConstructor
 public class ReadLoanCountStepConfig {
-    private static final int CHUNK_SIZE = 5_000;
-
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
