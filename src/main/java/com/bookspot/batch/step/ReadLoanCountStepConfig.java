@@ -14,7 +14,10 @@ import org.springframework.batch.core.partition.support.MultiResourcePartitioner
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.ItemWriter;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -50,13 +53,43 @@ public class ReadLoanCountStepConfig {
     }
 
     @Bean
-    public Step readLoanCountStep(StockCsvFileReader stockCsvFileReader) {
+    public Step readLoanCountStep(Tasklet readLoanCountTasklet) {
         return new StepBuilder("readLoanCountStep", jobRepository)
-                .<StockCsvData, StockCsvData>chunk(CHUNK_SIZE, platformTransactionManager)
-                .reader(stockCsvFileReader)
-                .writer(memoryIsbnWriter())
+                .tasklet(readLoanCountTasklet, platformTransactionManager)
                 .listener(stepLoggingListener)
                 .build();
+    }
+
+    @Bean
+    @StepScope
+    public Tasklet readLoanCountTasklet(StockCsvFileReader reader) {
+        return (contribution, chunkContext) -> {
+
+            try{
+                reader.open(
+                        chunkContext.getStepContext()
+                                .getStepExecution()
+                                .getExecutionContext()
+                );
+
+                StockCsvData book;
+                while ((book = reader.read()) != null) {
+                    contribution.incrementReadCount();
+                    int loanCount = book.getLoanCount();
+
+                    if (!bookService.contains(book.getIsbn())) {
+                        contribution.incrementProcessSkipCount();
+                        continue;
+                    }
+
+                    bookService.increase(book.getIsbn(), loanCount);
+                    contribution.incrementWriteCount(1L);
+                }
+                return RepeatStatus.FINISHED;
+            } finally {
+                reader.close();
+            }
+        };
     }
 
     @Bean
@@ -86,20 +119,5 @@ public class ReadLoanCountStepConfig {
         partitioner.setResources(resources);
 
         return partitioner;
-    }
-
-
-    // 새로 등록된 책을 메모리에 등록
-    @Bean
-    public ItemWriter<StockCsvData> memoryIsbnWriter() {
-        return chunk -> chunk.getItems()
-                .forEach(book -> {
-                    int loanCount = book.getLoanCount();
-
-                    if(!bookService.contains(book.getIsbn()))
-                        throw new InvalidIsbn13Exception();
-
-                    bookService.increase(book.getIsbn(), loanCount);
-                });
     }
 }
