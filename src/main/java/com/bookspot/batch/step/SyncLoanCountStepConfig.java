@@ -50,19 +50,16 @@ public class SyncLoanCountStepConfig {
         return new JdbcBatchItemWriterBuilder<AggregatedBook>()
                 .dataSource(dataSource)
                 .sql("""
-                        INSERT INTO book
-                        (isbn13, loan_count)
-                        VALUES(?, ?)
-                        ON DUPLICATE KEY UPDATE
-                            loan_count = VALUES(loan_count)
+                        UPDATE book
+                        SET loan_count = ?
+                        WHERE isbn13 = ?
                         """)
 //                monthlyLoanIncrease = loan_count + VALUES(loan_count);
                 .itemPreparedStatementSetter(
                         (book, ps) -> {
-                            ps.setString(1, book.isbn13());
-                            ps.setInt(2, book.loanCount());
+                            ps.setInt(1, book.loanCount());
+                            ps.setString(2, book.isbn13());
                         })
-                .assertUpdates(false)
                 .build();
     }
 }
