@@ -1,6 +1,5 @@
 package com.bookspot.batch.step.reader.config;
 
-import com.bookspot.batch.job.LoanAggregatedJobConfig;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.reader.*;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +9,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
-import java.io.IOException;
 
 @Configuration
 @RequiredArgsConstructor
@@ -21,12 +19,5 @@ public class StockFileReaderConfig {
     public StockCsvFileReader stockCsvFileReader(
             @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) throws Exception {
         return new StockCsvFileReader(file);
-    }
-
-    @Bean
-    @StepScope
-    public MultiStockCsvFileReader multiStockCsvFileReader(
-            @Value(LoanAggregatedJobConfig.DIRECTORY_PATH) String rootDirPath) throws IOException {
-        return new MultiStockCsvFileReader(rootDirPath);
     }
 }
