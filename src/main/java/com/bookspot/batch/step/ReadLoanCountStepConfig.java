@@ -16,7 +16,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class LoadLoanCountToMemoryStepConfig {
+public class ReadLoanCountStepConfig {
     private static final int BOOK_SYNC_CHUNK_SIZE = 5_000;
 
     private final JobRepository jobRepository;
@@ -26,9 +26,9 @@ public class LoadLoanCountToMemoryStepConfig {
     private final StepLoggingListener stepLoggingListener;
 
     @Bean
-    public Step loanMemoryWarmupStep(
+    public Step readLoanCountStep(
             MultiStockCsvFileReader multiBookStockCsvFileReader) {
-        return new StepBuilder("loanMemoryWarmupStep", jobRepository)
+        return new StepBuilder("readLoanCountStep", jobRepository)
                 .<StockCsvData, StockCsvData>chunk(BOOK_SYNC_CHUNK_SIZE, platformTransactionManager)
                 .reader(multiBookStockCsvFileReader)
                 .writer(memoryIsbnWriter())

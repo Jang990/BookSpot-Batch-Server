@@ -47,10 +47,10 @@ public class LoanAggregatedJobConfig {
 
     @Bean
     public Job loanAggregatedJob(
-            Step loanMemoryWarmupStep,
+            Step readLoanCountStep,
             IsbnIdReader isbnIdReaderForWarmup) {
         return new JobBuilder("loanAggregatedJob", jobRepository)
-                .start(loanMemoryWarmupStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
+                .start(readLoanCountStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
                 .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
                 .listener(
                         new LoanAggregatedJobListener(
