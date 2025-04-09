@@ -47,6 +47,7 @@ public class ReadLoanCountStepConfig {
         return new StepBuilder("readLoanCountMasterStep", jobRepository)
                 .partitioner(readLoanCountStep.getName(), loanCountPartitioner(null))
                 .partitionHandler(loanCountPartitionHandler)
+                .allowStartIfComplete(true)
                 .build();
     }
 
