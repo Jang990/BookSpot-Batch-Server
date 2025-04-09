@@ -1,9 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.listener.BookSyncJobListener;
-import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
-import com.bookspot.batch.job.validator.file.FilePathType;
 import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
@@ -14,8 +12,6 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import java.util.Map;
 
 /**
  * - DB에 있는 ISBN 정보를 메모리로 불러오기
@@ -39,10 +35,10 @@ public class BookSyncJobConfig {
     public static final String MOVE_DIR_PARAM = "#{jobParameters['moveDir']}";*/
 
     @Bean
-    public Job bookSyncPartitionedJob(
+    public Job bookSyncJob(
             Step bookSyncPartitionMasterStep,
             IsbnReader isbnReader, IsbnSet isbnSet) {
-        return new JobBuilder("bookSyncPartitionedJob", jobRepository)
+        return new JobBuilder("bookSyncJob", jobRepository)
                 .start(bookSyncPartitionMasterStep)
                 .listener(new BookSyncJobListener(isbnReader, isbnSet))
                 .validator(

@@ -1,6 +1,5 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.TestFileUtil;
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.step.service.BookRepository;
@@ -25,7 +24,7 @@ class BookSyncJobConfigTest {
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    Job bookSyncPartitionedJob;
+    Job bookSyncJob;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -46,7 +45,7 @@ class BookSyncJobConfigTest {
     void 정상_처리() throws Exception {
         registerExistingBooks("0000000000003");
 
-        jobLauncherTestUtils.setJob(bookSyncPartitionedJob);
+        jobLauncherTestUtils.setJob(bookSyncJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(parameters);
 
 
