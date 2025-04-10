@@ -43,21 +43,17 @@ public class LoanAggregatedJobConfig {
     private final AggregatedBooksCsvWriter aggregatedBooksCsvWriter;
 
     private final CustomFilePathValidators filePathValidators;
-    private final InMemoryLoanCountService loanCountService;
 
     @Bean
     public Job loanAggregatedJob(
+            Step loanMapInitStep,
             Step readLoanCountMasterStep,
-            IsbnIdReader isbnIdReaderForWarmup) {
+            Step loanMapCleaningStep) {
         return new JobBuilder("loanAggregatedJob", jobRepository)
-                .start(readLoanCountMasterStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
+                .start(loanMapInitStep)
+                .next(readLoanCountMasterStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
                 .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
-                .listener(
-                        new LoanAggregatedJobListener(
-                                isbnIdReaderForWarmup,
-                                loanCountService
-                        )
-                )
+                .next(loanMapCleaningStep)
                 .validator(
                         temp_FilePathJobParameterValidator.of(
                                 filePathValidators,
@@ -85,17 +81,5 @@ public class LoanAggregatedJobConfig {
             aggregatedBooksCsvWriter.saveToCsv(aggregatedFilePath, inMemoryBookService.getData());
             return RepeatStatus.FINISHED;
         };
-    }
-
-    @Bean
-    @JobScope
-    public IsbnIdReader isbnIdReaderForWarmup(
-            DataSource dataSource,
-            IsbnIdPagingQueryProviderFactory isbnIdPagingQueryProviderFactory) throws Exception {
-        return new IsbnIdReader(
-                dataSource,
-                isbnIdPagingQueryProviderFactory.getObject(),
-                ISBN_WARM_UP_SIZE
-        );
     }
 }

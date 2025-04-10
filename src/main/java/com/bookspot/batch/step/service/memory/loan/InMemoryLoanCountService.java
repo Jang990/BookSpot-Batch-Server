@@ -21,7 +21,11 @@ public class InMemoryLoanCountService {
     }
 
     public boolean contains(String isbn13) {
-        return store.containsKey(Long.parseLong(isbn13));
+        try {
+            return store.containsKey(Long.parseLong(isbn13));
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     public void clearAll() {
