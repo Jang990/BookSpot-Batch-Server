@@ -4,9 +4,8 @@ import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.job.LoanAggregatedJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
-import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
-import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
+import com.bookspot.batch.step.service.memory.loan.MemoryLoanCountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -15,8 +14,6 @@ import org.springframework.batch.core.partition.support.TaskExecutorPartitionHan
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.item.ExecutionContext;
-import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -37,7 +34,7 @@ public class ReadLoanCountStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
-    private final InMemoryLoanCountService bookService;
+    private final MemoryLoanCountService memoryLoanCountService;
     private final StepLoggingListener stepLoggingListener;
 
     @Bean
@@ -76,12 +73,12 @@ public class ReadLoanCountStepConfig {
                     contribution.incrementReadCount();
                     int loanCount = book.getLoanCount();
 
-                    if (!bookService.contains(book.getIsbn())) {
+                    if (!memoryLoanCountService.contains(book.getIsbn())) {
                         contribution.incrementProcessSkipCount();
                         continue;
                     }
 
-                    bookService.increase(book.getIsbn(), loanCount);
+                    memoryLoanCountService.increase(book.getIsbn(), loanCount);
                     contribution.incrementWriteCount(1L);
                 }
                 return RepeatStatus.FINISHED;

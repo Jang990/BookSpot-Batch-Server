@@ -3,7 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
-import com.bookspot.batch.step.service.memory.loan.InMemoryLoanCountService;
+import com.bookspot.batch.step.service.memory.loan.MemoryLoanCountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.repository.JobRepository;
@@ -26,22 +26,22 @@ public class LoanMapStepConfig {
     @Bean
     public Step loanMapInitStep(
             IsbnIdReader isbnIdReader,
-            InMemoryLoanCountService loanCountService) {
+            MemoryLoanCountService memoryLoanCountService) {
         return new StepBuilder("loanCountMapInitStep", jobRepository)
                 .<Isbn13MemoryData, Isbn13MemoryData>chunk(CHUNK_SIZE, transactionManager)
                 .reader(isbnIdReader)
-                .writer(loanCountMapWriter(loanCountService))
+                .writer(loanCountMapWriter(memoryLoanCountService))
                 .listener(stepLoggingListener)
                 .allowStartIfComplete(true)
                 .build();
     }
 
     @Bean
-    public Step loanMapCleaningStep(InMemoryLoanCountService loanCountService) {
+    public Step loanMapCleaningStep(MemoryLoanCountService memoryLoanCountService) {
         return new StepBuilder("loanMapCleaningStep", jobRepository)
                 .tasklet(
                         (contribution, chunkContext) -> {
-                            loanCountService.clearAll();
+                            memoryLoanCountService.clearAll();
                             return RepeatStatus.FINISHED;
                         },
                         transactionManager
@@ -51,10 +51,10 @@ public class LoanMapStepConfig {
     }
 
     @Bean
-    public ItemWriter<Isbn13MemoryData> loanCountMapWriter(InMemoryLoanCountService loanCountService) {
+    public ItemWriter<Isbn13MemoryData> loanCountMapWriter(MemoryLoanCountService memoryLoanCountService) {
         return chunk -> {
             for (Isbn13MemoryData data : chunk)
-                loanCountService.add(data.isbn13());
+                memoryLoanCountService.add(data.isbn13());
         };
     }
 }

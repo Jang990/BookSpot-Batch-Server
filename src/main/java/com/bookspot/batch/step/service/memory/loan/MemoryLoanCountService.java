@@ -7,7 +7,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
-public class InMemoryLoanCountService {
+public class MemoryLoanCountService {
     private static Map<Long, AtomicInteger> store = new ConcurrentHashMap<>();
     private static final int INIT_LOAN_COUNT = 0;
 
