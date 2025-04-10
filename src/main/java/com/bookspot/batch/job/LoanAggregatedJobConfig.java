@@ -1,6 +1,5 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.job.listener.LoanAggregatedJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
 import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
