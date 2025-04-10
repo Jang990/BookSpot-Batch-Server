@@ -18,6 +18,9 @@ public class Book {
     private LocalDate publishedDate;
     private int pageCount;
 
+//    private LocalDateTime createdAt;
+//    private LocalDateTime updatedAt;
+
     public Book(
             long dbBookId, String isbn, String image,
             String title, String subTitle, String author,

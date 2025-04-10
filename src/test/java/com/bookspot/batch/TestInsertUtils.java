@@ -39,14 +39,14 @@ public class TestInsertUtils {
     public static class BookBuilder {
         private static final String WITHOUT_ID_QUERY ="""
                 INSERT INTO bookspot_test.book
-                (isbn13, title, loan_count)
-                VALUES(?, ?, ?);
+                (isbn13, title, loan_count, created_at, updated_at)
+                VALUES(?, ?, ?, NOW(6), NOW(6));
                 """;
 
         private static final String WITH_ID_QUERY ="""
                 INSERT INTO bookspot_test.book
-                (id, isbn13, title, loan_count)
-                VALUES(?, ?, ?, ?);
+                (id, isbn13, title, loan_count, created_at, updated_at)
+                VALUES(?, ?, ?, ?, NOW(6), NOW(6));
                 """;
 
         private Long id = null;
