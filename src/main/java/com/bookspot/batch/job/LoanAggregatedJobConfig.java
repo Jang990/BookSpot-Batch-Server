@@ -34,8 +34,6 @@ public class LoanAggregatedJobConfig {
     public static final String OUTPUT_FILE_PARAM_NAME = "outputFilePath";
     public static final String OUTPUT_FILE_PATH = "#{jobParameters['outputFilePath']}";
 
-    private static final int ISBN_WARM_UP_SIZE = 5_000;
-
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final InMemoryLoanCountService inMemoryBookService;
