@@ -17,4 +17,15 @@ public class TaskExecutorConfig {
         executor.initialize();
         return executor;
     }
+
+    @Bean
+    public TaskExecutor singleTaskPool() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(10);
+        executor.setThreadNamePrefix("single-csv-thread");
+        executor.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
+        executor.initialize();
+        return executor;
+    }
 }

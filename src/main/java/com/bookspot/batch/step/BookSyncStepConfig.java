@@ -29,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.io.IOException;
@@ -57,10 +58,12 @@ public class BookSyncStepConfig {
     }
 
     @Bean
-    public TaskExecutorPartitionHandler bookSyncPartitionHandler(Step bookSyncStep) {
+    public TaskExecutorPartitionHandler bookSyncPartitionHandler(
+            Step bookSyncStep,
+            TaskExecutor singleTaskPool) {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(bookSyncStep);
-        partitionHandler.setTaskExecutor(new SyncTaskExecutor());
+        partitionHandler.setTaskExecutor(singleTaskPool);
         return partitionHandler;
     }
 
