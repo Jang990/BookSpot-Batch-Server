@@ -79,7 +79,6 @@ public class StockSyncStepConfig {
                 .processor(stockProcessor)
                 .writer(stockWriter)
                 .listener(stepLoggingListener)
-                .listener(invalidIsbn13LoggingListener)
                 .faultTolerant()
                 .skip(InvalidIsbn13Exception.class)
                 .skipLimit(50_000)

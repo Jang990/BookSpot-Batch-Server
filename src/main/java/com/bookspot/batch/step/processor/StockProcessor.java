@@ -18,7 +18,6 @@ public class StockProcessor implements ItemProcessor<StockCsvData, LibraryStock>
         Long bookId = isbnMemoryRepository.get(item.getIsbn());
 
         if (bookId == null) {
-            log.info("DB에서 찾을 수 없는 도서 정보 = {}", item);
             return null;
         }
 
