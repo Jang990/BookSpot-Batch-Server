@@ -91,10 +91,10 @@ public class ReadLoanCountStepConfig {
     @Bean
     public TaskExecutorPartitionHandler loanCountPartitionHandler(
             Step readLoanCountStep,
-            TaskExecutor stockCsvTaskPool) {
+            TaskExecutor multiTaskPool) {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(readLoanCountStep);
-        partitionHandler.setTaskExecutor(stockCsvTaskPool);
+        partitionHandler.setTaskExecutor(multiTaskPool);
         return partitionHandler;
     }
 

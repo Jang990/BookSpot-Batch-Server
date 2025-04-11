@@ -60,10 +60,12 @@ public class StockSyncStepConfig {
     }
 
     @Bean
-    public TaskExecutorPartitionHandler stockSyncPartitionHandler(Step stockSyncStep, TaskExecutor stockCsvTaskPool) {
+    public TaskExecutorPartitionHandler stockSyncPartitionHandler(
+            Step stockSyncStep,
+            TaskExecutor multiTaskPool) {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(stockSyncStep);
-        partitionHandler.setTaskExecutor(stockCsvTaskPool);
+        partitionHandler.setTaskExecutor(multiTaskPool);
         return partitionHandler;
     }
 

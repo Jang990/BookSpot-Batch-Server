@@ -20,15 +20,4 @@ import java.nio.file.Paths;
 public class StockCsvPartitionConfig {
     public static final String PARTITIONER_KEY = "file";
     public static final String STEP_EXECUTION_FILE = "#{stepExecutionContext['" + StockCsvPartitionConfig.PARTITIONER_KEY + "']}";
-
-    @Bean
-    public TaskExecutor stockCsvTaskPool() {
-        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
-        executor.setThreadNamePrefix("stock-csv-thread");
-        executor.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
-        executor.initialize();
-        return executor;
-    }
 }
