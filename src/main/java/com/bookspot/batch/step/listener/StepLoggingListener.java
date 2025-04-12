@@ -10,6 +10,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class StepLoggingListener implements StepExecutionListener {
     @Override
+    public void beforeStep(StepExecution stepExecution) {
+        log.info("{} 시작", stepExecution.getStepName());
+    }
+
+    @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
         log.info("{}[{}]: {} 읽기 / {} 스킵 / {} 쓰기",
                 stepExecution.getStepName(),
