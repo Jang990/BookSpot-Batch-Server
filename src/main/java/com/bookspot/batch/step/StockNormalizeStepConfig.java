@@ -112,9 +112,6 @@ public class StockNormalizeStepConfig {
     public StockNormalizeFileWriter stockNormalizeFileWriter(
             @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
             @Value(StockNormalizeJobConfig.NORMALIZE_DIR_PARAM) String normalizeDirPath) {
-        System.out.println(file);
-        System.out.println(normalizeDirPath);
-
         String outputFile = normalizeDirPath.concat("/")
                 .concat(StockFilenameUtil.toNormalized(file.getFilename()))
                 .concat(".csv");
