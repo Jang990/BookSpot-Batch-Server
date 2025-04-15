@@ -28,17 +28,13 @@ public class Temp_StockNormalizeJob {
 
     @Bean
     public Job stockNormalizeJob(
-            StockSyncJobListener stockSyncJobListener,
-
             Step isbnIdMapInitStep,
             Step stockNormalizeMasterStep,
             Step isbnIdMapCleaningStep) {
-        // 재고 업데이트 -> 사라진 재고 정보 삭제 -> 크롤링 시점 업데이트
         return new JobBuilder("stockNormalizeJob", jobRepository)
                 .start(isbnIdMapInitStep)
                 .next(stockNormalizeMasterStep)
                 .next(isbnIdMapCleaningStep)
-                .listener(stockSyncJobListener)
                 .validator(
                         temp_FilePathJobParameterValidator.of(
                                 filePathValidators,
