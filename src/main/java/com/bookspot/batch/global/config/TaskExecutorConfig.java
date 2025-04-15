@@ -10,8 +10,8 @@ public class TaskExecutorConfig {
     @Bean
     public TaskExecutor multiTaskPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
+        executor.setCorePoolSize(5);
+        executor.setMaxPoolSize(5);
         executor.setThreadNamePrefix("multi-csv-thread");
         executor.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
         executor.initialize();
@@ -21,8 +21,8 @@ public class TaskExecutorConfig {
     @Bean
     public TaskExecutor singleTaskPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(10);
-        executor.setMaxPoolSize(10);
+        executor.setCorePoolSize(1);
+        executor.setMaxPoolSize(1);
         executor.setThreadNamePrefix("single-csv-thread");
         executor.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
         executor.initialize();
