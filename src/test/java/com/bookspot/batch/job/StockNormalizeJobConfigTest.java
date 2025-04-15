@@ -14,8 +14,6 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
@@ -25,7 +23,7 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 @BatchJobTest
-class Temp_StockNormalizeJobTest {
+class StockNormalizeJobConfigTest {
     final String SOURCE_DIR = "src/test/resources/files/stockNormalize";
     final String OUTPUT_DIR = "src/test/resources/files/stockNormalize/result";
 
@@ -64,11 +62,11 @@ class Temp_StockNormalizeJobTest {
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(
                 new JobParametersBuilder()
                         .addString(
-                                Temp_StockNormalizeJob.SOURCE_DIR_PARAM_NAME,
+                                StockNormalizeJobConfig.SOURCE_DIR_PARAM_NAME,
                                 SOURCE_DIR
                         )
                         .addString(
-                                Temp_StockNormalizeJob.NORMALIZE_DIR_PARAM_NAME,
+                                StockNormalizeJobConfig.NORMALIZE_DIR_PARAM_NAME,
                                 OUTPUT_DIR
                         )
                         .toJobParameters()

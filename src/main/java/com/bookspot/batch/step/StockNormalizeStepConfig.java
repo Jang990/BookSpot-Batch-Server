@@ -3,7 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
-import com.bookspot.batch.job.Temp_StockNormalizeJob;
+import com.bookspot.batch.job.StockNormalizeJobConfig;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
@@ -57,7 +57,7 @@ public class StockNormalizeStepConfig {
     @Bean
     @StepScope
     public MultiResourcePartitioner stockNormalizePartitioner(
-            @Value(Temp_StockNormalizeJob.SOURCE_DIR_PARAM) String root) throws IOException {
+            @Value(StockNormalizeJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
         Path rootPath = Paths.get(root);
@@ -90,7 +90,7 @@ public class StockNormalizeStepConfig {
     @StepScope
     public StockNormalizeFileWriter stockNormalizeFileWriter(
             @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
-            @Value(Temp_StockNormalizeJob.NORMALIZE_DIR_PARAM) String normalizeDirPath) {
+            @Value(StockNormalizeJobConfig.NORMALIZE_DIR_PARAM) String normalizeDirPath) {
         System.out.println(file);
         System.out.println(normalizeDirPath);
 

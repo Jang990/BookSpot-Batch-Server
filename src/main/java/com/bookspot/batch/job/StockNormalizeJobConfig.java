@@ -1,6 +1,5 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.job.listener.StockSyncJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
 import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
@@ -16,7 +15,7 @@ import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
-public class Temp_StockNormalizeJob {
+public class StockNormalizeJobConfig {
     private final JobRepository jobRepository;
     private final CustomFilePathValidators filePathValidators;
 
