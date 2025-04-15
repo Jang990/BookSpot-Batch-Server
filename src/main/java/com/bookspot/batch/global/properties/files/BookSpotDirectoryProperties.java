@@ -17,6 +17,8 @@ public class BookSpotDirectoryProperties {
     private String loanSync;
     @Value("${path.directory.normalizedStock}")
     private String normalizedStock;
+    @Value("${path.directory.filteredStock}")
+    private String filteredStock;
 
 
     public String root() {
@@ -41,5 +43,9 @@ public class BookSpotDirectoryProperties {
 
     public String normalizedStock() {
         return normalizedStock;
+    }
+
+    public String filteredStock() {
+        return filteredStock;
     }
 }
