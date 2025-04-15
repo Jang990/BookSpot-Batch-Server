@@ -1,13 +1,13 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
-import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
-import com.bookspot.batch.job.StockNormalizeJobConfig;
+import com.bookspot.batch.job.DuplicatedBookFilterJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
-import com.bookspot.batch.step.processor.StockProcessor;
-import com.bookspot.batch.step.reader.StockCsvFileReader;
+import com.bookspot.batch.step.processor.DuplicatedBookIdFilter;
+import com.bookspot.batch.step.reader.StockNormalizedFileReader;
+import com.bookspot.batch.step.service.memory.isbn.BookIdSet;
 import com.bookspot.batch.step.writer.file.stock.StockNormalizeFileWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -28,38 +28,37 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
-public class StockNormalizeStepConfig {
+public class DuplicatedBookFilterStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
 
     @Bean
-    public Step stockNormalizeMasterStep(
-            Step stockNormalizeStep,
-            TaskExecutorPartitionHandler stockNormalizePartitionHandler) throws IOException {
-        return new StepBuilder("stockNormalizeMasterStep", jobRepository)
-                .partitioner(stockNormalizeStep.getName(), stockNormalizePartitioner(null))
-                .partitionHandler(stockNormalizePartitionHandler)
+    public Step duplicatedBookFilterMasterStep(
+            Step duplicatedBookFilterStep,
+            TaskExecutorPartitionHandler duplicatedBookFilterPartitionHandler) throws IOException {
+        return new StepBuilder("duplicatedBookFilterMasterStep", jobRepository)
+                .partitioner(duplicatedBookFilterStep.getName(), duplicatedBookFilterPartitioner(null))
+                .partitionHandler(duplicatedBookFilterPartitionHandler)
                 .build();
     }
 
     @Bean
-    public TaskExecutorPartitionHandler stockNormalizePartitionHandler(
-            Step stockNormalizeStep,
+    public TaskExecutorPartitionHandler duplicatedBookFilterPartitionHandler(
+            Step duplicatedBookFilterStep,
             TaskExecutor multiTaskPool) {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
-        partitionHandler.setStep(stockNormalizeStep);
+        partitionHandler.setStep(duplicatedBookFilterStep);
         partitionHandler.setTaskExecutor(multiTaskPool);
         return partitionHandler;
     }
 
     @Bean
     @StepScope
-    public MultiResourcePartitioner stockNormalizePartitioner(
-            @Value(StockNormalizeJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
+    public MultiResourcePartitioner duplicatedBookFilterPartitioner(
+            @Value(DuplicatedBookFilterJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
         Path rootPath = Paths.get(root);
@@ -76,27 +75,36 @@ public class StockNormalizeStepConfig {
     }
 
     @Bean
-    public Step stockNormalizeStep(
-            StockCsvFileReader stockCsvFileReader,
-            StockProcessor stockProcessor,
-            StockNormalizeFileWriter stockNormalizeFileWriter,
-            StepLoggingListener stepLoggingListener) {
-        return new StepBuilder("stockNormalizeStep", jobRepository)
-                .<StockCsvData, LibraryStock>chunk(10_000, transactionManager)
-                .reader(stockCsvFileReader)
-                .processor(stockProcessor)
-                .writer(stockNormalizeFileWriter)
+    public Step duplicatedBookFilterStep(StepLoggingListener stepLoggingListener) {
+        return new StepBuilder("duplicatedBookFilterStep", jobRepository)
+                .<LibraryStock, LibraryStock>chunk(10_000, transactionManager)
+                .reader(normalizedFileReader(null))
+                .processor(duplicatedBookIdFilter())
+                .writer(duplicatedBookIdWriter(null, null))
                 .listener(stepLoggingListener)
                 .build();
     }
 
     @Bean
     @StepScope
-    public StockNormalizeFileWriter stockNormalizeFileWriter(
-            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
-            @Value(StockNormalizeJobConfig.NORMALIZE_DIR_PARAM) String normalizeDirPath) {
+    public StockNormalizedFileReader normalizedFileReader(
+            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) {
+        return new StockNormalizedFileReader(file);
+    }
+
+    @Bean
+    @StepScope
+    public DuplicatedBookIdFilter duplicatedBookIdFilter() {
+        return new DuplicatedBookIdFilter(new BookIdSet());
+    }
+
+    @Bean
+    @StepScope
+    public StockNormalizeFileWriter duplicatedBookIdWriter(
+            @Value(DuplicatedBookFilterJobConfig.OUTPUT_DIR_PARAM) String normalizeDirPath,
+            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) {
         String outputFile = normalizeDirPath.concat("/")
-                .concat(StockFilenameUtil.toNormalized(file.getFilename()))
+                .concat(StockFilenameUtil.toFiltered(file.getFilename()))
                 .concat(".csv");
         return new StockNormalizeFileWriter(outputFile);
     }

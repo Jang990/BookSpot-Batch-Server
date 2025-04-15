@@ -24,9 +24,9 @@ import java.nio.file.Path;
 import static org.junit.jupiter.api.Assertions.*;
 
 @BatchJobTest
-class StockNormalizeJobConfigTest {
-    final String SOURCE_DIR = "src/test/resources/files/stockNormalize";
-    final String OUTPUT_DIR = "src/test/resources/files/stockNormalize/result";
+class DuplicatedBookFilterJobConfigTest {
+    final String SOURCE_DIR = "src/test/resources/files/stockFilteredJob";
+    final String OUTPUT_DIR = "src/test/resources/files/stockFilteredJob/result";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -35,19 +35,15 @@ class StockNormalizeJobConfigTest {
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    Job stockNormalizeJob;
+    Job duplicatedBookFilterJob;
 
     @BeforeEach
     void beforeEach() throws IOException {
         TestInsertUtils.bookBuilder().id(101L).isbn13("0000000000101").insert(jdbcTemplate);
         TestInsertUtils.bookBuilder().id(102L).isbn13("0000000000102").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(103L).isbn13("0000000000103").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(104L).isbn13("0000000000104").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(105L).isbn13("0000000000105").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(106L).isbn13("0000000000106").insert(jdbcTemplate);
 
         TestFileUtil.copy(
-                "src/test/resources/files/sample/stockSync/10001_2025-03-01.csv",
+                "src/test/resources/files/sample/normalized/sample_normalized.csv",
                 SOURCE_DIR+"/10001_2025-03-01.csv"
         );
     }
@@ -60,33 +56,34 @@ class StockNormalizeJobConfigTest {
 
     @Test
     void test() throws Exception {
-        jobLauncherTestUtils.setJob(stockNormalizeJob);
+        jobLauncherTestUtils.setJob(duplicatedBookFilterJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(
                 new JobParametersBuilder()
                         .addString(
-                                StockNormalizeJobConfig.SOURCE_DIR_PARAM_NAME,
+                                DuplicatedBookFilterJobConfig.SOURCE_DIR_PARAM_NAME,
                                 SOURCE_DIR
                         )
                         .addString(
-                                StockNormalizeJobConfig.NORMALIZE_DIR_PARAM_NAME,
+                                DuplicatedBookFilterJobConfig.OUTPUT_DIR_PARAM_NAME,
                                 OUTPUT_DIR
                         )
                         .toJobParameters()
         );
 
         assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-        assertTrue(Files.exists(Path.of(OUTPUT_DIR.concat("/10001_2025-03-01_normalized.csv"))));
+        assertTrue(Files.exists(Path.of(OUTPUT_DIR.concat("/10001_2025-03-01_filtered.csv"))));
 
         StockNormalizedFileReader fileReader = new StockNormalizedFileReader(
                 new FileSystemResource(
-                        OUTPUT_DIR.concat("/10001_2025-03-01_normalized.csv")
+                        OUTPUT_DIR.concat("/10001_2025-03-01_filtered.csv")
                 )
         );
         fileReader.open(new ExecutionContext());
 
-        assertLine(fileReader.read(), 101, 10001);
-        assertLine(fileReader.read(), 102, 10001);
-        assertLine(fileReader.read(), 101, 10001);
+        assertLine(fileReader.read(), 1,1);
+        assertLine(fileReader.read(), 2,1);
+        assertLine(fileReader.read(), 4,1);
+        assertLine(fileReader.read(), 3,1);
         assertNull(fileReader.read());
     }
 
@@ -94,5 +91,4 @@ class StockNormalizeJobConfigTest {
         assertEquals(line.getBookId(), bookId);
         assertEquals(line.getLibraryId(), libraryId);
     }
-
 }

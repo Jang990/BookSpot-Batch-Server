@@ -6,14 +6,15 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 
 import java.util.Arrays;
 
 public class StockNormalizedFileReader extends FlatFileItemReader<LibraryStock> {
-    public StockNormalizedFileReader(String sourceFilePath) {
+    public StockNormalizedFileReader(Resource sourceFile) {
         setName("stockNormalizedFileReader");
         setEncoding("UTF-8");
-        setResource(new FileSystemResource(sourceFilePath));
+        setResource(sourceFile);
 
         DelimitedLineTokenizer tokenizer = delimitedLineTokenizer();
         DefaultLineMapper<LibraryStock> lineMapper = lineMapper(tokenizer);

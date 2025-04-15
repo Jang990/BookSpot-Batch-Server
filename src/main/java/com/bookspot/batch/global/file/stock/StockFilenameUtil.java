@@ -18,6 +18,11 @@ public class StockFilenameUtil {
         return String.format("%d_%s_normalized", element.libraryId(), element.referenceDate());
     }
 
+    public static String toFiltered(String filename) {
+        StockFilenameElement element = parse(filename);
+        return String.format("%d_%s_filtered", element.libraryId(), element.referenceDate());
+    }
+
     public static StockFilenameElement parse(String filename) {
         if(hasExt(filename))
             filename = removeExt(filename);
