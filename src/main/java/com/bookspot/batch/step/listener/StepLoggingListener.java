@@ -16,10 +16,11 @@ public class StepLoggingListener implements StepExecutionListener {
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
-        log.info("{}[{}]: {} 읽기 / {} 스킵 / {} 쓰기",
+        log.info("{}[{}]: {} 읽기 / {} 필터링 / {} 스킵 / {} 쓰기",
                 stepExecution.getStepName(),
                 stepExecution.getExitStatus().getExitCode(),
                 stepExecution.getReadCount(),
+                stepExecution.getFilterCount(),
                 stepExecution.getSkipCount(),
                 stepExecution.getWriteCount());
 
