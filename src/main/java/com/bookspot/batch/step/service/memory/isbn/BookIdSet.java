@@ -1,9 +1,10 @@
 package com.bookspot.batch.step.service.memory.isbn;
 
-import java.util.HashSet;
+import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
+
 
 public class BookIdSet {
-    private final HashSet<Long> set = new HashSet<>();
+    private final LongHashSet set = new LongHashSet();
 
     public void add(long bookId) {
         set.add(bookId);

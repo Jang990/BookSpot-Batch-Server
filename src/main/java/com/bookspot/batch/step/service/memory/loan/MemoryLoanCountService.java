@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.service.memory.loan;
 
+import io.netty.util.collection.LongObjectHashMap;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -8,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class MemoryLoanCountService {
-    private static Map<Long, AtomicInteger> store = new ConcurrentHashMap<>();
+    private static LongObjectHashMap store = new LongObjectHashMap();
     private static final int INIT_LOAN_COUNT = 0;
 
 
@@ -16,8 +17,12 @@ public class MemoryLoanCountService {
         store.put(Long.parseLong(isbn13), new AtomicInteger(INIT_LOAN_COUNT));
     }
 
+    private AtomicInteger temp_get(String isbn13) {
+        return (AtomicInteger) store.get(Long.parseLong(isbn13));
+    }
+
     public Integer get(String isbn13) {
-        return store.get(Long.parseLong(isbn13)).get();
+        return temp_get(isbn13).get();
     }
 
     public boolean contains(String isbn13) {
@@ -40,6 +45,6 @@ public class MemoryLoanCountService {
         Integer currentLoanCount = get(isbn);
         if(currentLoanCount == null)
             throw new IllegalArgumentException("찾을 수 없는 ISBN");
-        store.get(Long.parseLong(isbn)).addAndGet(loanCount);
+        temp_get(isbn).addAndGet(loanCount);
     }
 }

@@ -1,12 +1,13 @@
 package com.bookspot.batch.step.service.memory.bookid;
 
+import org.eclipse.collections.impl.map.mutable.primitive.LongLongHashMap;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
 @Service
 public class IsbnJdkMemoryRepository implements IsbnMemoryRepository {
-    private static HashMap<Long, Long> store = new HashMap<>();
+    private static LongLongHashMap store = new LongLongHashMap();
 
     public void add(Isbn13MemoryData data) {
         store.put(Long.parseLong(data.isbn13()), data.bookId());
