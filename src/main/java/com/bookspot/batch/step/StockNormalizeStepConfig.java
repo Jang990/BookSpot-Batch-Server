@@ -5,8 +5,10 @@ import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.StockNormalizeJobConfig;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
+import com.bookspot.batch.step.processor.DuplicatedBookIdFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
+import com.bookspot.batch.step.service.memory.isbn.BookIdSet;
 import com.bookspot.batch.step.writer.file.stock.StockNormalizeFileWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -15,6 +17,7 @@ import org.springframework.batch.core.partition.support.MultiResourcePartitioner
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -77,13 +81,27 @@ public class StockNormalizeStepConfig {
     public Step stockNormalizeStep(
             StockCsvFileReader stockCsvFileReader,
             StockProcessor stockProcessor,
+            DuplicatedBookIdFilter duplicatedBookIdFilter,
             StockNormalizeFileWriter stockNormalizeFileWriter) {
         return new StepBuilder("stockNormalizeStep", jobRepository)
                 .<StockCsvData, LibraryStock>chunk(10_000, transactionManager)
                 .reader(stockCsvFileReader)
-                .processor(stockProcessor)
+                .processor(
+                        new CompositeItemProcessor<>(
+                                List.of(
+                                        stockProcessor,
+                                        duplicatedBookIdFilter
+                                )
+                        )
+                )
                 .writer(stockNormalizeFileWriter)
                 .build();
+    }
+
+    @Bean
+    @StepScope
+    public DuplicatedBookIdFilter duplicatedBookIdFilter() {
+        return new DuplicatedBookIdFilter(new BookIdSet());
     }
 
     @Bean

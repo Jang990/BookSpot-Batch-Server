@@ -53,6 +53,7 @@ class StockNormalizeJobConfigTest {
 
     @AfterEach
     void afterEach() throws IOException {
+        TestFileUtil.deleteAll(SOURCE_DIR);
         TestFileUtil.deleteAll(OUTPUT_DIR);
     }
 
