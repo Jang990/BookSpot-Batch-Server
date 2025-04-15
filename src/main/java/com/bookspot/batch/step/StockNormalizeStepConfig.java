@@ -4,6 +4,7 @@ import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.StockNormalizeJobConfig;
+import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.DuplicatedBookIdFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
@@ -82,7 +83,8 @@ public class StockNormalizeStepConfig {
             StockCsvFileReader stockCsvFileReader,
             StockProcessor stockProcessor,
             DuplicatedBookIdFilter duplicatedBookIdFilter,
-            StockNormalizeFileWriter stockNormalizeFileWriter) {
+            StockNormalizeFileWriter stockNormalizeFileWriter,
+            StepLoggingListener stepLoggingListener) {
         return new StepBuilder("stockNormalizeStep", jobRepository)
                 .<StockCsvData, LibraryStock>chunk(10_000, transactionManager)
                 .reader(stockCsvFileReader)
@@ -95,6 +97,7 @@ public class StockNormalizeStepConfig {
                         )
                 )
                 .writer(stockNormalizeFileWriter)
+                .listener(stepLoggingListener)
                 .build();
     }
 
