@@ -2,7 +2,7 @@ spring:
   sql.init.mode: always # schema.sql data.sql 실행
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/BookSpot_Test?rewriteBatchedStatements=true
+    url: jdbc:mysql://localhost:3306/BookSpot_Test?rewriteBatchedStatements=true&allowLoadLocalInfile=true
     hikari:
       username: root
       password: 1234
