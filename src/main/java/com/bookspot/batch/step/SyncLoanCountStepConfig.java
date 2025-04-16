@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.AggregatedBook;
-import com.bookspot.batch.job.LoanSyncJobConfig;
+import com.bookspot.batch.job.loan.LoanSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.AggregatedLoanFileReader;
 import lombok.RequiredArgsConstructor;

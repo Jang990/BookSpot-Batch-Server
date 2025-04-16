@@ -1,8 +1,9 @@
-package com.bookspot.batch.job;
+package com.bookspot.batch.job.loan;
 
 import com.bookspot.batch.TestFileUtil;
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
+import com.bookspot.batch.job.BatchJobTest;
 import com.bookspot.batch.step.service.BookRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
