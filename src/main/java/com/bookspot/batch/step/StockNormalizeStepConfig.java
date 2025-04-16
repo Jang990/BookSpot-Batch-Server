@@ -6,7 +6,9 @@ import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.stock.StockNormalizeJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
+import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
+import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.writer.file.stock.StockNormalizeFileWriter;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +18,7 @@ import org.springframework.batch.core.partition.support.MultiResourcePartitioner
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +31,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -84,8 +88,19 @@ public class StockNormalizeStepConfig {
                 .<StockCsvData, LibraryStock>chunk(10_000, transactionManager)
                 .reader(stockCsvFileReader)
                 .processor(stockProcessor)
+                .processor(
+                        new CompositeItemProcessor<>(
+                                List.of(
+                                        isbnValidationFilter,
+                                        stockProcessor
+                                )
+                        )
+                )
                 .writer(stockNormalizeFileWriter)
                 .listener(stepLoggingListener)
+                .faultTolerant()
+                    .skip(InvalidIsbn13Exception.class)
+                    .skipLimit(5_000)
                 .build();
     }
 
