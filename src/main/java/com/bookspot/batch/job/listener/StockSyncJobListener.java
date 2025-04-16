@@ -6,7 +6,7 @@ import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 @RequiredArgsConstructor
-public class Temp_StockSyncJobListener  implements JobExecutionListener {
+public class StockSyncJobListener implements JobExecutionListener {
     private final JdbcTemplate jdbcTemplate;
 
     @Override

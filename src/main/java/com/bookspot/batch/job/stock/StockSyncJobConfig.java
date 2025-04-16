@@ -1,6 +1,6 @@
 package com.bookspot.batch.job.stock;
 
-import com.bookspot.batch.job.listener.Temp_StockSyncJobListener;
+import com.bookspot.batch.job.listener.StockSyncJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
 @RequiredArgsConstructor
-public class TEMP_StockSyncJobConfig {
+public class StockSyncJobConfig {
     public static final String TEMP_DB_NAME = "temp_stock";
     public static final String SOURCE_DIR_PARAM_NAME = "sourceStockDir";
     public static final String SOURCE_DIR_PARAM = "#{jobParameters['sourceStockDir']}";
@@ -29,8 +29,8 @@ public class TEMP_StockSyncJobConfig {
     private final JdbcTemplate jdbcTemplate;
 
     @Bean
-    public Job temp_stockSyncJob(Step stockStagingMasterStep) {
-        return new JobBuilder("temp_stockSyncJob", jobRepository)
+    public Job stockSyncJob(Step stockStagingMasterStep) {
+        return new JobBuilder("stockSyncJob", jobRepository)
                 .start(createStockStagingStep())
                 .next(stockStagingMasterStep)
                 .next(deleteStockStagingStep())
@@ -40,7 +40,7 @@ public class TEMP_StockSyncJobConfig {
                                 SOURCE_DIR_PARAM_NAME
                         )
                 )
-                .listener(new Temp_StockSyncJobListener(jdbcTemplate))
+                .listener(new StockSyncJobListener(jdbcTemplate))
                 .build();
     }
 

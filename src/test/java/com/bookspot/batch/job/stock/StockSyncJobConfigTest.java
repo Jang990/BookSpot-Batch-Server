@@ -19,12 +19,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @BatchJobTest
-class TEMP_StockSyncJobConfigTest {
+class StockSyncJobConfigTest {
     @Autowired
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    Job temp_stockSyncJob;
+    Job stockSyncJob;
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -43,7 +43,7 @@ class TEMP_StockSyncJobConfigTest {
     void afterEach() throws IOException {
         jdbcTemplate.execute(
                 "DROP TABLE IF EXISTS %s".formatted(
-                        TEMP_StockSyncJobConfig.TEMP_DB_NAME
+                        StockSyncJobConfig.TEMP_DB_NAME
                 )
         );
 
@@ -52,11 +52,11 @@ class TEMP_StockSyncJobConfigTest {
 
     @Test
     void 정상처리() throws Exception {
-        jobLauncherTestUtils.setJob(temp_stockSyncJob);
+        jobLauncherTestUtils.setJob(stockSyncJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(
                 new JobParametersBuilder()
                         .addString(
-                                TEMP_StockSyncJobConfig.SOURCE_DIR_PARAM_NAME,
+                                StockSyncJobConfig.SOURCE_DIR_PARAM_NAME,
                                 SOURCE_DIR
                         )
                         .addLocalDate(

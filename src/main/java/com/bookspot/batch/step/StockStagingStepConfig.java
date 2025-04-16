@@ -1,6 +1,6 @@
 package com.bookspot.batch.step;
 
-import com.bookspot.batch.job.stock.TEMP_StockSyncJobConfig;
+import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -55,7 +55,7 @@ public class StockStagingStepConfig {
     @Bean
     @StepScope
     public MultiResourcePartitioner stockStagingPartitioner(
-            @Value(TEMP_StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
+            @Value(StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
         Path rootPath = Paths.get(root);
@@ -94,7 +94,7 @@ public class StockStagingStepConfig {
                             file.getFile()
                                     .getPath()
                                     .replace("\\", "/"),
-                            TEMP_StockSyncJobConfig.TEMP_DB_NAME
+                            StockSyncJobConfig.TEMP_DB_NAME
                     )
             );
             return RepeatStatus.FINISHED;
