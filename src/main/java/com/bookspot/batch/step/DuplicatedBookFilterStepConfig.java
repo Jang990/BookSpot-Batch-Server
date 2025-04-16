@@ -2,7 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
-import com.bookspot.batch.job.DuplicatedBookFilterJobConfig;
+import com.bookspot.batch.job.stock.DuplicatedBookFilterJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.DuplicatedBookIdFilter;

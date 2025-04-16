@@ -1,4 +1,4 @@
-package com.bookspot.batch.job;
+package com.bookspot.batch.job.stock;
 
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;

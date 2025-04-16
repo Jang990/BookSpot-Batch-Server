@@ -1,8 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.global.file.stock.StockFileManager;
-import com.bookspot.batch.job.StockSyncJobConfig;
-import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
+import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.processor.csv.stock.repository.LibraryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;

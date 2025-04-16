@@ -1,4 +1,4 @@
-package com.bookspot.batch.job;
+package com.bookspot.batch.job.stock;
 
 import com.bookspot.batch.global.file.stock.StockFileManager;
 import com.bookspot.batch.job.listener.StockSyncJobListener;

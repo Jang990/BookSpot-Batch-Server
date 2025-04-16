@@ -1,11 +1,11 @@
-package com.bookspot.batch.job;
+package com.bookspot.batch.job.stock;
 
 import com.bookspot.batch.TestFileUtil;
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.TestQueryUtil;
 import com.bookspot.batch.data.Library;
 import com.bookspot.batch.data.LibraryStock;
-import com.bookspot.batch.global.JobParameterHelper;
+import com.bookspot.batch.job.BatchJobTest;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
