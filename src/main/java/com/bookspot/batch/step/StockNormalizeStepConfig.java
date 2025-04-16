@@ -81,13 +81,13 @@ public class StockNormalizeStepConfig {
     @Bean
     public Step stockNormalizeStep(
             StockCsvFileReader stockCsvFileReader,
+            IsbnValidationFilter isbnValidationFilter,
             StockProcessor stockProcessor,
             StockNormalizeFileWriter stockNormalizeFileWriter,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("stockNormalizeStep", jobRepository)
-                .<StockCsvData, LibraryStock>chunk(10_000, transactionManager)
+                .<StockCsvData, LibraryStock>chunk(2_000, transactionManager)
                 .reader(stockCsvFileReader)
-                .processor(stockProcessor)
                 .processor(
                         new CompositeItemProcessor<>(
                                 List.of(

@@ -77,7 +77,7 @@ public class DuplicatedBookFilterStepConfig {
     @Bean
     public Step duplicatedBookFilterStep(StepLoggingListener stepLoggingListener) {
         return new StepBuilder("duplicatedBookFilterStep", jobRepository)
-                .<LibraryStock, LibraryStock>chunk(10_000, transactionManager)
+                .<LibraryStock, LibraryStock>chunk(2_000, transactionManager)
                 .reader(normalizedFileReader(null))
                 .processor(duplicatedBookIdFilter())
                 .writer(duplicatedBookIdWriter(null, null))
