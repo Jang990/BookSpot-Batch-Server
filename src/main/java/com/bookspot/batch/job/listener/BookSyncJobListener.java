@@ -9,7 +9,6 @@ import org.springframework.batch.item.ExecutionContext;
 
 @RequiredArgsConstructor
 public class BookSyncJobListener implements JobExecutionListener {
-    public static final int ISBN_WARMUP_SIZE = 10_000;
     private final IsbnReader isbnReader;
     private final IsbnSet isbnSet;
 

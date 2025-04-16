@@ -1,6 +1,5 @@
 package com.bookspot.batch.step;
 
-import com.bookspot.batch.job.listener.StockSyncJobListener;
 import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;

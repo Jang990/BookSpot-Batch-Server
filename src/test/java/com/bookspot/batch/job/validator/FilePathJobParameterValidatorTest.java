@@ -39,7 +39,7 @@ class FilePathJobParameterValidatorTest {
                 () -> validator.validate(
                         JobParameterHelper.addRootDirPath(
                                 new JobParametersBuilder(),
-                                "src/test/resources/files/sample/stockSync/10001_2025-03-01.csv"
+                                "src/test/resources/files/sample/stock/10001_2025-03-01.csv"
                         ).toJobParameters())
         );
         assertEquals("rootDirPath는 디렉토리 경로여야 합니다.", exception.getMessage());
@@ -52,7 +52,7 @@ class FilePathJobParameterValidatorTest {
         validator.validate(
                 JobParameterHelper.addRootDirPath(
                         new JobParametersBuilder(),
-                        "src/test/resources/files/sample/stockSync"
+                        "src/test/resources/files/sample/stock"
                 ).toJobParameters()
         );
     }
@@ -74,7 +74,7 @@ class FilePathJobParameterValidatorTest {
                 () -> validator.validate(
                         JobParameterHelper.addAggregatedFilePath(
                                 new JobParametersBuilder(),
-                                "src/test/resources/files/sample/stockSync"
+                                "src/test/resources/files/sample/stock"
                         ).toJobParameters())
         );
         assertEquals("aggregatedFilePath는 파일 경로여야 합니다.", exception.getMessage());
@@ -88,7 +88,7 @@ class FilePathJobParameterValidatorTest {
         validator.validate(
                 JobParameterHelper.addAggregatedFilePath(
                         new JobParametersBuilder(),
-                        "src/test/resources/files/sample/stockSync/10001_2025-03-01.csv"
+                        "src/test/resources/files/sample/stock/10001_2025-03-01.csv"
                 ).toJobParameters()
         );
     }
@@ -101,7 +101,7 @@ class FilePathJobParameterValidatorTest {
         validator.validate(
                 JobParameterHelper.addAggregatedFilePath(
                         new JobParametersBuilder(),
-                        "src/test/resources/files/sample/stockSync/something.csv"
+                        "src/test/resources/files/sample/stock/something.csv"
                 ).toJobParameters()
         );
     }
@@ -114,7 +114,7 @@ class FilePathJobParameterValidatorTest {
                 () -> validator.validate(
                         JobParameterHelper.addRootDirPath(
                                 new JobParametersBuilder(),
-                                "src/test/resources/files/sample/stockSync"
+                                "src/test/resources/files/sample/stock"
                         ).toJobParameters()
                 )
         );
@@ -130,7 +130,7 @@ class FilePathJobParameterValidatorTest {
                 () -> validator.validate(
                         JobParameterHelper.addAggregatedFilePath(
                                 new JobParametersBuilder(),
-                                "src/test/resources/files/sample/stockSync/10001_2025-03-01.csv"
+                                "src/test/resources/files/sample/stock/10001_2025-03-01.csv"
                         ).toJobParameters()
                 )
         );
@@ -142,8 +142,8 @@ class FilePathJobParameterValidatorTest {
     void dirFile에_디렉토리_파리미터를_파일로_넘기면_예외발생() throws JobParametersInvalidException {
         FilePathJobParameterValidator validator = FilePathJobParameterValidator.rootDirAndAggregatedFile();
         JobParametersBuilder builder = new JobParametersBuilder();
-        JobParameterHelper.addRootDirPath(builder, "src/test/resources/files/sample/stockSync/10001_2025-03-01.csv");
-        JobParameterHelper.addAggregatedFilePath(builder, "src/test/resources/files/sample/stockSync/10001_2025-03-01.csv");
+        JobParameterHelper.addRootDirPath(builder, "src/test/resources/files/sample/stock/10001_2025-03-01.csv");
+        JobParameterHelper.addAggregatedFilePath(builder, "src/test/resources/files/sample/stock/10001_2025-03-01.csv");
 
         JobParametersInvalidException exception = assertThrows(JobParametersInvalidException.class, () -> validator.validate(builder.toJobParameters()));
         assertEquals("rootDirPath는 디렉토리 경로여야 합니다.", exception.getMessage());
@@ -153,8 +153,8 @@ class FilePathJobParameterValidatorTest {
     void dirFile에_디렉토리와_파일이_들어오면_정상처리() throws JobParametersInvalidException {
         FilePathJobParameterValidator validator = FilePathJobParameterValidator.rootDirAndAggregatedFile();
         JobParametersBuilder builder = new JobParametersBuilder();
-        JobParameterHelper.addRootDirPath(builder, "src/test/resources/files/sample/stockSync");
-        JobParameterHelper.addAggregatedFilePath(builder, "src/test/resources/files/sample/stockSync/10001_2025-03-01.csv");
+        JobParameterHelper.addRootDirPath(builder, "src/test/resources/files/sample/stock");
+        JobParameterHelper.addAggregatedFilePath(builder, "src/test/resources/files/sample/stock/10001_2025-03-01.csv");
 
         validator.validate(builder.toJobParameters());
     }

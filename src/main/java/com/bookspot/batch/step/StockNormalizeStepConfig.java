@@ -10,6 +10,7 @@ import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
+import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import com.bookspot.batch.step.writer.file.stock.StockNormalizeFileWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -38,6 +39,7 @@ import java.util.List;
 public class StockNormalizeStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    private final IsbnMemoryRepository isbnMemoryRepository;
 
     @Bean
     public Step stockNormalizeMasterStep(
@@ -113,5 +115,14 @@ public class StockNormalizeStepConfig {
                 .concat(StockFilenameUtil.toNormalized(file.getFilename()))
                 .concat(".csv");
         return new StockNormalizeFileWriter(outputFile);
+    }
+
+    @Bean
+    @StepScope
+    public StockProcessor stockProcessor(@Value("#{stepExecutionContext['file']}") Resource file) {
+        return new StockProcessor(
+                isbnMemoryRepository,
+                StockFilenameUtil.parse(file.getFilename()).libraryId()
+        );
     }
 }

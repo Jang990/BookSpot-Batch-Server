@@ -48,7 +48,7 @@ class StockNormalizeJobConfigTest {
         TestInsertUtils.bookBuilder().id(106L).isbn13("0000000000106").insert(jdbcTemplate);
 
         TestFileUtil.copy(
-                "src/test/resources/files/sample/stockSync/10001_2025-03-01.csv",
+                "src/test/resources/files/sample/stock/10001_2025-03-01.csv",
                 SOURCE_DIR+"/10001_2025-03-01.csv"
         );
     }

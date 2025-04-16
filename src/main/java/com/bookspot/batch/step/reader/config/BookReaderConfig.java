@@ -1,7 +1,5 @@
 package com.bookspot.batch.step.reader.config;
 
-import com.bookspot.batch.job.listener.BookSyncJobListener;
-import com.bookspot.batch.job.listener.StockSyncJobListener;
 import com.bookspot.batch.step.reader.BookRepositoryReader;
 import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
 import com.bookspot.batch.step.reader.IsbnIdReader;
@@ -17,6 +15,8 @@ import javax.sql.DataSource;
 @Configuration
 @RequiredArgsConstructor
 public class BookReaderConfig {
+    private static final int WARM_UP_SIZE = 5_000;
+
     @Bean
     public BookRepositoryReader bookRepositoryReader(UniqueBookRepository uniqueBookRepository) {
         return new BookRepositoryReader(uniqueBookRepository, 1_000);
@@ -29,7 +29,7 @@ public class BookReaderConfig {
         return new IsbnReader(
                 dataSource,
                 isbnIdPagingQueryProviderFactory.getObject(),
-                BookSyncJobListener.ISBN_WARMUP_SIZE
+                WARM_UP_SIZE
         );
     }
 
@@ -41,7 +41,7 @@ public class BookReaderConfig {
         return new IsbnIdReader(
                 dataSource,
                 isbnIdPagingQueryProviderFactory.getObject(),
-                StockSyncJobListener.ISBN_ID_WARMUP_SIZE
+                WARM_UP_SIZE
         );
     }
 
