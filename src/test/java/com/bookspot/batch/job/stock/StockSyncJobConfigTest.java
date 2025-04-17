@@ -1,12 +1,15 @@
 package com.bookspot.batch.job.stock;
 
 import com.bookspot.batch.TestFileUtil;
+import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.TestQueryUtil;
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.job.BatchJobTest;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -17,6 +20,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @BatchJobTest
 class StockSyncJobConfigTest {
@@ -37,16 +46,17 @@ class StockSyncJobConfigTest {
                 "src/test/resources/files/sample/filtered",
                 SOURCE_DIR
         );
+
+        TestInsertUtils.libraryBuilder().id(1L).insert(jdbcTemplate);
+
+        TestInsertUtils.bookBuilder().id(1L).insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().id(2L).insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().id(3L).insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().id(4L).insert(jdbcTemplate);
     }
 
     @AfterEach
     void afterEach() throws IOException {
-        jdbcTemplate.execute(
-                "DROP TABLE IF EXISTS %s".formatted(
-                        StockSyncJobConfig.TEMP_DB_NAME
-                )
-        );
-
         TestFileUtil.deleteAll(SOURCE_DIR);
     }
 
@@ -66,6 +76,26 @@ class StockSyncJobConfigTest {
                         .toJobParameters()
         );
 
+        assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
+
+
         List<LibraryStock> stocks = TestQueryUtil.findStocks(jdbcTemplate);
+        Map<Long, List<LibraryStock>> map = toLibraryStockMap(stocks);
+
+        assertThat(List.of(1L, 2L, 3L, 4L))
+                .containsExactlyInAnyOrderElementsOf(
+                        map.get(1L).stream()
+                                .mapToLong(LibraryStock::getBookId)
+                                .boxed().toList()
+                );
+    }
+
+    private Map<Long, List<LibraryStock>> toLibraryStockMap(List<LibraryStock> stocks) {
+        return stocks.stream()
+                .collect(
+                        Collectors.groupingBy(
+                                LibraryStock::getLibraryId
+                        )
+                );
     }
 }

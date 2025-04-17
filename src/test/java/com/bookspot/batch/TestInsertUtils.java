@@ -75,8 +75,8 @@ public class TestInsertUtils {
         }
 
         public void insert(JdbcTemplate jdbcTemplate) {
-            if (isbn13 == null)
-                throw new IllegalArgumentException("책 Insert 시 ISBN13은 필수 설정");
+            if (id == null && isbn13 == null)
+                throw new IllegalArgumentException("책 Insert 시 ISBN13과 ID 둘 중 하나는 필수 설정");
 
             if (id == null) {
                 jdbcTemplate.update(WITHOUT_ID_QUERY, ps -> {
@@ -90,7 +90,7 @@ public class TestInsertUtils {
 
             jdbcTemplate.update(WITH_ID_QUERY, ps -> {
                         ps.setLong(1, id);
-                        ps.setString(2, isbn13);
+                        ps.setString(2, isbn13 == null ? "%013d".formatted(id) : isbn13);
                         ps.setString(3, title);
                         ps.setInt(4, loanCount);
                     }

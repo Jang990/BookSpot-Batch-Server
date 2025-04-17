@@ -29,10 +29,13 @@ public class StockSyncJobConfig {
     private final JdbcTemplate jdbcTemplate;
 
     @Bean
-    public Job stockSyncJob(Step stockStagingMasterStep) {
+    public Job stockSyncJob(
+            Step stockStagingMasterStep,
+            Step stockInsertMasterStep) {
         return new JobBuilder("stockSyncJob", jobRepository)
                 .start(createStockStagingStep())
-                .next(stockStagingMasterStep)
+                    .next(stockStagingMasterStep)
+                    .next(stockInsertMasterStep)
                 .next(deleteStockStagingStep())
                 .validator(
                         temp_FilePathJobParameterValidator.REQUIRED_DIRECTORY(
@@ -50,7 +53,7 @@ public class StockSyncJobConfig {
                 .tasklet(
                         (contribution, chunkContext) -> {
                             jdbcTemplate.execute("""
-                                    CREATE TABLE %s (
+                                    CREATE TABLE IF NOT EXISTS %s (
                                       id BIGINT NOT NULL AUTO_INCREMENT,
                                       book_id BIGINT NOT NULL,
                                       library_id BIGINT NOT NULL,
