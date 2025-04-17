@@ -1,7 +1,9 @@
 package com.bookspot.batch.step;
 
+import com.bookspot.batch.data.IdRange;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.partition.IdRangePartitioner;
+import com.bookspot.batch.step.reader.IdRangeReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -10,6 +12,7 @@ import org.springframework.batch.core.partition.support.TaskExecutorPartitionHan
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +27,14 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class DuplicatedTempStockStepConfig {
     public static final int CHUNK_SIZE = 10_000;
+    private static final String DELETE_SQL = """
+                DELETE temp
+                FROM %s temp
+                INNER JOIN library_stock ls
+                  ON ls.book_id = temp.book_id
+                 AND ls.library_id = temp.library_id
+                WHERE temp.id BETWEEN ? AND ?
+            """.formatted(StockSyncJobConfig.TEMP_DB_NAME);
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -59,33 +70,25 @@ public class DuplicatedTempStockStepConfig {
     @Bean
     public Step duplicatedTempStockStep() {
         return new StepBuilder("duplicatedTempStockStep", jobRepository)
-                .tasklet(duplicatedTempStockTasklet(null, null), transactionManager)
+                .<IdRange, IdRange>chunk(IdRangeReader.FIXED_CHUNK_SIZE, transactionManager)
+                .reader(idRangeReader(null, null))
+                .writer(duplicatedTempStockDeleter())
                 .build();
     }
 
     @Bean
     @StepScope
-    public Tasklet duplicatedTempStockTasklet(
+    public IdRangeReader idRangeReader(
             @Value(IdRangePartitioner.MIN_PARAM) Long minId,
             @Value(IdRangePartitioner.MAX_PARAM) Long maxId) {
-        // TODO: 재처리 방안 필요.
-        return (contribution, chunkContext) -> {
+        return new IdRangeReader(minId, maxId, CHUNK_SIZE);
+    }
 
-            for (long start = minId; start <= maxId; start += CHUNK_SIZE) {
-                long end = Math.min(start + CHUNK_SIZE - 1, maxId);
-                String sql = """
-                            DELETE temp
-                            FROM %s temp
-                            INNER JOIN library_stock ls
-                              ON ls.book_id = temp.book_id
-                             AND ls.library_id = temp.library_id
-                            WHERE temp.id BETWEEN ? AND ?
-                        """.formatted(StockSyncJobConfig.TEMP_DB_NAME);
-
-                jdbcTemplate.update(sql, start, end);
-            }
-
-            return RepeatStatus.FINISHED;
+    @Bean
+    public ItemWriter<IdRange> duplicatedTempStockDeleter() {
+        return chunk -> {
+            for (IdRange item : chunk.getItems())
+                jdbcTemplate.update(DELETE_SQL, item.start(), item.end());
         };
     }
 }
