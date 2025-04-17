@@ -2,6 +2,9 @@ package com.bookspot.batch;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.sql.Date;
+import java.time.LocalDate;
+
 public class TestInsertUtils {
 
     public static class LibraryBuilder {
@@ -98,11 +101,59 @@ public class TestInsertUtils {
         }
     }
 
+    public static class LibraryStockBuilder {
+        private Long bookId;
+        private Long libraryId;
+        private LocalDate createdAt = LocalDate.now();
+        private LocalDate updatedAt = LocalDate.now();
+
+        private static final String INSERT_SQL = """
+                INSERT INTO library_stock
+                (book_id, library_id, created_at, updated_at)
+                VALUES(?, ?, ?, ?);
+                """;
+
+        public LibraryStockBuilder bookId(long bookId) {
+            this.bookId = bookId;
+            return this;
+        }
+
+        public LibraryStockBuilder libraryId(long libraryId) {
+            this.libraryId = libraryId;
+            return this;
+        }
+
+        public LibraryStockBuilder createdAt(LocalDate createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public LibraryStockBuilder updatedAt(LocalDate updatedAt) {
+            this.createdAt = updatedAt;
+            return this;
+        }
+
+        public void insert(JdbcTemplate jdbcTemplate) {
+            if (bookId == null && libraryId == null)
+                throw new IllegalArgumentException("도서관 재고에 (책ID, 도서관ID)는 필수 설정");
+
+            jdbcTemplate.update(INSERT_SQL, ps -> {
+                        ps.setLong(1, bookId);
+                        ps.setLong(2, libraryId);
+                        ps.setDate(3, Date.valueOf(createdAt));
+                        ps.setDate(4, Date.valueOf(updatedAt));
+                    }
+            );
+        }
+    }
+
     public static LibraryBuilder libraryBuilder() {
         return new LibraryBuilder();
     }
     public static BookBuilder bookBuilder() {
         return new BookBuilder();
     }
-
+    public static LibraryStockBuilder libraryStockBuilder() {
+        return new LibraryStockBuilder();
+    }
 }

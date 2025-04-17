@@ -31,11 +31,15 @@ public class StockSyncJobConfig {
     @Bean
     public Job stockSyncJob(
             Step stockStagingMasterStep,
+            Step stockUpdateMasterStep,
+//            Step tempStockDeleteMasterStep,
             Step stockInsertMasterStep) {
         return new JobBuilder("stockSyncJob", jobRepository)
                 .start(createStockStagingStep())
                     .next(stockStagingMasterStep)
-                    .next(stockInsertMasterStep)
+                    .next(stockUpdateMasterStep)
+//                    .next(tempStockDeleteMasterStep)
+//                    .next(stockInsertMasterStep)
                 .next(deleteStockStagingStep())
                 .validator(
                         temp_FilePathJobParameterValidator.REQUIRED_DIRECTORY(

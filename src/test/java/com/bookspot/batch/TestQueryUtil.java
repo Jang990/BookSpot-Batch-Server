@@ -36,7 +36,7 @@ public class TestQueryUtil {
 
     public static List<LibraryStock> findStocks(JdbcTemplate jdbcTemplate) {
         return jdbcTemplate.query("""
-                        SELECT library_id, book_id, updated_at
+                        SELECT library_id, book_id, created_at, updated_at
                         FROM library_stock
                         """, stockMapper()
         );
@@ -47,6 +47,11 @@ public class TestQueryUtil {
             LibraryStock result = new LibraryStock(
                     rs.getLong("library_id"),
                     rs.getLong("book_id")
+            );
+
+            ReflectionTestUtils.setField(
+                    result, "createdAt",
+                    rs.getObject("created_at", LocalDate.class)
             );
 
             ReflectionTestUtils.setField(
