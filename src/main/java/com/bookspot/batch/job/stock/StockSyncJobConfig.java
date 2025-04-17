@@ -32,14 +32,14 @@ public class StockSyncJobConfig {
     public Job stockSyncJob(
             Step stockStagingMasterStep,
             Step stockUpdateMasterStep,
-//            Step tempStockDeleteMasterStep,
+            Step duplicatedTempStockMasterStep,
             Step stockInsertMasterStep) {
         return new JobBuilder("stockSyncJob", jobRepository)
                 .start(createStockStagingStep())
                     .next(stockStagingMasterStep)
                     .next(stockUpdateMasterStep)
-//                    .next(tempStockDeleteMasterStep)
-//                    .next(stockInsertMasterStep)
+                    .next(duplicatedTempStockMasterStep)
+                    .next(stockInsertMasterStep)
                 .next(deleteStockStagingStep())
                 .validator(
                         temp_FilePathJobParameterValidator.REQUIRED_DIRECTORY(

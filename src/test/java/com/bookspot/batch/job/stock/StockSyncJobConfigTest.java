@@ -54,6 +54,7 @@ class StockSyncJobConfigTest {
         TestInsertUtils.bookBuilder().id(3L).insert(jdbcTemplate);
         TestInsertUtils.bookBuilder().id(4L).insert(jdbcTemplate);
 
+        // 중복 데이터
         TestInsertUtils.libraryStockBuilder()
                 .bookId(1L).libraryId(1L)
                 .createdAt(LocalDate.of(2000, 10, 10))
@@ -98,12 +99,13 @@ class StockSyncJobConfigTest {
                 find(stocks,1L, 1L).getUpdatedAt()
         );
 
-        /*assertThat(List.of(1L, 2L, 3L, 4L))
-                .containsExactlyInAnyOrderElementsOf(
-                        map.get(1L).stream()
-                                .mapToLong(LibraryStock::getBookId)
-                                .boxed().toList()
-                );*/
+        assertNotNull(find(stocks, 1L, 1L));
+        assertNotNull(find(stocks, 2L, 1L));
+        assertNotNull(find(stocks, 3L, 1L));
+        assertNotNull(find(stocks, 4L, 1L));
+
+        assertEquals(LocalDate.of(2000, 10, 10), find(stocks, 1L, 1L).getCreatedAt());
+        assertEquals(LocalDate.now(), find(stocks, 1L, 1L).getUpdatedAt());
     }
 
     private LibraryStock find(List<LibraryStock> stocks, long bookId, long libraryId) {
@@ -112,7 +114,7 @@ class StockSyncJobConfigTest {
                                 libraryStock.getBookId().equals(bookId)
                                         && libraryStock.getLibraryId().equals(libraryId))
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElse(null);
     }
 
     private Map<Long, List<LibraryStock>> toLibraryStockMap(List<LibraryStock> stocks) {
