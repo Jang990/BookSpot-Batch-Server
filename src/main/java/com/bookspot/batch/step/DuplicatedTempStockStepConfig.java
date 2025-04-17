@@ -71,14 +71,14 @@ public class DuplicatedTempStockStepConfig {
     public Step duplicatedTempStockStep() {
         return new StepBuilder("duplicatedTempStockStep", jobRepository)
                 .<IdRange, IdRange>chunk(IdRangeReader.FIXED_CHUNK_SIZE, transactionManager)
-                .reader(idRangeReader(null, null))
+                .reader(deletedTempStockIdRangeReader(null, null))
                 .writer(duplicatedTempStockDeleter())
                 .build();
     }
 
     @Bean
     @StepScope
-    public IdRangeReader idRangeReader(
+    public IdRangeReader deletedTempStockIdRangeReader(
             @Value(IdRangePartitioner.MIN_PARAM) Long minId,
             @Value(IdRangePartitioner.MAX_PARAM) Long maxId) {
         return new IdRangeReader(minId, maxId, CHUNK_SIZE);
