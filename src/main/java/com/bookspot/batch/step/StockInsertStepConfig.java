@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.IdRange;
+import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.partition.IdRangePartitioner;
 import com.bookspot.batch.step.reader.IdRangeReader;
@@ -53,7 +54,7 @@ public class StockInsertStepConfig {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(stockInsertStep);
         partitionHandler.setTaskExecutor(multiTaskPool);
-        partitionHandler.setGridSize(4);
+        partitionHandler.setGridSize(TaskExecutorConfig.MULTI_POOL_SIZE);
         return partitionHandler;
     }
 

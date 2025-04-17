@@ -1,5 +1,6 @@
 package com.bookspot.batch.step;
 
+import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +50,7 @@ public class StockStagingStepConfig {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(stockStagingStep);
         partitionHandler.setTaskExecutor(multiTaskPool);
+        partitionHandler.setGridSize(TaskExecutorConfig.MULTI_POOL_SIZE);
         return partitionHandler;
     }
 

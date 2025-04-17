@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
+import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.stock.DuplicatedBookFilterJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
@@ -52,6 +53,7 @@ public class DuplicatedBookFilterStepConfig {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(duplicatedBookFilterStep);
         partitionHandler.setTaskExecutor(multiTaskPool);
+        partitionHandler.setGridSize(TaskExecutorConfig.MULTI_POOL_SIZE);
         return partitionHandler;
     }
 
