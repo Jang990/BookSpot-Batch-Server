@@ -2,7 +2,7 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.listener.BookSyncJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
-import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class BookSyncJobConfig {
                 .start(bookSyncPartitionMasterStep)
                 .listener(new BookSyncJobListener(isbnReader, isbnSet))
                 .validator(
-                        temp_FilePathJobParameterValidator.REQUIRED_DIRECTORY(
+                        FilePathJobParameterValidator.REQUIRED_DIRECTORY(
                                 filePathValidators,
                                 SOURCE_DIR_PARAM_NAME
                         )

@@ -1,7 +1,7 @@
 package com.bookspot.batch.job.loan;
 
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
-import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -25,7 +25,7 @@ public class LoanSyncJobConfig {
         return new JobBuilder("loanAggregatedJob", jobRepository)
                 .start(syncLoanCountStep) //- 저장한 파일을 DB에 반영 - 새로 나온 책 + 최근 대출 횟수 반영
                 .validator(
-                        temp_FilePathJobParameterValidator.REQUIRED_FILE(
+                        FilePathJobParameterValidator.REQUIRED_FILE(
                                 filePathValidators,
                                 AGGREGATED_FILE_PARAM_NAME
                         )

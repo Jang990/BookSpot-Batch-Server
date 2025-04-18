@@ -2,7 +2,7 @@ package com.bookspot.batch.job.loan;
 
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
-import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.service.memory.loan.MemoryLoanCountService;
 import com.bookspot.batch.step.writer.file.book.AggregatedBooksCsvWriter;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +48,7 @@ public class LoanAggregatedJobConfig {
                 .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
                 .next(loanMapCleaningStep)
                 .validator(
-                        temp_FilePathJobParameterValidator.of(
+                        FilePathJobParameterValidator.of(
                                 filePathValidators,
                                 Map.of(
                                         DIRECTORY_PARAM_NAME, FilePathType.REQUIRED_DIRECTORY,

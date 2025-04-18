@@ -2,7 +2,7 @@ package com.bookspot.batch.job.stock;
 
 import com.bookspot.batch.job.listener.StockSyncJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
-import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -42,7 +42,7 @@ public class StockSyncJobConfig {
                     .next(stockInsertMasterStep)
                 .next(deleteStockStagingStep())
                 .validator(
-                        temp_FilePathJobParameterValidator.REQUIRED_DIRECTORY(
+                        FilePathJobParameterValidator.REQUIRED_DIRECTORY(
                                 filePathValidators,
                                 SOURCE_DIR_PARAM_NAME
                         )

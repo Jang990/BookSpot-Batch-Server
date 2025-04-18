@@ -1,7 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
-import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -25,7 +25,7 @@ public class StockFileJobConfig {
         return new JobBuilder("stockFileJob", jobRepository)
                 .start(stockCsvDownloadStep)
                 .validator(
-                        temp_FilePathJobParameterValidator.REQUIRED_DIRECTORY(
+                        FilePathJobParameterValidator.REQUIRED_DIRECTORY(
                                 filePathValidators,
                                 DOWNLOAD_DIR_PARAM_NAME
                         )

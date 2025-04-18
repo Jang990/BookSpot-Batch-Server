@@ -4,7 +4,7 @@ import com.bookspot.batch.global.crawler.naru.NaruRequestCreator;
 import com.bookspot.batch.global.file.NaruFileDownloader;
 import com.bookspot.batch.job.listener.LibrarySyncJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
-import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -34,7 +34,7 @@ public class LibrarySyncJobConfig {
                 .start(librarySyncStep)
                 .next(libraryNaruDetailParsingStep)
                 .listener(new LibrarySyncJobListener(libraryFileDownloader)) // 도서관 파일 저장 및 제거
-                .validator(temp_FilePathJobParameterValidator.OPTIONAL_FILE(customFilePathValidators, LIBRARY_FILE_PARAM_NAME))
+                .validator(FilePathJobParameterValidator.OPTIONAL_FILE(customFilePathValidators, LIBRARY_FILE_PARAM_NAME))
                 .build();
     }
 

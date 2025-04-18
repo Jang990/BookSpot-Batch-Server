@@ -11,25 +11,25 @@ import org.springframework.batch.core.JobParametersValidator;
 import java.util.Map;
 
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class temp_FilePathJobParameterValidator implements JobParametersValidator {
+public class FilePathJobParameterValidator implements JobParametersValidator {
     private final CustomFilePathValidators validators;
     private final Map<String, FilePathType> requiredJobParams;
     private static final String NOT_FOUND_PARAM_MESSAGE_TEMPLATE = "%s 는 필수 JobParameter입니다.";
 
-    public static temp_FilePathJobParameterValidator of(CustomFilePathValidators validators, Map<String, FilePathType> requireParams) {
-        return new temp_FilePathJobParameterValidator(validators, requireParams);
+    public static FilePathJobParameterValidator of(CustomFilePathValidators validators, Map<String, FilePathType> requireParams) {
+        return new FilePathJobParameterValidator(validators, requireParams);
     }
 
-    public static temp_FilePathJobParameterValidator REQUIRED_FILE(CustomFilePathValidators validators, String paramName) {
-        return new temp_FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.REQUIRED_FILE));
+    public static FilePathJobParameterValidator REQUIRED_FILE(CustomFilePathValidators validators, String paramName) {
+        return new FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.REQUIRED_FILE));
     }
 
-    public static temp_FilePathJobParameterValidator OPTIONAL_FILE(CustomFilePathValidators validators, String paramName) {
-        return new temp_FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.OPTIONAL_FILE));
+    public static FilePathJobParameterValidator OPTIONAL_FILE(CustomFilePathValidators validators, String paramName) {
+        return new FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.OPTIONAL_FILE));
     }
 
-    public static temp_FilePathJobParameterValidator REQUIRED_DIRECTORY(CustomFilePathValidators validators, String paramName) {
-        return new temp_FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.REQUIRED_DIRECTORY));
+    public static FilePathJobParameterValidator REQUIRED_DIRECTORY(CustomFilePathValidators validators, String paramName) {
+        return new FilePathJobParameterValidator(validators, Map.of(paramName, FilePathType.REQUIRED_DIRECTORY));
     }
 
     @Override

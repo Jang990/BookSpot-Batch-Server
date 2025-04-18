@@ -2,7 +2,7 @@ package com.bookspot.batch.job.stock;
 
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
-import com.bookspot.batch.job.validator.temp_FilePathJobParameterValidator;
+import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -35,7 +35,7 @@ public class StockNormalizeJobConfig {
                 .next(stockNormalizeMasterStep)
                 .next(isbnIdMapCleaningStep)
                 .validator(
-                        temp_FilePathJobParameterValidator.of(
+                        FilePathJobParameterValidator.of(
                                 filePathValidators,
                                 Map.of(
                                         SOURCE_DIR_PARAM_NAME,
