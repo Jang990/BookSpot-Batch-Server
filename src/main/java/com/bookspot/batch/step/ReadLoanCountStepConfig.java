@@ -7,6 +7,7 @@ import com.bookspot.batch.job.loan.LoanAggregatedJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
+import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.service.memory.loan.MemoryLoanCountService;
 import lombok.RequiredArgsConstructor;
@@ -77,6 +78,9 @@ public class ReadLoanCountStepConfig {
                         }
                 )
                 .listener(stepLoggingListener)
+                .faultTolerant()
+                .skip(InvalidIsbn13Exception.class)
+                .skipLimit(200)
                 .build();
     }
 
