@@ -1,10 +1,12 @@
 package com.bookspot.batch.step;
 
+import com.bookspot.batch.data.LoanCount;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.loan.LoanAggregatedJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
+import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.service.memory.loan.MemoryLoanCountService;
 import lombok.RequiredArgsConstructor;
@@ -14,8 +16,8 @@ import org.springframework.batch.core.partition.support.MultiResourcePartitioner
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
@@ -37,6 +40,8 @@ public class ReadLoanCountStepConfig {
 
     private final MemoryLoanCountService memoryLoanCountService;
     private final StepLoggingListener stepLoggingListener;
+
+    private static final int CHUNK_SIZE = 1000;
 
     @Bean
     public Step readLoanCountMasterStep(
@@ -50,42 +55,42 @@ public class ReadLoanCountStepConfig {
     }
 
     @Bean
-    public Step readLoanCountStep(Tasklet readLoanCountTasklet) {
+    public Step readLoanCountStep(
+            StockCsvFileReader stockCsvFileReader,
+            IsbnValidationFilter isbnValidationFilter) {
         return new StepBuilder("readLoanCountStep", jobRepository)
-                .tasklet(readLoanCountTasklet, platformTransactionManager)
+                .<StockCsvData, LoanCount>chunk(CHUNK_SIZE, platformTransactionManager)
+                .reader(stockCsvFileReader)
+                .processor(
+                    new CompositeItemProcessor<>(
+                            List.of(
+                                    isbnValidationFilter,
+                                    loanCountConvertor(),
+                                    memoryIsbnFilter()
+                            )
+                    )
+                )
+                .writer(
+                        chunk -> {
+                            for (LoanCount item : chunk.getItems())
+                                memoryLoanCountService.increase(item.isbn13(), item.loanCount());
+                        }
+                )
                 .listener(stepLoggingListener)
                 .build();
     }
 
     @Bean
-    @StepScope
-    public Tasklet readLoanCountTasklet(StockCsvFileReader reader) {
-        return (contribution, chunkContext) -> {
+    public ItemProcessor<StockCsvData, LoanCount> loanCountConvertor() {
+        return item -> new LoanCount(item.getIsbn(), item.getLoanCount());
+    }
 
-            try{
-                reader.open(
-                        chunkContext.getStepContext()
-                                .getStepExecution()
-                                .getExecutionContext()
-                );
-
-                StockCsvData book;
-                while ((book = reader.read()) != null) {
-                    contribution.incrementReadCount();
-                    int loanCount = book.getLoanCount();
-
-                    if (!memoryLoanCountService.contains(book.getIsbn())) {
-                        contribution.incrementProcessSkipCount();
-                        continue;
-                    }
-
-                    memoryLoanCountService.increase(book.getIsbn(), loanCount);
-                    contribution.incrementWriteCount(1L);
-                }
-                return RepeatStatus.FINISHED;
-            } finally {
-                reader.close();
-            }
+    @Bean
+    public ItemProcessor<LoanCount, LoanCount> memoryIsbnFilter() {
+        return item -> {
+            if (!memoryLoanCountService.contains(item.isbn13()))
+                return null;
+            return item;
         };
     }
 
