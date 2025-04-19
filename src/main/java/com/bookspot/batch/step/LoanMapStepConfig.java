@@ -17,7 +17,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @RequiredArgsConstructor
 public class LoanMapStepConfig {
-    private static final int CHUNK_SIZE = 5_000;
+    private static final int CHUNK_SIZE = 3_000;
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
 
