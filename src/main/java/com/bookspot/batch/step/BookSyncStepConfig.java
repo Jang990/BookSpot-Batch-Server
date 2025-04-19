@@ -81,7 +81,7 @@ public class BookSyncStepConfig {
                 .listener(stepLoggingListener)
                 .faultTolerant()
                 .skip(InvalidIsbn13Exception.class)
-                .skipLimit(50_000)
+                .skipLimit(200)
                 .build();
     }
 
