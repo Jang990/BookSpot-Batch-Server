@@ -26,7 +26,7 @@ public class SyncLoanCountStepConfig {
     private final DataSource dataSource;
     private final StepLoggingListener stepLoggingListener;
 
-    private static final int CHUNK_SIZE = 5_000;
+    private static final int CHUNK_SIZE = 3_000;
 
     @Bean
     public Step syncLoanCountStep() {
