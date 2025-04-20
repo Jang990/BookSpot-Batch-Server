@@ -22,6 +22,7 @@ public class NaruCrawler {
     private static final String VALUE_CSRF_TOKEN = "value";
 
     private final String CSS_QUERY_CSV_FILE_LINK = "a.download_link:nth-child(1)";
+//    private final String CSS_QUERY_CSV_FILE_LINK = "#sb-site > section > div.sub_container > div:nth-child(5) > table > tbody > tr:nth-child(2) > td.data_type.br_none > a"; // 이전달 css
     private static final String VALUE_DOWNLOAD_LINK = "data-url";
 
 
