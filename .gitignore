@@ -36,6 +36,7 @@ out/
 ### VS Code ###
 .vscode/
 
+/src/main/resources/application-prod.yml
 /src/main/resources/application-api.yml
 /src/main/resources/application-files.yml
 /src/test/java/com/bookspot/batch/openapi/ApiUrlHolder.java
