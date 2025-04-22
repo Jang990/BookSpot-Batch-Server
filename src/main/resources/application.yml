@@ -1,3 +1,7 @@
+elasticsearch:
+  serverUrl: http://localhost:9200
+  apiKey: bTRReWFaVUJzYnB2TkJ3QXNVd1c6b0g3VGpXUlBUTmVBTWFDWXk0LW1rUQ==
+
 spring:
   batch.job.enabled: false
   profiles:
