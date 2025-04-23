@@ -7,7 +7,6 @@ spring:
   profiles:
     include:
       - "api"
-      - "files"
   application.name: bookspot-batch
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -34,3 +33,18 @@ management:
       base-path: /my-monitor # '...:9292/my-monitor'로 요청
       exposure:
         include: "*" # 모든 엔드포인트 노출
+
+path:
+  directory:
+    root: C:/Programming_Tools/temp_bookSpotFiles
+    librarySync: ${path.directory.root}/librarySync
+    bookSync: ${path.directory.root}/bookSync
+    stockSync: ${path.directory.root}/bookSync
+    loanSync: ${path.directory.root}/bookSync
+    normalizedStock: ${path.directory.root}/normalizedStock
+    filteredStock: ${path.directory.root}/filteredStock
+  #    stockSync: ${path.directory.root}/stockSync
+  #    loanSync: ${path.directory.root}/loanSync
+  file:
+    library: ${path.directory.librarySync}/library_list.xlsx
+    loan: ${path.directory.root}/aggregated/unique_books.csv
