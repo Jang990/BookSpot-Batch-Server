@@ -42,6 +42,8 @@ public class StockNormalizeStepConfig {
     private final PlatformTransactionManager transactionManager;
     private final IsbnMemoryRepository isbnMemoryRepository;
 
+    private static final int CHUNK_SIZE = 800;
+
     @Bean
     public Step stockNormalizeMasterStep(
             Step stockNormalizeStep,
@@ -90,7 +92,7 @@ public class StockNormalizeStepConfig {
             StockNormalizeFileWriter stockNormalizeFileWriter,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("stockNormalizeStep", jobRepository)
-                .<StockCsvData, LibraryStock>chunk(2_000, transactionManager)
+                .<StockCsvData, LibraryStock>chunk(CHUNK_SIZE, transactionManager)
                 .reader(stockCsvFileReader)
                 .processor(
                         new CompositeItemProcessor<>(
@@ -103,8 +105,8 @@ public class StockNormalizeStepConfig {
                 .writer(stockNormalizeFileWriter)
                 .listener(stepLoggingListener)
                 .faultTolerant()
-                    .skip(InvalidIsbn13Exception.class)
-                    .skipLimit(5_000)
+                .skip(InvalidIsbn13Exception.class)
+                .skipLimit(5_000)
                 .build();
     }
 
