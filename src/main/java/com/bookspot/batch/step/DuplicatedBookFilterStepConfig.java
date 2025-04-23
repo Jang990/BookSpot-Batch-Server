@@ -35,6 +35,7 @@ import java.nio.file.Paths;
 public class DuplicatedBookFilterStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    private static final int CHUNK_SIZE = 2_000;
 
     @Bean
     public Step duplicatedBookFilterMasterStep(
@@ -79,7 +80,7 @@ public class DuplicatedBookFilterStepConfig {
     @Bean
     public Step duplicatedBookFilterStep(StepLoggingListener stepLoggingListener) {
         return new StepBuilder("duplicatedBookFilterStep", jobRepository)
-                .<LibraryStock, LibraryStock>chunk(2_000, transactionManager)
+                .<LibraryStock, LibraryStock>chunk(CHUNK_SIZE, transactionManager)
                 .reader(normalizedFileReader(null))
                 .processor(duplicatedBookIdFilter())
                 .writer(duplicatedBookIdWriter(null, null))
