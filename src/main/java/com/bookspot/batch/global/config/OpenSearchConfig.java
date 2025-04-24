@@ -42,7 +42,9 @@ public class OpenSearchConfig {
                                                 .setDefaultCredentialsProvider(credentialsProvider)
                                                 .setDefaultIOReactorConfig(
                                                         IOReactorConfig.custom()
-                                                                .setIoThreadCount(1)
+                                                                .setIoThreadCount(
+                                                                        TaskExecutorConfig.MULTI_POOL_SIZE
+                                                                )
                                                                 .build()
                                                 )
                                 )
