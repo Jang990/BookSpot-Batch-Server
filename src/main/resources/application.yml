@@ -3,7 +3,7 @@ elasticsearch:
   apiKey: bTRReWFaVUJzYnB2TkJ3QXNVd1c6b0g3VGpXUlBUTmVBTWFDWXk0LW1rUQ==
 
 opensearch:
-  serverUrl: http://localhost:9200
+  serverUrl: http://127.0.0.1:9200
   username: admin
   password: admin
 

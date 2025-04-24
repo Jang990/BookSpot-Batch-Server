@@ -36,7 +36,7 @@ public class OpenSearchConfig {
 
         return new OpenSearchClient(
                 new RestClientTransport(
-                        RestClient.builder(new HttpHost(serverUrl))
+                        RestClient.builder(HttpHost.create(serverUrl))
                                 .setHttpClientConfigCallback(
                                         httpClientBuilder -> httpClientBuilder
                                                 .setDefaultCredentialsProvider(credentialsProvider)
