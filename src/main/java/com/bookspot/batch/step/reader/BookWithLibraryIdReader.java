@@ -6,13 +6,9 @@ import com.bookspot.batch.step.service.UniqueBookRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.NonTransientResourceException;
-import org.springframework.batch.item.ParseException;
-import org.springframework.batch.item.UnexpectedInputException;
+import org.springframework.batch.item.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -20,7 +16,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument> {
+public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, ItemStream {
     private static final String library_ids_query = """
             SELECT book_id, JSON_ARRAYAGG(library_id) as library_ids
             FROM library_stock
@@ -28,21 +24,18 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument> {
             GROUP BY book_id;
             """;
 
+    private static final String KEY_PAGE = "BookWithLibraryIdReader.currentPage";
+    private static final String KEY_INDEX = "BookWithLibraryIdReader.currentIndex";
+
     private final NamedParameterJdbcTemplate namedJdbcTemplate;
     private final UniqueBookRepository bookRepository;
     private final ObjectMapper objectMapper;
     private final int pageSize;
 
+    private ExecutionContext executionContext;
     private List<TEMP_BookDocument> currentBatch;
     private int currentIndex;
     private int currentPage;
-
-    @PostConstruct
-    protected void postConstruct() {
-        currentPage = 0;
-        currentIndex = 0;
-        currentBatch = new ArrayList<>(pageSize);
-    }
 
     public BookWithLibraryIdReader(
             NamedParameterJdbcTemplate namedJdbcTemplate,
@@ -62,11 +55,25 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument> {
     }
 
     @Override
+    public void open(ExecutionContext executionContext) throws ItemStreamException {
+        ItemStream.super.open(executionContext);
+        this.executionContext = executionContext;
+        if (executionContext.containsKey(KEY_PAGE)) {
+            currentPage = executionContext.getInt(KEY_PAGE);
+            currentIndex = executionContext.getInt(KEY_INDEX);
+        } else {
+            currentPage = 0;
+            currentIndex = 0;
+        }
+        currentBatch = new ArrayList<>(pageSize);
+    }
+
+    @Override
     public TEMP_BookDocument read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-        if(isAllDataFetched())
-            return null;
         if(currentIndex >= currentBatch.size())
             fetchNextPage();
+        if(isAllDataFetched())
+            return null;
         return currentBatch.get(currentIndex++);
     }
 
@@ -82,6 +89,12 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument> {
 
         currentIndex = 0;
         currentPage++;
+        saveState();
+    }
+
+    private void saveState() {
+        executionContext.putInt(KEY_PAGE, currentPage);
+        executionContext.putInt(KEY_INDEX, currentIndex);
     }
 
     private List<TEMP_BookDocument> aggregate(
