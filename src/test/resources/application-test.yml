@@ -1,3 +1,8 @@
+opensearch:
+  serverUrl: http://127.0.0.1:9200
+  username: admin
+  password: admin
+
 spring:
   sql.init.mode: always # schema.sql data.sql 실행
   datasource:

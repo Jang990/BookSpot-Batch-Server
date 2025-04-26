@@ -1,0 +1,73 @@
+package com.bookspot.batch.global.config;
+
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
+@Component
+public class OpenSearchIndex {
+    public static final String INDEX_PREFIX = "books-";
+    public static final String DOCS = """
+            {
+                "settings": {
+                    "analysis": {
+                        // 토크나이저 정의
+                        "tokenizer": {
+                            "my_tokenizer": {
+                                "type": "nori_tokenizer",
+                                "decompound_mode": "mixed"
+                            }
+                        },
+                        "analyzer": {
+                                "my_nori_analyzer": {
+                                    "type": "custom",
+                                    "tokenizer": "my_tokenizer",
+                                    "filter": ["nori_readingform", "nori_part_of_speech", "lowercase"]
+                                }
+                        }
+                    }
+                },
+                "mappings": {
+                    "dynamic": false,
+                    "properties": {
+                        "id": {
+                            "type": "keyword"
+                        },
+                        "isbn13": {
+                            "type": "keyword"
+                        },
+                        "title": {
+                            "type": "text",
+                            "analyzer": "my_nori_analyzer"
+                        },
+                        "subject_code": {
+                            "type": "short"
+                        },
+                        "author": {
+                            "type": "text",
+                            "analyzer": "my_nori_analyzer"
+                        },
+                        "publication_year": {
+                            "type": "short"
+                        },
+                        "publisher": {
+                            "type": "keyword"
+                        },
+                        "loan_count": {
+                            "type": "integer"
+                        },
+                        "library_ids": {
+                            "type": "keyword"
+                        }
+                    }
+                }
+            }
+            """;
+
+    public String indexName() {
+        return INDEX_PREFIX.concat(
+                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))
+        );
+    }
+}
