@@ -99,7 +99,7 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument> {
                         book.getPublisher(),
                         book.getLoanCount(),
                         book.getSubjectCode(),
-                        book.getPublicationYear().getValue(),
+                        book.getPublicationYear() == null ? null : book.getPublicationYear().getValue(),
                         libraryIdMap.getOrDefault(book.getId(), new LinkedList<>())
                 ))
                 .collect(Collectors.toList());
