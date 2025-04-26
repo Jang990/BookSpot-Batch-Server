@@ -1,8 +1,5 @@
 package com.bookspot.batch.step.writer;
 
-import co.elastic.clients.elasticsearch.ElasticsearchClient;
-import com.bookspot.batch.data.mapper.BookToDocumentMapper;
-import com.bookspot.batch.step.writer.book.BookElasticSearchWriter;
 import com.bookspot.batch.step.writer.book.UniqueBookInfoWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,12 +15,5 @@ public class BookWriterConfig {
     @Bean
     public UniqueBookInfoWriter bookInfoWriter() {
         return new UniqueBookInfoWriter(dataSource);
-    }
-
-    @Bean
-    public BookElasticSearchWriter bookElasticSearchWriter(
-            ElasticsearchClient elasticsearchClient,
-            BookToDocumentMapper bookToDocumentMapper) {
-        return new BookElasticSearchWriter(elasticsearchClient, bookToDocumentMapper);
     }
 }
