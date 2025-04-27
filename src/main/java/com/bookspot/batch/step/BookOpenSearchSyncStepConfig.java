@@ -4,6 +4,7 @@ import com.bookspot.batch.data.TEMP_BookDocument;
 import com.bookspot.batch.global.config.OpenSearchIndex;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
+import com.bookspot.batch.step.service.LibraryStockRepository;
 import com.bookspot.batch.step.service.UniqueBookRepository;
 import com.bookspot.batch.step.writer.book.BookOpenSearchWriter;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,15 +22,14 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @RequiredArgsConstructor
 public class BookOpenSearchSyncStepConfig {
-    private static final int CHUNK_SIZE = 2_000;
+    private static final int CHUNK_SIZE = 500;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final StepLoggingListener stepLoggingListener;
 
-    private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
     private final UniqueBookRepository bookRepository;
-    private final ObjectMapper objectMapper;
+    private final LibraryStockRepository libraryStockRepository;
 
     private final OpenSearchClient openSearchClient;
     private final OpenSearchIndex openSearchIndex;
@@ -49,9 +49,8 @@ public class BookOpenSearchSyncStepConfig {
     @StepScope
     public BookWithLibraryIdReader bookWithLibraryIdReader() {
         return new BookWithLibraryIdReader(
-                namedParameterJdbcTemplate,
                 bookRepository,
-                objectMapper,
+                libraryStockRepository,
                 CHUNK_SIZE
         );
     }
