@@ -1,7 +1,7 @@
 package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.data.LibraryIds;
-import com.bookspot.batch.data.TEMP_BookDocument;
+import com.bookspot.batch.data.BookDocument;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.step.service.LibraryStockRepository;
 import com.bookspot.batch.step.service.BookRepository;
@@ -11,7 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, ItemStream {
+public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemStream {
 
     protected static final String KEY_PAGE = "BookWithLibraryIdReader.currentPage";
 
@@ -20,7 +20,7 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
     private final int pageSize;
 
     private ExecutionContext executionContext;
-    private List<TEMP_BookDocument> currentBatch;
+    private List<BookDocument> currentBatch;
     private int currentIndex;
     private int currentPage;
 
@@ -50,7 +50,7 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
     }
 
     @Override
-    public TEMP_BookDocument read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+    public BookDocument read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
         if(currentBatch == null
                 || currentIndex >= currentBatch.size())
             fetchNextPage();
@@ -81,14 +81,14 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
         executionContext.putInt(KEY_PAGE, currentPage);
     }
 
-    private List<TEMP_BookDocument> aggregate(
+    private List<BookDocument> aggregate(
             List<ConvertedUniqueBook> books,
             List<LibraryIds> libraryIds) {
         Map<Long, List<String>> libraryIdMap = libraryIds.stream()
                 .collect(Collectors.toMap(LibraryIds::bookId, LibraryIds::libraryIds));
 
         return books.stream()
-                .map(book -> new TEMP_BookDocument(
+                .map(book -> new BookDocument(
                         book.getId().toString(),
                         book.getIsbn13(),
                         book.getTitle(),

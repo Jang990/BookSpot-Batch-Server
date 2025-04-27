@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class TEMP_BookDocument {
+public class BookDocument {
     @JsonProperty("book_id")
     private String bookId;
     private String isbn13;          // isbn
@@ -23,7 +23,7 @@ public class TEMP_BookDocument {
     @JsonProperty("library_ids")
     private List<String> libraryIdsArrayString;
 
-    public TEMP_BookDocument(
+    public BookDocument(
             String bookId, String isbn13, String title,
             String author, String publisher, int loanCount,
             Integer subjectCode, Integer publicationYear,

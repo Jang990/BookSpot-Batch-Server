@@ -1,6 +1,6 @@
 package com.bookspot.batch.step;
 
-import com.bookspot.batch.data.TEMP_BookDocument;
+import com.bookspot.batch.data.BookDocument;
 import com.bookspot.batch.global.config.OpenSearchIndex;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
@@ -36,7 +36,7 @@ public class BookOpenSearchSyncStepConfig {
     @Bean
     public Step bookOpenSearchSyncStep() throws Exception {
         return new StepBuilder("bookOpenSearchSyncStep", jobRepository)
-                .<TEMP_BookDocument, TEMP_BookDocument>chunk(CHUNK_SIZE, transactionManager)
+                .<BookDocument, BookDocument>chunk(CHUNK_SIZE, transactionManager)
                 .reader(bookWithLibraryIdReader())
                 .writer(bookOpenSearchWriter())
                 .listener(stepLoggingListener)
