@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, ItemStream {
 
-    private static final String KEY_PAGE = "BookWithLibraryIdReader.currentPage";
-    private static final String KEY_INDEX = "BookWithLibraryIdReader.currentIndex";
+    protected static final String KEY_PAGE = "BookWithLibraryIdReader.currentPage";
+    protected static final String KEY_INDEX = "BookWithLibraryIdReader.currentIndex";
 
     private final UniqueBookRepository bookRepository;
     private final LibraryStockRepository libraryStockRepository;
@@ -41,7 +41,6 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
 
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
-        ItemStream.super.open(executionContext);
         this.executionContext = executionContext;
         if (executionContext.containsKey(KEY_PAGE)) {
             currentPage = executionContext.getInt(KEY_PAGE);
@@ -50,12 +49,13 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
             currentPage = 0;
             currentIndex = 0;
         }
-        currentBatch = new ArrayList<>(pageSize);
+        saveState();
     }
 
     @Override
     public TEMP_BookDocument read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
-        if(currentIndex >= currentBatch.size())
+        if(currentBatch == null
+                || currentIndex >= currentBatch.size())
             fetchNextPage();
         if(isAllDataFetched())
             return null;
@@ -64,6 +64,10 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
 
     private void fetchNextPage() {
         List<ConvertedUniqueBook> content = bookRepository.findAll(PageRequest.of(currentPage, pageSize)).getContent();
+        if (content.isEmpty()) {
+            currentBatch = Collections.emptyList();
+            return;
+        }
 
         List<LibraryIds> libraryIds = libraryStockRepository.findLibraryIds(content.stream()
                 .mapToLong(ConvertedUniqueBook::getId)
@@ -103,7 +107,15 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
     }
 
     private boolean isAllDataFetched() {
-        return currentPage != 0
+        return isAfterLastElement() || isLastEmptyPage();
+    }
+
+    private boolean isLastEmptyPage() {
+        return currentBatch != null && currentBatch.isEmpty();
+    }
+
+    private boolean isAfterLastElement() {
+        return currentBatch != null
                 && currentBatch.size() < pageSize
                 && currentBatch.size() == currentIndex;
     }
