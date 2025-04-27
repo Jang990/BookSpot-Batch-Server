@@ -5,9 +5,8 @@ import com.bookspot.batch.global.config.OpenSearchIndex;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
 import com.bookspot.batch.step.service.LibraryStockRepository;
-import com.bookspot.batch.step.service.UniqueBookRepository;
+import com.bookspot.batch.step.service.BookRepository;
 import com.bookspot.batch.step.writer.book.BookOpenSearchWriter;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.springframework.batch.core.Step;
@@ -16,7 +15,6 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -28,7 +26,7 @@ public class BookOpenSearchSyncStepConfig {
     private final PlatformTransactionManager transactionManager;
     private final StepLoggingListener stepLoggingListener;
 
-    private final UniqueBookRepository bookRepository;
+    private final BookRepository bookRepository;
     private final LibraryStockRepository libraryStockRepository;
 
     private final OpenSearchClient openSearchClient;

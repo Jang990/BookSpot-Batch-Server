@@ -4,7 +4,7 @@ import com.bookspot.batch.step.reader.BookRepositoryReader;
 import com.bookspot.batch.step.reader.IsbnIdPagingQueryProviderFactory;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.reader.IsbnReader;
-import com.bookspot.batch.step.service.UniqueBookRepository;
+import com.bookspot.batch.step.service.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +18,8 @@ public class BookReaderConfig {
     private static final int WARM_UP_SIZE = 5_000;
 
     @Bean
-    public BookRepositoryReader bookRepositoryReader(UniqueBookRepository uniqueBookRepository) {
-        return new BookRepositoryReader(uniqueBookRepository, 1_000);
+    public BookRepositoryReader bookRepositoryReader(BookRepository bookRepository) {
+        return new BookRepositoryReader(bookRepository, 1_000);
     }
 
     @Bean

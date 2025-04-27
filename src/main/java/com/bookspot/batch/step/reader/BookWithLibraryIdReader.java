@@ -4,7 +4,7 @@ import com.bookspot.batch.data.LibraryIds;
 import com.bookspot.batch.data.TEMP_BookDocument;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.step.service.LibraryStockRepository;
-import com.bookspot.batch.step.service.UniqueBookRepository;
+import com.bookspot.batch.step.service.BookRepository;
 import org.springframework.batch.item.*;
 import org.springframework.data.domain.PageRequest;
 
@@ -15,7 +15,7 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
 
     protected static final String KEY_PAGE = "BookWithLibraryIdReader.currentPage";
 
-    private final UniqueBookRepository bookRepository;
+    private final BookRepository bookRepository;
     private final LibraryStockRepository libraryStockRepository;
     private final int pageSize;
 
@@ -25,7 +25,7 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
     private int currentPage;
 
     public BookWithLibraryIdReader(
-            UniqueBookRepository bookRepository,
+            BookRepository bookRepository,
             LibraryStockRepository libraryStockRepository,
             int pageSize) {
         Objects.requireNonNull(bookRepository);

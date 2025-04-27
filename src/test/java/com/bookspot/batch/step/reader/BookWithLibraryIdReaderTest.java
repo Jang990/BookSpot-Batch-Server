@@ -2,7 +2,7 @@ package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.step.service.LibraryStockRepository;
-import com.bookspot.batch.step.service.UniqueBookRepository;
+import com.bookspot.batch.step.service.BookRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,8 @@ class BookWithLibraryIdReaderTest {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    @Autowired UniqueBookRepository bookRepository;
+    @Autowired
+    BookRepository bookRepository;
     @Autowired LibraryStockRepository libraryStockRepository;
 
     private void initData() {
