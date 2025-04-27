@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, ItemStream {
 
     protected static final String KEY_PAGE = "BookWithLibraryIdReader.currentPage";
-    protected static final String KEY_INDEX = "BookWithLibraryIdReader.currentIndex";
 
     private final UniqueBookRepository bookRepository;
     private final LibraryStockRepository libraryStockRepository;
@@ -44,10 +43,8 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
         this.executionContext = executionContext;
         if (executionContext.containsKey(KEY_PAGE)) {
             currentPage = executionContext.getInt(KEY_PAGE);
-            currentIndex = executionContext.getInt(KEY_INDEX);
         } else {
             currentPage = 0;
-            currentIndex = 0;
         }
         saveState();
     }
@@ -82,7 +79,6 @@ public class BookWithLibraryIdReader implements ItemReader<TEMP_BookDocument>, I
 
     private void saveState() {
         executionContext.putInt(KEY_PAGE, currentPage);
-        executionContext.putInt(KEY_INDEX, currentIndex);
     }
 
     private List<TEMP_BookDocument> aggregate(

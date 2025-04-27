@@ -64,7 +64,6 @@ class BookWithLibraryIdReaderTest {
         assertNull(reader.read());
 
         assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 2);
-        assertEquals(ec.get(BookWithLibraryIdReader.KEY_INDEX), 0);
     }
 
     @Test
@@ -75,7 +74,6 @@ class BookWithLibraryIdReaderTest {
         );
 
         ExecutionContext ec = new ExecutionContext();
-        ec.put(BookWithLibraryIdReader.KEY_INDEX, 0);
         ec.put(BookWithLibraryIdReader.KEY_PAGE, 1);
 
         reader.open(ec);
@@ -84,7 +82,6 @@ class BookWithLibraryIdReaderTest {
         assertNull(reader.read());
 
         assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 2);
-        assertEquals(ec.get(BookWithLibraryIdReader.KEY_INDEX), 0);
     }
 
     @Test
@@ -99,6 +96,5 @@ class BookWithLibraryIdReaderTest {
         assertNull(reader.read());
 
         assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 0);
-        assertEquals(ec.get(BookWithLibraryIdReader.KEY_INDEX), 0);
     }
 }
