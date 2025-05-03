@@ -13,6 +13,7 @@ public class BookDocument {
     private String title;           // 도서명
     private String author;          // 저자
     private String publisher;       // 출판사
+    @JsonProperty("loan_count")
     private int loanCount;
 
     @JsonProperty("subject_code")
