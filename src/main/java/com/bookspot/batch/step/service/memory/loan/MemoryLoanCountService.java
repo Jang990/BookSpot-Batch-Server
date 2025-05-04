@@ -1,15 +1,15 @@
 package com.bookspot.batch.step.service.memory.loan;
 
-import io.netty.util.collection.LongObjectHashMap;
+import org.eclipse.collections.impl.map.mutable.primitive.LongObjectHashMap;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiConsumer;
 
 @Service
-public class MemoryLoanCountService {
-    private static LongObjectHashMap store = new LongObjectHashMap();
+public class MemoryLoanCountService{
+    private static LongObjectHashMap<AtomicInteger> store = new LongObjectHashMap<>();
     private static final int INIT_LOAN_COUNT = 0;
 
 
@@ -18,7 +18,7 @@ public class MemoryLoanCountService {
     }
 
     private AtomicInteger temp_get(String isbn13) {
-        return (AtomicInteger) store.get(Long.parseLong(isbn13));
+        return store.get(Long.parseLong(isbn13));
     }
 
     public Integer get(String isbn13) {
@@ -37,8 +37,10 @@ public class MemoryLoanCountService {
         store.clear();
     }
 
-    public Map<Long, AtomicInteger> getData() {
-        return store;
+    public void processAll(LongIntPrimitiveConsumer consumer) {
+        store.forEachKeyValue((l, atomicInteger) -> {
+            consumer.accept(l, atomicInteger.get());
+        });
     }
 
     public void increase(String isbn, int loanCount) {

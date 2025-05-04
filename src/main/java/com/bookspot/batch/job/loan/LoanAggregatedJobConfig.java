@@ -71,7 +71,7 @@ public class LoanAggregatedJobConfig {
     public Tasklet saveAggregatedCsvTasklet(
             @Value(OUTPUT_FILE_PATH) String aggregatedFilePath) {
         return (contribution, chunkContext) -> {
-            aggregatedBooksCsvWriter.saveToCsv(aggregatedFilePath, memoryLoanCountService.getData());
+            aggregatedBooksCsvWriter.saveToCsv(aggregatedFilePath);
             return RepeatStatus.FINISHED;
         };
     }
