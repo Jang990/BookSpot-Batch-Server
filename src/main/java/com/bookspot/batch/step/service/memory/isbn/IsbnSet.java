@@ -4,7 +4,7 @@ import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
 
 
 public class IsbnSet {
-    private LongHashSet set = new LongHashSet();
+    private LongHashSet set = new LongHashSet(4_000_000);
 
     public void add(String isbn13) {
         set.add(toLong(isbn13));
