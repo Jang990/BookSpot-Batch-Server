@@ -147,7 +147,7 @@ CREATE TABLE `library` (
 CREATE TABLE `book` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `isbn13` varchar(13) NOT NULL,
-  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `title` varchar(300) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `subject_code` int DEFAULT NULL,
   `author` varchar(255) DEFAULT NULL,
   `publication_year` year DEFAULT NULL,
