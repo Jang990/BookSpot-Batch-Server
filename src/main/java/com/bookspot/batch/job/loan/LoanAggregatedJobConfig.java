@@ -3,7 +3,6 @@ package com.bookspot.batch.job.loan;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
-import com.bookspot.batch.step.service.memory.loan.MemoryLoanCountService;
 import com.bookspot.batch.step.writer.file.book.AggregatedBooksCsvWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -32,7 +31,6 @@ public class LoanAggregatedJobConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
-    private final MemoryLoanCountService memoryLoanCountService;
     private final AggregatedBooksCsvWriter aggregatedBooksCsvWriter;
 
     private final CustomFilePathValidators filePathValidators;
