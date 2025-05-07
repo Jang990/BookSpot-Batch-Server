@@ -2,14 +2,13 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LoanCount;
 import com.bookspot.batch.data.file.csv.StockCsvData;
-import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.loan.LoanAggregatedJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
-import com.bookspot.batch.step.service.memory.loan.MemoryLoanCountService;
+import com.bookspot.batch.step.service.memory.loan.LoanCountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -39,10 +38,10 @@ public class ReadLoanCountStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager platformTransactionManager;
 
-    private final MemoryLoanCountService memoryLoanCountService;
+    private final LoanCountService loanCountService;
     private final StepLoggingListener stepLoggingListener;
 
-    private static final int CHUNK_SIZE = 1000;
+    private static final int CHUNK_SIZE = 700;
 
     @Bean
     public Step readLoanCountMasterStep(
@@ -74,7 +73,7 @@ public class ReadLoanCountStepConfig {
                 .writer(
                         chunk -> {
                             for (LoanCount item : chunk.getItems())
-                                memoryLoanCountService.increase(item.isbn13(), item.loanCount());
+                                loanCountService.increase(item.isbn13(), item.loanCount());
                         }
                 )
                 .listener(stepLoggingListener)
@@ -92,7 +91,7 @@ public class ReadLoanCountStepConfig {
     @Bean
     public ItemProcessor<LoanCount, LoanCount> memoryIsbnFilter() {
         return item -> {
-            if (!memoryLoanCountService.contains(item.isbn13()))
+            if (!loanCountService.contains(item.isbn13()))
                 return null;
             return item;
         };
@@ -101,11 +100,12 @@ public class ReadLoanCountStepConfig {
     @Bean
     public TaskExecutorPartitionHandler loanCountPartitionHandler(
             Step readLoanCountStep,
-            TaskExecutor multiTaskPool) {
+            TaskExecutor singleTaskPool) {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(readLoanCountStep);
-        partitionHandler.setTaskExecutor(multiTaskPool);
-        partitionHandler.setGridSize(TaskExecutorConfig.MULTI_POOL_SIZE);
+        partitionHandler.setTaskExecutor(singleTaskPool);
+//        partitionHandler.setGridSize(TaskExecutorConfig.MULTI_POOL_SIZE);
+        partitionHandler.setGridSize(1);
         return partitionHandler;
     }
 

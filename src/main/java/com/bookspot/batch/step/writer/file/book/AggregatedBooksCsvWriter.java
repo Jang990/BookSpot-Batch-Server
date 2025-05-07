@@ -2,7 +2,7 @@ package com.bookspot.batch.step.writer.file.book;
 
 import com.bookspot.batch.global.file.spec.AggregatedBooksCsvSpec;
 import com.bookspot.batch.step.service.memory.Isbn13Convertor;
-import com.bookspot.batch.step.service.memory.loan.MemoryLoanCountService;
+import com.bookspot.batch.step.service.memory.loan.LoanCountService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,14 +15,14 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class AggregatedBooksCsvWriter {
-    private final MemoryLoanCountService memoryLoanCountService;
+    private final LoanCountService loanCountService;
 
     public void saveToCsv(String filePath) throws IOException {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, false))) {
             // 헤더?
             /*writer.write("id,title,author");
             writer.newLine();*/
-            memoryLoanCountService.processAll(
+            loanCountService.processAll(
                     (k, v) -> {
                         try {
                             String line = AggregatedBooksCsvSpec.createLine(Isbn13Convertor.convert(k), v);

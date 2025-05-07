@@ -3,9 +3,12 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
-import com.bookspot.batch.step.service.memory.loan.MemoryLoanCountService;
+import com.bookspot.batch.step.service.memory.loan.LoanCountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.item.ItemWriter;
@@ -22,26 +25,41 @@ public class LoanMapStepConfig {
     private final PlatformTransactionManager transactionManager;
 
     private final StepLoggingListener stepLoggingListener;
+    private final LoanCountService loanCountService;
 
     @Bean
     public Step loanMapInitStep(
-            IsbnIdReader isbnIdReader,
-            MemoryLoanCountService memoryLoanCountService) {
+            IsbnIdReader isbnIdReader) {
         return new StepBuilder("loanCountMapInitStep", jobRepository)
                 .<Isbn13MemoryData, Isbn13MemoryData>chunk(CHUNK_SIZE, transactionManager)
                 .reader(isbnIdReader)
-                .writer(loanCountMapWriter(memoryLoanCountService))
+                .writer(loanCountMapWriter())
                 .listener(stepLoggingListener)
+                .listener(
+                        new StepExecutionListener() {
+                            @Override
+                            public void beforeStep(StepExecution stepExecution) {
+                                loanCountService.init();
+                                StepExecutionListener.super.beforeStep(stepExecution);
+                            }
+
+                            @Override
+                            public ExitStatus afterStep(StepExecution stepExecution) {
+                                loanCountService.beforeCount();
+                                return StepExecutionListener.super.afterStep(stepExecution);
+                            }
+                        }
+                )
                 .allowStartIfComplete(true)
                 .build();
     }
 
     @Bean
-    public Step loanMapCleaningStep(MemoryLoanCountService memoryLoanCountService) {
+    public Step loanMapCleaningStep() {
         return new StepBuilder("loanMapCleaningStep", jobRepository)
                 .tasklet(
                         (contribution, chunkContext) -> {
-                            memoryLoanCountService.clearAll();
+                            loanCountService.clearAll();
                             return RepeatStatus.FINISHED;
                         },
                         transactionManager
@@ -51,10 +69,10 @@ public class LoanMapStepConfig {
     }
 
     @Bean
-    public ItemWriter<Isbn13MemoryData> loanCountMapWriter(MemoryLoanCountService memoryLoanCountService) {
+    public ItemWriter<Isbn13MemoryData> loanCountMapWriter() {
         return chunk -> {
             for (Isbn13MemoryData data : chunk)
-                memoryLoanCountService.add(data.isbn13());
+                loanCountService.add(data.isbn13());
         };
     }
 }
