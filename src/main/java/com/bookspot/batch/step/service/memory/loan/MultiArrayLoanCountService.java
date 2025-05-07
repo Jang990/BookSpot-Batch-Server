@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicIntegerArray;
 
-//@Component
+@Component
 public class MultiArrayLoanCountService implements LoanCountService {
     private long[] isbnArray;
     private AtomicIntegerArray loanArray;

@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
-@Component
+//@Component
 public class SingleArrayLoanCountService implements LoanCountService {
     private long[] isbnArray;
     private int[] loanArray;
