@@ -7,7 +7,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 public class TaskExecutorConfig {
-    public static final int MULTI_POOL_SIZE = 5;
+    public static final int MULTI_POOL_SIZE = 2;
 
     @Bean
     public TaskExecutor multiTaskPool() {
