@@ -18,13 +18,13 @@ import java.util.List;
  * @see LibraryFileDownloader 사용할 것
  */
 @Deprecated
-@Component
+//@Component
 @RequiredArgsConstructor
 public class LibraryItemReader implements ItemReader<Library> {
 
     private final LibraryApiRequester libraryApiRequester;
 
-    private int totalLibraries;
+    private int totalLibraries = 1521;
     private int currentPage;
     private int currentIndex;
     private List<Library> currentBatch;
