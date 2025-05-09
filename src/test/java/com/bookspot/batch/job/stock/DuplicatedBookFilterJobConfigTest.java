@@ -65,7 +65,7 @@ class DuplicatedBookFilterJobConfigTest {
                                 SOURCE_DIR
                         )
                         .addString(
-                                DuplicatedBookFilterJobConfig.OUTPUT_DIR_PARAM_NAME,
+                                DuplicatedBookFilterJobConfig.DUPLICATED_FILTER_DIR_PARAM_NAME,
                                 OUTPUT_DIR
                         )
                         .toJobParameters()

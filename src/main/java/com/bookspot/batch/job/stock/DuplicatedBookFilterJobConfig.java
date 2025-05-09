@@ -14,8 +14,8 @@ public class DuplicatedBookFilterJobConfig {
     public static final String SOURCE_DIR_PARAM_NAME = "sourceDir";
     public static final String SOURCE_DIR_PARAM = "#{jobParameters['sourceDir']}";
 
-    public static final String OUTPUT_DIR_PARAM_NAME = "filteredDir";
-    public static final String OUTPUT_DIR_PARAM = "#{jobParameters['filteredDir']}";
+    public static final String DUPLICATED_FILTER_DIR_PARAM_NAME = "filteredDir";
+    public static final String DUPLICATED_FILTER_DIR_PARAM = "#{jobParameters['filteredDir']}";
 
     private final JobRepository jobRepository;
 

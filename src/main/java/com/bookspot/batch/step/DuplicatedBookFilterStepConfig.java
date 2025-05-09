@@ -104,7 +104,7 @@ public class DuplicatedBookFilterStepConfig {
     @Bean
     @StepScope
     public StockNormalizeFileWriter duplicatedBookIdWriter(
-            @Value(DuplicatedBookFilterJobConfig.OUTPUT_DIR_PARAM) String normalizeDirPath,
+            @Value(DuplicatedBookFilterJobConfig.DUPLICATED_FILTER_DIR_PARAM) String normalizeDirPath,
             @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) {
         String outputFile = normalizeDirPath.concat("/")
                 .concat(StockFilenameUtil.toFiltered(file.getFilename()))
