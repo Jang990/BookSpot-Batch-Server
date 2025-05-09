@@ -25,15 +25,21 @@ public class StockNormalizeJobConfig {
     public static final String NORMALIZE_DIR_PARAM_NAME = "normalizeDir";
     public static final String NORMALIZE_DIR_PARAM = "#{jobParameters['normalizeDir']}";
 
+    public static final String DUPLICATED_FILTER_DIR_PARAM_NAME = "filteredDir";
+    public static final String DUPLICATED_FILTER_DIR_PARAM = "#{jobParameters['filteredDir']}";
+
     @Bean
     public Job stockNormalizeJob(
             Step isbnIdMapInitStep,
             Step stockNormalizeMasterStep,
-            Step isbnIdMapCleaningStep) {
+            Step isbnIdMapCleaningStep,
+            Step duplicatedBookFilterMasterStep) {
         return new JobBuilder("stockNormalizeJob", jobRepository)
                 .start(isbnIdMapInitStep)
                 .next(stockNormalizeMasterStep)
                 .next(isbnIdMapCleaningStep)
+
+                .next(duplicatedBookFilterMasterStep)
                 .validator(
                         FilePathJobParameterValidator.of(
                                 filePathValidators,
@@ -42,6 +48,9 @@ public class StockNormalizeJobConfig {
                                         FilePathType.REQUIRED_DIRECTORY,
 
                                         NORMALIZE_DIR_PARAM_NAME,
+                                        FilePathType.REQUIRED_DIRECTORY,
+
+                                        DUPLICATED_FILTER_DIR_PARAM_NAME,
                                         FilePathType.REQUIRED_DIRECTORY
                                 )
                         )

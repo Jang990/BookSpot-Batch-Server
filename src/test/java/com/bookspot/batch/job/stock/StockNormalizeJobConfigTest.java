@@ -26,8 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @BatchJobTest
 class StockNormalizeJobConfigTest {
-    final String SOURCE_DIR = "src/test/resources/files/stockNormalize";
-    final String OUTPUT_DIR = "src/test/resources/files/stockNormalize/result";
+    final String SOURCE_DIR = "src/test/resources/files/stockSync";
+    final String NORMALIZED_DIR = "src/test/resources/files/stockSync/normalized";
+    final String FILTERED_DIR = "src/test/resources/files/stockSync/filtered";
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -43,20 +44,18 @@ class StockNormalizeJobConfigTest {
         TestInsertUtils.bookBuilder().id(101L).isbn13("0000000000101").insert(jdbcTemplate);
         TestInsertUtils.bookBuilder().id(102L).isbn13("0000000000102").insert(jdbcTemplate);
         TestInsertUtils.bookBuilder().id(103L).isbn13("0000000000103").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(104L).isbn13("0000000000104").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(105L).isbn13("0000000000105").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(106L).isbn13("0000000000106").insert(jdbcTemplate);
 
         TestFileUtil.copy(
                 "src/test/resources/files/sample/stock/10001_2025-03-01.csv",
-                SOURCE_DIR+"/10001_2025-03-01.csv"
+                SOURCE_DIR.concat("/10001_2025-03-01.csv")
         );
     }
 
     @AfterEach
     void afterEach() throws IOException {
         TestFileUtil.deleteAll(SOURCE_DIR);
-        TestFileUtil.deleteAll(OUTPUT_DIR);
+        TestFileUtil.deleteAll(NORMALIZED_DIR);
+        TestFileUtil.deleteAll(FILTERED_DIR);
     }
 
     @Test
@@ -70,24 +69,43 @@ class StockNormalizeJobConfigTest {
                         )
                         .addString(
                                 StockNormalizeJobConfig.NORMALIZE_DIR_PARAM_NAME,
-                                OUTPUT_DIR
+                                NORMALIZED_DIR
+                        )
+                        .addString(
+                                StockNormalizeJobConfig.DUPLICATED_FILTER_DIR_PARAM_NAME,
+                                FILTERED_DIR
                         )
                         .toJobParameters()
         );
 
         assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
-        assertTrue(Files.exists(Path.of(OUTPUT_DIR.concat("/10001_2025-03-01_normalized.csv"))));
+
+        assertResultFile(
+                NORMALIZED_DIR.concat("/10001_2025-03-01_normalized.csv"),
+                new MyResultSet(101, 10001),
+                new MyResultSet(102, 10001),
+                new MyResultSet(101, 10001)
+        );
+
+        assertResultFile(
+                FILTERED_DIR.concat("/10001_2025-03-01_filtered.csv"),
+                new MyResultSet(101, 10001),
+                new MyResultSet(102, 10001)
+        );
+    }
+
+    private static void assertResultFile(String resultPath, MyResultSet... resultSets) throws Exception {
+        assertTrue(Files.exists(Path.of(resultPath)));
 
         StockNormalizedFileReader fileReader = new StockNormalizedFileReader(
                 new FileSystemResource(
-                        OUTPUT_DIR.concat("/10001_2025-03-01_normalized.csv")
+                        resultPath
                 )
         );
         fileReader.open(new ExecutionContext());
 
-        assertLine(fileReader.read(), 101, 10001);
-        assertLine(fileReader.read(), 102, 10001);
-        assertLine(fileReader.read(), 101, 10001);
+        for (MyResultSet resultSet : resultSets)
+            assertLine(fileReader.read(), resultSet.bookId, resultSet.libraryId);
         assertNull(fileReader.read());
     }
 
@@ -96,4 +114,5 @@ class StockNormalizeJobConfigTest {
         assertEquals(line.getLibraryId(), libraryId);
     }
 
+    record MyResultSet(long bookId, long libraryId) {}
 }
