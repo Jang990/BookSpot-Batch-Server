@@ -2,6 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LoanCount;
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.loan.LoanAggregatedJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
@@ -41,7 +42,7 @@ public class ReadLoanCountStepConfig {
     private final LoanCountService loanCountService;
     private final StepLoggingListener stepLoggingListener;
 
-    private static final int CHUNK_SIZE = 700;
+    private static final int CHUNK_SIZE = 1000;
 
     @Bean
     public Step readLoanCountMasterStep(
@@ -100,12 +101,11 @@ public class ReadLoanCountStepConfig {
     @Bean
     public TaskExecutorPartitionHandler loanCountPartitionHandler(
             Step readLoanCountStep,
-            TaskExecutor singleTaskPool) {
+            TaskExecutor multiTaskPool) {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(readLoanCountStep);
-        partitionHandler.setTaskExecutor(singleTaskPool);
-//        partitionHandler.setGridSize(TaskExecutorConfig.MULTI_POOL_SIZE);
-        partitionHandler.setGridSize(1);
+        partitionHandler.setTaskExecutor(multiTaskPool);
+        partitionHandler.setGridSize(TaskExecutorConfig.MULTI_POOL_SIZE);
         return partitionHandler;
     }
 
