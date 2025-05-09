@@ -58,6 +58,8 @@ public class MultiArrayLoanCountService implements LoanCountService {
 
     @Override
     public void increase(String isbn, int loanCount) {
+        if(loanCount == 0)
+            return;
         if(!contains(isbn))
             throw new IllegalArgumentException("찾을 수 없는 ISBN");
         loanArray.getAndAdd(findIdx(isbn), loanCount);
