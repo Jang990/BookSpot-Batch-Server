@@ -2,15 +2,12 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
-import com.bookspot.batch.job.stock.Temp_StockSyncJobConfig;
+import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
-import com.bookspot.batch.step.processor.ExistsStockFilter;
 import com.bookspot.batch.step.reader.StockNormalizedFileReader;
 import com.bookspot.batch.step.writer.stock.LibraryStockDeleter;
-import com.bookspot.batch.step.writer.stock.LibraryStockWriter;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
@@ -64,7 +61,7 @@ public class DeleteStockStepConfig {
     @Bean
     @StepScope
     public MultiResourcePartitioner deleteStockPartitioner(
-            @Value(Temp_StockSyncJobConfig.DELETE_DIR_PARAM) String root) throws IOException {
+            @Value(StockSyncJobConfig.DELETE_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
         Path rootPath = Paths.get(root);

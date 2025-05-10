@@ -3,7 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
-import com.bookspot.batch.job.stock.Temp_StockSyncJobConfig;
+import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.DeletedStockFileCreator;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
@@ -12,7 +12,6 @@ import com.bookspot.batch.step.writer.ExistsStockChecker;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.collections.impl.map.mutable.primitive.LongBooleanHashMap;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
@@ -30,7 +29,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 @Configuration
 @RequiredArgsConstructor
@@ -64,7 +62,7 @@ public class DeleteStockFileStepConfig {
     @Bean
     @StepScope
     public MultiResourcePartitioner deleteStockFilePartitioner(
-            @Value(Temp_StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
+            @Value(StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
         Path rootPath = Paths.get(root);
@@ -100,7 +98,7 @@ public class DeleteStockFileStepConfig {
     public DeletedStockFileCreator deletedStockFileCreator(
             ExistsStockChecker existsStockChecker,
             @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
-            @Value(Temp_StockSyncJobConfig.DELETE_DIR_PARAM) String deleteDir) {
+            @Value(StockSyncJobConfig.DELETE_DIR_PARAM) String deleteDir) {
         return new DeletedStockFileCreator(
                 existsStockChecker,
                 deleteDir.concat("/")

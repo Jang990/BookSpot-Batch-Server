@@ -28,7 +28,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @BatchJobTest
-class Temp_StockSyncJobConfigTest {
+class StockSyncJobConfigTest {
     final String SOURCE_DIR = "src/test/resources/files/stockSync"; // {1,3,5} = {1,2,4}
     final String INSERT_DIR = "src/test/resources/files/stockSync/insert";
     final String DELETE_DIR = "src/test/resources/files/stockSync/delete";
@@ -40,7 +40,7 @@ class Temp_StockSyncJobConfigTest {
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    Job temp_stockSyncJob;
+    Job stockSyncJob;
 
     @BeforeEach
     void beforeEach() throws IOException {
@@ -76,15 +76,15 @@ class Temp_StockSyncJobConfigTest {
 
     @Test
     void test() throws Exception {
-        jobLauncherTestUtils.setJob(temp_stockSyncJob);
+        jobLauncherTestUtils.setJob(stockSyncJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(
                 new JobParametersBuilder()
                         .addString(
-                                Temp_StockSyncJobConfig.SOURCE_DIR_PARAM_NAME,
+                                StockSyncJobConfig.SOURCE_DIR_PARAM_NAME,
                                 SOURCE_DIR
                         )
                         .addString(
-                                Temp_StockSyncJobConfig.DELETE_DIR_PARAM_NAME,
+                                StockSyncJobConfig.DELETE_DIR_PARAM_NAME,
                                 DELETE_DIR
                         )
                         .toJobParameters()

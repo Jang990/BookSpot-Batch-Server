@@ -8,11 +8,9 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
-
 @Configuration
 @RequiredArgsConstructor
-public class Temp_StockSyncJobConfig {
+public class StockSyncJobConfig {
     public static final String SOURCE_DIR_PARAM_NAME = "sourceDir";
     public static final String SOURCE_DIR_PARAM = "#{jobParameters['sourceDir']}";
 
@@ -22,12 +20,11 @@ public class Temp_StockSyncJobConfig {
     private final JobRepository jobRepository;
 
     @Bean
-    public Job temp_stockSyncJob(
+    public Job stockSyncJob(
             Step insertStockMasterStep,
             Step deleteStockFileMasterStep,
-            Step deleteStockMasterStep
-    ) {
-        return new JobBuilder("temp_stockSyncJob", jobRepository)
+            Step deleteStockMasterStep) {
+        return new JobBuilder("stockSyncJob", jobRepository)
                 .start(insertStockMasterStep)
                 .next(deleteStockFileMasterStep)
                 .next(deleteStockMasterStep)

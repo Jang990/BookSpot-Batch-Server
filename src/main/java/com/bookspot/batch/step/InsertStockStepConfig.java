@@ -2,15 +2,11 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
-import com.bookspot.batch.global.file.stock.StockFilenameUtil;
-import com.bookspot.batch.job.stock.Temp_StockSyncJobConfig;
+import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.ExistsStockFilter;
 import com.bookspot.batch.step.reader.StockNormalizedFileReader;
-import com.bookspot.batch.step.reader.db.stock.LibraryStockPagingQueryProviderFactory;
-import com.bookspot.batch.step.reader.db.stock.LibraryStockReader;
-import com.bookspot.batch.step.writer.file.stock.StockNormalizeFileWriter;
 import com.bookspot.batch.step.writer.stock.LibraryStockWriter;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
@@ -33,7 +29,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Set;
 
 @Configuration
 @RequiredArgsConstructor
@@ -68,7 +63,7 @@ public class InsertStockStepConfig {
     @Bean
     @StepScope
     public MultiResourcePartitioner insertStockPartitioner(
-            @Value(Temp_StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
+            @Value(StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
         Path rootPath = Paths.get(root);
