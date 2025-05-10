@@ -5,6 +5,8 @@ import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.step.InsertStockStepConfig;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import lombok.RequiredArgsConstructor;
+import org.eclipse.collections.impl.map.mutable.primitive.LongBooleanHashMap;
+import org.eclipse.collections.impl.map.mutable.primitive.LongLongHashMap;
 import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +31,24 @@ public class LibraryStockReaderConfig {
             bookIdSet.add(stock.bookId());
         }
 
+        libraryStockReader.close();
+
         return bookIdSet;
+    }
+
+    @Bean
+    @StepScope
+    public LongBooleanHashMap bookIdExistsMap(LibraryStockReader libraryStockReader) throws Exception {
+        LongBooleanHashMap bookIdExistsMap = new LongBooleanHashMap();
+
+        LibraryStockDto stock;
+        while ((stock = libraryStockReader.read()) != null) {
+            bookIdExistsMap.put(stock.bookId(), false);
+        }
+
+        libraryStockReader.close();
+
+        return bookIdExistsMap;
     }
 
     @Bean

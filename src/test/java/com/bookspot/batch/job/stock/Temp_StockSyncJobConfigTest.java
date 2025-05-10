@@ -21,12 +21,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @BatchJobTest
 class Temp_StockSyncJobConfigTest {
-    final String SOURCE_DIR = "src/test/resources/files/stockSync";
+    final String SOURCE_DIR = "src/test/resources/files/stockSync"; // {1,3,5} = {1,2,4}
     final String INSERT_DIR = "src/test/resources/files/stockSync/insert";
     final String DELETE_DIR = "src/test/resources/files/stockSync/delete";
 
@@ -53,6 +54,7 @@ class Temp_StockSyncJobConfigTest {
         TestInsertUtils.libraryStockBuilder().libraryId(1001L).bookId(1001L).insert(jdbcTemplate);
         TestInsertUtils.libraryStockBuilder().libraryId(1001L).bookId(1002L).insert(jdbcTemplate);
         TestInsertUtils.libraryStockBuilder().libraryId(1001L).bookId(1003L).insert(jdbcTemplate);
+        TestInsertUtils.libraryStockBuilder().libraryId(1001L).bookId(1004L).insert(jdbcTemplate);
 
         TestInsertUtils.libraryStockBuilder().libraryId(1002L).bookId(1001L).insert(jdbcTemplate);
         TestInsertUtils.libraryStockBuilder().libraryId(1002L).bookId(1002L).insert(jdbcTemplate);
@@ -84,6 +86,10 @@ class Temp_StockSyncJobConfigTest {
                                 Temp_StockSyncJobConfig.INSERT_DIR_PARAM_NAME,
                                 INSERT_DIR
                         )
+                        .addString(
+                                Temp_StockSyncJobConfig.DELETE_DIR_PARAM_NAME,
+                                DELETE_DIR
+                        )
                         .toJobParameters()
         );
 
@@ -95,9 +101,22 @@ class Temp_StockSyncJobConfigTest {
         );
 
         assertResultFile(
+                DELETE_DIR.concat("/1001_2025-03-01_delete.csv"),
+                new MyResultSet(1002, 1001),
+                new MyResultSet(1004, 1001)
+        );
+
+
+        assertResultFile(
                 INSERT_DIR.concat("/1002_2025-03-01_insert.csv"),
                 new MyResultSet(1004, 1002)
         );
+        assertResultFile(
+                DELETE_DIR.concat("/1002_2025-03-01_delete.csv"),
+                new MyResultSet(1003, 1002)
+        );
+
+
     }
 
     private static void assertResultFile(String resultPath, MyResultSet... resultSets) throws Exception {
