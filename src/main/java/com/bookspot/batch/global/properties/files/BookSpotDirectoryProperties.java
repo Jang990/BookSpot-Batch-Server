@@ -19,6 +19,8 @@ public class BookSpotDirectoryProperties {
     private String normalizedStock;
     @Value("${path.directory.filteredStock}")
     private String filteredStock;
+    @Value("${path.directory.deletedStock}")
+    private String deletedStock;
 
 
     public String root() {
@@ -47,5 +49,9 @@ public class BookSpotDirectoryProperties {
 
     public String filteredStock() {
         return filteredStock;
+    }
+
+    public String deletedStock() {
+        return deletedStock;
     }
 }
