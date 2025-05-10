@@ -11,6 +11,7 @@ import com.bookspot.batch.step.reader.StockNormalizedFileReader;
 import com.bookspot.batch.step.reader.db.stock.LibraryStockPagingQueryProviderFactory;
 import com.bookspot.batch.step.reader.db.stock.LibraryStockReader;
 import com.bookspot.batch.step.writer.file.stock.StockNormalizeFileWriter;
+import com.bookspot.batch.step.writer.stock.LibraryStockWriter;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
 import org.springframework.batch.core.Step;
@@ -39,6 +40,7 @@ import java.util.Set;
 public class InsertStockStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+    private final DataSource dataSource;
 
     public static final int CHUNK_SIZE = 1_000;
 
@@ -92,25 +94,20 @@ public class InsertStockStepConfig {
                 .<LibraryStock, LibraryStock>chunk(CHUNK_SIZE, transactionManager)
                 .reader(stockNormalizedFileReader)
                 .processor(existsStockFilter)
-                .writer(insertStockFileWriter(null, null))
+                .writer(libraryStockWriter())
                 .listener(stepLoggingListener)
                 .build();
     }
 
     @Bean
     @StepScope
-    public StockNormalizeFileWriter insertStockFileWriter(
-            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
-            @Value(Temp_StockSyncJobConfig.INSERT_DIR_PARAM) String insertDirPath) {
-        String outputFile = insertDirPath.concat("/")
-                .concat(StockFilenameUtil.toInsert(file.getFilename()))
-                .concat(".csv");
-        return new StockNormalizeFileWriter(outputFile);
+    public ExistsStockFilter existsStockFilter(LongHashSet libraryBookIdSet) {
+        return new ExistsStockFilter(libraryBookIdSet);
     }
 
     @Bean
     @StepScope
-    public ExistsStockFilter existsStockFilter(LongHashSet libraryBookIdSet) {
-        return new ExistsStockFilter(libraryBookIdSet);
+    public LibraryStockWriter libraryStockWriter() {
+        return new LibraryStockWriter(dataSource);
     }
 }

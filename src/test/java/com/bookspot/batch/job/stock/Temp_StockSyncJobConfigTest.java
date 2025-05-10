@@ -2,9 +2,11 @@ package com.bookspot.batch.job.stock;
 
 import com.bookspot.batch.TestFileUtil;
 import com.bookspot.batch.TestInsertUtils;
+import com.bookspot.batch.TestQueryUtil;
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.job.BatchJobTest;
 import com.bookspot.batch.step.reader.StockNormalizedFileReader;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,7 +71,6 @@ class Temp_StockSyncJobConfigTest {
     @AfterEach
     void afterEach() throws IOException {
         TestFileUtil.deleteAll(SOURCE_DIR);
-        TestFileUtil.deleteAll(INSERT_DIR);
         TestFileUtil.deleteAll(DELETE_DIR);
     }
 
@@ -83,10 +84,6 @@ class Temp_StockSyncJobConfigTest {
                                 SOURCE_DIR
                         )
                         .addString(
-                                Temp_StockSyncJobConfig.INSERT_DIR_PARAM_NAME,
-                                INSERT_DIR
-                        )
-                        .addString(
                                 Temp_StockSyncJobConfig.DELETE_DIR_PARAM_NAME,
                                 DELETE_DIR
                         )
@@ -95,11 +92,7 @@ class Temp_StockSyncJobConfigTest {
 
         assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 
-        assertResultFile(
-                INSERT_DIR.concat("/1001_2025-03-01_insert.csv"),
-                new MyResultSet(1005, 1001)
-        );
-
+        assertStockData(1001, List.of(1001L, 1002L, 1003L, 1004L, 1005L));
         assertResultFile(
                 DELETE_DIR.concat("/1001_2025-03-01_delete.csv"),
                 new MyResultSet(1002, 1001),
@@ -107,19 +100,26 @@ class Temp_StockSyncJobConfigTest {
         );
 
 
-        assertResultFile(
-                INSERT_DIR.concat("/1002_2025-03-01_insert.csv"),
-                new MyResultSet(1004, 1002)
-        );
+        assertStockData(1002, List.of(1001L, 1002L, 1003L, 1004L));
         assertResultFile(
                 DELETE_DIR.concat("/1002_2025-03-01_delete.csv"),
                 new MyResultSet(1003, 1002)
         );
+    }
 
+    private void assertStockData(long libraryId, List<Long> bookIds) {
+        List<LibraryStock> stocks = TestQueryUtil.findStocks(jdbcTemplate, libraryId);
+        Assertions.assertThat(bookIds)
+                .containsExactlyInAnyOrderElementsOf(
+                        stocks.stream()
+                                .mapToLong(LibraryStock::getBookId)
+                                .boxed()
+                                .toList()
+                );
 
     }
 
-    private static void assertResultFile(String resultPath, MyResultSet... resultSets) throws Exception {
+    private void assertResultFile(String resultPath, MyResultSet... resultSets) throws Exception {
         assertTrue(Files.exists(Path.of(resultPath)));
 
         StockNormalizedFileReader fileReader = new StockNormalizedFileReader(

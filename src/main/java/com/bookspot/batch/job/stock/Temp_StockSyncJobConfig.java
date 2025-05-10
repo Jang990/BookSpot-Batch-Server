@@ -16,9 +16,6 @@ public class Temp_StockSyncJobConfig {
     public static final String SOURCE_DIR_PARAM_NAME = "sourceDir";
     public static final String SOURCE_DIR_PARAM = "#{jobParameters['sourceDir']}";
 
-    public static final String INSERT_DIR_PARAM_NAME = "insertDir";
-    public static final String INSERT_DIR_PARAM = "#{jobParameters['insertDir']}";
-
     public static final String DELETE_DIR_PARAM_NAME = "deleteDir";
     public static final String DELETE_DIR_PARAM = "#{jobParameters['deleteDir']}";
 
