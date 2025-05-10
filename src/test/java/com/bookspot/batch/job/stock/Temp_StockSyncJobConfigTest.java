@@ -92,7 +92,7 @@ class Temp_StockSyncJobConfigTest {
 
         assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 
-        assertStockData(1001, List.of(1001L, 1002L, 1003L, 1004L, 1005L));
+        assertStockData(1001, List.of(1001L, 1003L, 1005L));
         assertResultFile(
                 DELETE_DIR.concat("/1001_2025-03-01_delete.csv"),
                 new MyResultSet(1002, 1001),
@@ -100,7 +100,7 @@ class Temp_StockSyncJobConfigTest {
         );
 
 
-        assertStockData(1002, List.of(1001L, 1002L, 1003L, 1004L));
+        assertStockData(1002, List.of(1001L, 1002L, 1004L));
         assertResultFile(
                 DELETE_DIR.concat("/1002_2025-03-01_delete.csv"),
                 new MyResultSet(1003, 1002)

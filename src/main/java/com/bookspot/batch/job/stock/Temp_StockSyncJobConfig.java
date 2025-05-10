@@ -24,11 +24,13 @@ public class Temp_StockSyncJobConfig {
     @Bean
     public Job temp_stockSyncJob(
             Step insertStockMasterStep,
-            Step deleteStockFileMasterStep
+            Step deleteStockFileMasterStep,
+            Step deleteStockMasterStep
     ) {
         return new JobBuilder("temp_stockSyncJob", jobRepository)
                 .start(insertStockMasterStep)
                 .next(deleteStockFileMasterStep)
+                .next(deleteStockMasterStep)
                 .build();
     }
 }
