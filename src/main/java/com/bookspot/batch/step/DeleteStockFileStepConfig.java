@@ -36,8 +36,6 @@ public class DeleteStockFileStepConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
 
-    public static final int CHUNK_SIZE = 1_000;
-
     @Bean
     public Step deleteStockFileMasterStep(
             Step deleteStockFileStep,
@@ -85,7 +83,7 @@ public class DeleteStockFileStepConfig {
             ExistsStockChecker existsStockChecker,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("deleteStockFileStep", jobRepository)
-                .<LibraryStock, LibraryStock>chunk(CHUNK_SIZE, transactionManager)
+                .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.STEP_CHUNK_SIZE, transactionManager)
                 .reader(stockNormalizedFileReader)
                 .writer(existsStockChecker)
                 .listener(stepLoggingListener)

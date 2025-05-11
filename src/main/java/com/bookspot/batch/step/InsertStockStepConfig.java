@@ -37,8 +37,6 @@ public class InsertStockStepConfig {
     private final PlatformTransactionManager transactionManager;
     private final DataSource dataSource;
 
-    public static final int CHUNK_SIZE = 1_000;
-
     @Bean
     public Step insertStockMasterStep(
             Step insertStockStep,
@@ -86,7 +84,7 @@ public class InsertStockStepConfig {
             ExistsStockFilter existsStockFilter,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("insertStockStep", jobRepository)
-                .<LibraryStock, LibraryStock>chunk(CHUNK_SIZE, transactionManager)
+                .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.STEP_CHUNK_SIZE, transactionManager)
                 .reader(stockNormalizedFileReader)
                 .processor(existsStockFilter)
                 .writer(libraryStockWriter())
@@ -105,4 +103,15 @@ public class InsertStockStepConfig {
     public LibraryStockWriter libraryStockWriter() {
         return new LibraryStockWriter(dataSource);
     }
+
+    /*@Bean
+    @StepScope
+    public StockNormalizeFileWriter insertStockFileWriter(
+            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
+            @Value(StockSyncJobConfig.INSERT_DIR_PARAM) String insertDir) {
+        String outputFile = insertDir.concat("/")
+                .concat(StockFilenameUtil.toInsert(file.getFilename()))
+                .concat(".csv");
+        return new StockNormalizeFileWriter(outputFile);
+    }*/
 }

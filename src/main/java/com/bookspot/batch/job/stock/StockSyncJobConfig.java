@@ -17,6 +17,8 @@ public class StockSyncJobConfig {
     public static final String DELETE_DIR_PARAM_NAME = "deleteDir";
     public static final String DELETE_DIR_PARAM = "#{jobParameters['deleteDir']}";
 
+    public static final int STEP_CHUNK_SIZE = 6_000;
+
     private final JobRepository jobRepository;
 
     @Bean
@@ -25,9 +27,10 @@ public class StockSyncJobConfig {
             Step deleteStockFileMasterStep,
             Step deleteStockMasterStep) {
         return new JobBuilder("stockSyncJob", jobRepository)
-                .start(insertStockMasterStep)
-                .next(deleteStockFileMasterStep)
+                .start(insertStockMasterStep) // 6000 - 2 | 8m50s390ms
+                .next(deleteStockFileMasterStep) // 6000 - 2 | 8m36s647ms
                 .next(deleteStockMasterStep)
                 .build();
     }
+
 }
