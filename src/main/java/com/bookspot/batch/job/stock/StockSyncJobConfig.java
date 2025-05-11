@@ -29,7 +29,7 @@ public class StockSyncJobConfig {
         return new JobBuilder("stockSyncJob", jobRepository)
                 .start(insertStockMasterStep) // 6000 - 2 | 8m50s390ms
                 .next(deleteStockFileMasterStep) // 6000 - 2 | 8m36s647ms
-                .next(deleteStockMasterStep)
+                .next(deleteStockMasterStep) // 6000 - 2 | 4s11ms
                 .build();
     }
 
