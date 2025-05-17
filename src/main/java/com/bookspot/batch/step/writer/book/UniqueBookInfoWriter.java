@@ -1,6 +1,7 @@
 package com.bookspot.batch.step.writer.book;
 
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 
 import javax.sql.DataSource;
@@ -25,6 +26,13 @@ public class UniqueBookInfoWriter extends JdbcBatchItemWriter<ConvertedUniqueBoo
             else
                 ps.setInt(6, book.getPublicationYear().getValue());
         });
+        setAssertUpdates(false);
+    }
 
+    @Override
+    public void write(Chunk<? extends ConvertedUniqueBook> chunk) throws Exception {
+        if (chunk.isEmpty())
+            return;
+        super.write(chunk);
     }
 }
