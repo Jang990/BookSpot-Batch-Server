@@ -2,6 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.BookSyncJobConfig;
 import com.bookspot.batch.step.listener.InvalidIsbn13LoggingListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
@@ -30,6 +31,10 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.dao.CannotAcquireLockException;
+import org.springframework.retry.RetryCallback;
+import org.springframework.retry.RetryContext;
+import org.springframework.retry.RetryListener;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.io.IOException;
@@ -40,7 +45,7 @@ import java.nio.file.Paths;
 @Configuration
 @RequiredArgsConstructor
 public class BookSyncStepConfig {
-    private static final int CHUNK_SIZE = 3_000;
+    private static final int CHUNK_SIZE = 2_000;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -60,10 +65,11 @@ public class BookSyncStepConfig {
     @Bean
     public TaskExecutorPartitionHandler bookSyncPartitionHandler(
             Step bookSyncStep,
-            TaskExecutor singleTaskPool) {
+            TaskExecutor multiTaskPool) {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
         partitionHandler.setStep(bookSyncStep);
-        partitionHandler.setTaskExecutor(singleTaskPool);
+        partitionHandler.setTaskExecutor(multiTaskPool);
+        partitionHandler.setGridSize(TaskExecutorConfig.MULTI_POOL_SIZE);
         return partitionHandler;
     }
 
@@ -82,6 +88,8 @@ public class BookSyncStepConfig {
                 .faultTolerant()
                 .skip(InvalidIsbn13Exception.class)
                 .skipLimit(200)
+                .retry(CannotAcquireLockException.class)
+                .retryLimit(20)
                 .build();
     }
 
