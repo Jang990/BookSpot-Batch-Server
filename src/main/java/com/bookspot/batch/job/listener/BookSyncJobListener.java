@@ -17,10 +17,13 @@ public class BookSyncJobListener implements JobExecutionListener {
         isbnReader.open(new ExecutionContext());
 
         try {
+            isbnSet.init();
             while (true) {
                 String isbn = isbnReader.read();
-                if(isbn == null)
+                if (isbn == null) {
+                    isbnSet.beforeProcess();
                     return;
+                }
                 isbnSet.add(isbn);
             }
         } catch (Exception e) {
