@@ -14,7 +14,6 @@ import com.bookspot.batch.step.processor.TitleEllipsisConverter;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.writer.book.UniqueBookInfoWriter;
-import com.bookspot.batch.step.writer.memory.InMemoryIsbnWriterWithCsv;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -29,12 +28,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.dao.CannotAcquireLockException;
-import org.springframework.retry.RetryCallback;
-import org.springframework.retry.RetryContext;
-import org.springframework.retry.RetryListener;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.io.IOException;
@@ -77,12 +72,12 @@ public class BookSyncStepConfig {
     public Step bookSyncStep(
             StockCsvFileReader stockCsvFileReader,
             CompositeItemProcessor<StockCsvData, ConvertedUniqueBook> bookSyncProcessor,
-            CompositeItemWriter<ConvertedUniqueBook> bookSyncItemWriter) {
+            UniqueBookInfoWriter uniqueBookInfoWriter) {
         return new StepBuilder("bookSyncStep", jobRepository)
                 .<StockCsvData, ConvertedUniqueBook>chunk(CHUNK_SIZE, transactionManager)
                 .reader(stockCsvFileReader)
                 .processor(bookSyncProcessor)
-                .writer(bookSyncItemWriter)
+                .writer(uniqueBookInfoWriter)
                 .listener(invalidIsbn13Listener)
                 .listener(stepLoggingListener)
                 .faultTolerant()
@@ -104,16 +99,6 @@ public class BookSyncStepConfig {
                 inMemoryIsbnFilter,
                 titleEllipsisConverter,
                 stockCsvToBookConvertor
-        );
-    }
-
-    @Bean
-    public CompositeItemWriter<ConvertedUniqueBook> bookSyncItemWriter(
-            UniqueBookInfoWriter uniqueBookInfoWriter,
-            InMemoryIsbnWriterWithCsv inMemoryIsbnWriterWithCsv) {
-        return new CompositeItemWriter<>(
-                uniqueBookInfoWriter,
-                inMemoryIsbnWriterWithCsv
         );
     }
 
