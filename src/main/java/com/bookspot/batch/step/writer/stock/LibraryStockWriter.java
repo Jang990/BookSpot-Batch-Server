@@ -1,6 +1,7 @@
 package com.bookspot.batch.step.writer.stock;
 
 import com.bookspot.batch.data.LibraryStock;
+import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.database.JdbcBatchItemWriter;
 
 import javax.sql.DataSource;
@@ -17,5 +18,12 @@ public class LibraryStockWriter extends JdbcBatchItemWriter<LibraryStock> {
             ps.setLong(1, stock.getLibraryId());
             ps.setLong(2, stock.getBookId());
         });
+    }
+
+    @Override
+    public void write(Chunk<? extends LibraryStock> chunk) throws Exception {
+        if(chunk.isEmpty())
+            return;
+        super.write(chunk);
     }
 }
