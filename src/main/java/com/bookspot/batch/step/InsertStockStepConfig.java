@@ -84,7 +84,7 @@ public class InsertStockStepConfig {
             ExistsStockFilter existsStockFilter,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("insertStockStep", jobRepository)
-                .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.STEP_CHUNK_SIZE, transactionManager)
+                .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.INSERT_CHUNK_SIZE, transactionManager)
                 .reader(stockNormalizedFileReader)
                 .processor(existsStockFilter)
                 .writer(libraryStockWriter())

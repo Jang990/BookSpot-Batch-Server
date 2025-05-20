@@ -81,7 +81,7 @@ public class DeleteStockStepConfig {
             StockNormalizedFileReader stockNormalizedFileReader,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("deleteStockStep", jobRepository)
-                .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.STEP_CHUNK_SIZE, transactionManager)
+                .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.DELETE_CHUNK_SIZE, transactionManager)
                 .reader(stockNormalizedFileReader)
                 .writer(libraryStockDeleter())
                 .listener(stepLoggingListener)
