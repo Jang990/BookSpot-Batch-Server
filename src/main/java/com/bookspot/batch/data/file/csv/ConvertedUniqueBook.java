@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDate;
 import java.time.Year;
 
 @Entity
@@ -24,6 +26,9 @@ public class ConvertedUniqueBook {
 //    private int numberOfBooks;  // 도서권수
     private Integer subjectCode; // 주제분류번호
     private Year publicationYear;
+
+    @CreatedDate
+    private LocalDate createdAt;
 
     public ConvertedUniqueBook(
             String isbn13, String title, String author,
