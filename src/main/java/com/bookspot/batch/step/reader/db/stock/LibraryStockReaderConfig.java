@@ -58,7 +58,7 @@ public class LibraryStockReaderConfig {
                 dataSource,
                 libraryStockPagingQueryProviderFactory(),
                 StockFilenameUtil.parse(file.getFilename()).libraryId(),
-                StockSyncJobConfig.STEP_CHUNK_SIZE
+                StockSyncJobConfig.INSERT_CHUNK_SIZE
         );
     }
 
