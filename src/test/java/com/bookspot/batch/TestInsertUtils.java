@@ -43,18 +43,19 @@ public class TestInsertUtils {
         private static final String WITHOUT_ID_QUERY ="""
                 INSERT INTO bookspot_test.book
                 (isbn13, title, loan_count, created_at, updated_at)
-                VALUES(?, ?, ?, NOW(6), NOW(6));
+                VALUES(?, ?, ?, ?, NOW(6));
                 """;
 
         private static final String WITH_ID_QUERY ="""
                 INSERT INTO bookspot_test.book
                 (id, isbn13, title, loan_count, created_at, updated_at)
-                VALUES(?, ?, ?, ?, NOW(6), NOW(6));
+                VALUES(?, ?, ?, ?, ?, NOW(6));
                 """;
 
         private Long id = null;
         private String isbn13 = null;
         private String title = "Sample Title";
+        private LocalDate createdAt = LocalDate.now();
         private int loanCount = 0;
 
         public BookBuilder id(long id) {
@@ -77,6 +78,11 @@ public class TestInsertUtils {
             return this;
         }
 
+        public BookBuilder createdAt(LocalDate createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
         public void insert(JdbcTemplate jdbcTemplate) {
             if (id == null && isbn13 == null)
                 throw new IllegalArgumentException("책 Insert 시 ISBN13과 ID 둘 중 하나는 필수 설정");
@@ -86,6 +92,7 @@ public class TestInsertUtils {
                             ps.setString(1, isbn13);
                             ps.setString(2, title);
                             ps.setInt(3, loanCount);
+                            ps.setDate(4, Date.valueOf(createdAt));
                         }
                 );
                 return;
@@ -96,6 +103,7 @@ public class TestInsertUtils {
                         ps.setString(2, isbn13 == null ? "%013d".formatted(id) : isbn13);
                         ps.setString(3, title);
                         ps.setInt(4, loanCount);
+                        ps.setDate(5, Date.valueOf(createdAt));
                     }
             );
         }

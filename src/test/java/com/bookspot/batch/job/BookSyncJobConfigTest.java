@@ -41,6 +41,8 @@ class BookSyncJobConfigTest {
 //            .addString(BookSyncJobConfig.MOVE_DIR_PARAM_NAME, moveDir)
             .toJobParameters();
 
+    private final LocalDate EXIST_DATE = LocalDate.of(2025, 1, 1);
+
     @Test
     void 정상_처리() throws Exception {
         registerExistingBooks("0000000000003");
@@ -62,6 +64,12 @@ class BookSyncJobConfigTest {
         assertLibrary(bookMap.get("0000000000004"), "낭만 강아지 봉봉 (7)","홍민정 글;김무연 그림","다산어린이",Year.of(2024),"0000000000004",813,LocalDate.of(2024, 11, 8));
         assertLibrary(bookMap.get("0000000000005"), "변호사 어벤저스 (3)","고희정 글;최미란 그림","가나출판사",Year.of(2024), "0000000000005",360,LocalDate.of(2024, 11, 8));
 
+        assertEquals(
+                EXIST_DATE,
+                bookRepository.findByIsbn13In(List.of("0000000000003"))
+                        .getFirst()
+                        .getCreatedAt()
+        );
         // 파일 초기화
 //        TestFileUtil.moveAll(moveDir, sourceDir);
     }
@@ -73,12 +81,16 @@ class BookSyncJobConfigTest {
         assertEquals(year, dbBookData.getPublicationYear());
         assertEquals(isbn13, dbBookData.getIsbn13());
         assertEquals(subjectCode, dbBookData.getSubjectCode());
+        assertEquals(LocalDate.now(), dbBookData.getCreatedAt());
 //        assertEquals(registeredDate, ...);
     }
 
     private void registerExistingBooks(String... isbn13Array) {
         for (String isbn13 : isbn13Array) {
-            TestInsertUtils.bookBuilder().isbn13(isbn13).insert(jdbcTemplate);
+            TestInsertUtils.bookBuilder()
+                    .isbn13(isbn13)
+                    .createdAt(EXIST_DATE)
+                    .insert(jdbcTemplate);
         }
     }
 }
