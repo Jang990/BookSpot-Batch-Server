@@ -22,6 +22,7 @@ public class BookSyncJobListener implements JobExecutionListener {
                 String isbn = isbnReader.read();
                 if (isbn == null) {
                     isbnSet.beforeProcess();
+                    isbnReader.close();
                     return;
                 }
                 isbnSet.add(isbn);
