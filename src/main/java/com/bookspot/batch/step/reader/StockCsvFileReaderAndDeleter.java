@@ -3,6 +3,8 @@ package com.bookspot.batch.step.reader;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDataMapper;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDelimiterTokenizer;
+import org.springframework.batch.core.ExitStatus;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.item.ItemStreamException;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
@@ -17,13 +19,16 @@ import java.nio.file.Files;
  * #{stepExecutionContext['file']} Resource file 필요
  */
 public class StockCsvFileReaderAndDeleter extends FlatFileItemReader<StockCsvData> {
+    private final StepExecution stepExecution;
     private final Resource deleteTarget;
-    public StockCsvFileReaderAndDeleter(Resource resource) throws Exception {
+
+    public StockCsvFileReaderAndDeleter(StepExecution stepExecution, Resource resource) throws Exception {
+        this.stepExecution = stepExecution;
+        this.deleteTarget = resource;
+
         setName("stockCsvFileReader");
         setEncoding("euc-kr");
         setResource(resource);
-        deleteTarget = resource;
-
         setRecordSeparatorPolicy(new DefaultRecordSeparatorPolicy());
         setLinesToSkip(1);
 
@@ -38,6 +43,9 @@ public class StockCsvFileReaderAndDeleter extends FlatFileItemReader<StockCsvDat
     @Override
     public void close() throws ItemStreamException {
         super.close();
+
+        if(!stepExecution.getExitStatus().equals(ExitStatus.COMPLETED))
+            return;
 
         try {
             Files.delete(deleteTarget.getFile().toPath());
