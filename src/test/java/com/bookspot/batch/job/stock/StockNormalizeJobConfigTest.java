@@ -21,6 +21,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -92,6 +94,16 @@ class StockNormalizeJobConfigTest {
                 new MyResultSet(101, 10001),
                 new MyResultSet(102, 10001)
         );
+
+        assertTrue(isEmptyDirectory(SOURCE_DIR));
+    }
+
+    private boolean isEmptyDirectory(String directory) {
+        try(Stream<Path> files = Files.list(Paths.get(directory))) {
+            return !files.anyMatch(Files::isRegularFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static void assertResultFile(String resultPath, MyResultSet... resultSets) throws Exception {

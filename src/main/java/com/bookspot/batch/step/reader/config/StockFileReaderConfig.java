@@ -20,4 +20,11 @@ public class StockFileReaderConfig {
             @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) throws Exception {
         return new StockCsvFileReader(file);
     }
+
+    @Bean
+    @StepScope
+    public StockCsvFileReaderAndDeleter stockCsvFileReaderAndDeleter(
+            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) throws Exception {
+        return new StockCsvFileReaderAndDeleter(file);
+    }
 }

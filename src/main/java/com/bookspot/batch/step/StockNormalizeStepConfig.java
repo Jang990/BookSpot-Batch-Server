@@ -10,7 +10,7 @@ import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
-import com.bookspot.batch.step.reader.StockCsvFileReader;
+import com.bookspot.batch.step.reader.StockCsvFileReaderAndDeleter;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import com.bookspot.batch.step.writer.file.stock.StockNormalizeFileWriter;
 import lombok.RequiredArgsConstructor;
@@ -86,14 +86,14 @@ public class StockNormalizeStepConfig {
 
     @Bean
     public Step stockNormalizeStep(
-            StockCsvFileReader stockCsvFileReader,
+            StockCsvFileReaderAndDeleter stockCsvFileReaderAndDeleter,
             IsbnValidationFilter isbnValidationFilter,
             StockProcessor stockProcessor,
             StockNormalizeFileWriter stockNormalizeFileWriter,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("stockNormalizeStep", jobRepository)
                 .<StockCsvData, LibraryStock>chunk(CHUNK_SIZE, transactionManager)
-                .reader(stockCsvFileReader)
+                .reader(stockCsvFileReaderAndDeleter)
                 .processor(
                         new CompositeItemProcessor<>(
                                 List.of(
