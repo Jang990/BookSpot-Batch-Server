@@ -2,8 +2,10 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.global.config.OpenSearchIndex;
+import com.bookspot.batch.step.service.OpenSearchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -31,11 +33,28 @@ class BookOpenSearchSyncJobConfigTest {
     @MockBean
     OpenSearchIndex openSearchIndex;
 
-    private final String INDEX_NAME = "test-books";
+    @Autowired
+    OpenSearchRepository repository;
+
+    private final String SERVICE_ALIAS = "test-books";
+    private final String SERVICE_INDEX = "test-books-service";
+    private final String DELETABLE_INDEX = "test-books-deletable";
+    private final String BACKUP_INDEX = "test-books-backup";
 
     @BeforeEach
     void beforeEach() {
-        when(openSearchIndex.indexName()).thenReturn(INDEX_NAME);
+        deleteIfExist(SERVICE_INDEX);
+        deleteIfExist(BACKUP_INDEX);
+        deleteIfExist(DELETABLE_INDEX);
+
+        when(openSearchIndex.serviceAlias()).thenReturn(SERVICE_ALIAS);
+        when(openSearchIndex.serviceIndexName()).thenReturn(SERVICE_INDEX);
+        when(openSearchIndex.backupIndexName()).thenReturn(BACKUP_INDEX);
+        when(openSearchIndex.deletableIndexName()).thenReturn(DELETABLE_INDEX);
+
+        createIndexIfExist(BACKUP_INDEX);
+        createIndexIfExist(DELETABLE_INDEX);
+        repository.addAlias(BACKUP_INDEX, SERVICE_ALIAS);
 
         TestInsertUtils.bookBuilder().id(1).insert(jdbcTemplate);
         TestInsertUtils.bookBuilder().id(2).insert(jdbcTemplate);
@@ -55,6 +74,12 @@ class BookOpenSearchSyncJobConfigTest {
                 .bookId(2).libraryId(3).insert(jdbcTemplate);
     }
 
+    private void deleteIfExist(String indexName) {
+        try {
+            repository.delete(indexName);
+        } catch (OpenSearchException e) {}
+    }
+
     @Test
     void 정상처리() throws Exception {
         jobLauncherTestUtils.setJob(bookOpenSearchSyncJob);
@@ -63,5 +88,11 @@ class BookOpenSearchSyncJobConfigTest {
         );
 
         assertEquals(jobExecution.getExitStatus(), ExitStatus.COMPLETED);
+    }
+
+    private void createIndexIfExist(String indexName) {
+        try {
+            repository.createIndex(indexName, OpenSearchIndex.SCHEMA);
+        } catch (RuntimeException e) {}
     }
 }

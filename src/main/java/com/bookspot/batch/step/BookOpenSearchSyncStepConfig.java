@@ -6,9 +6,8 @@ import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
 import com.bookspot.batch.step.service.LibraryStockRepository;
 import com.bookspot.batch.step.service.BookRepository;
-import com.bookspot.batch.step.writer.book.BookOpenSearchWriter;
+import com.bookspot.batch.step.service.OpenSearchRepository;
 import lombok.RequiredArgsConstructor;
-import org.opensearch.client.opensearch.OpenSearchClient;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
@@ -29,8 +28,8 @@ public class BookOpenSearchSyncStepConfig {
     private final BookRepository bookRepository;
     private final LibraryStockRepository libraryStockRepository;
 
-    private final OpenSearchClient openSearchClient;
     private final OpenSearchIndex openSearchIndex;
+    private final OpenSearchRepository openSearchRepository;
 
 
     @Bean
@@ -38,7 +37,7 @@ public class BookOpenSearchSyncStepConfig {
         return new StepBuilder("bookOpenSearchSyncStep", jobRepository)
                 .<BookDocument, BookDocument>chunk(CHUNK_SIZE, transactionManager)
                 .reader(bookWithLibraryIdReader())
-                .writer(bookOpenSearchWriter())
+                .writer(chunk -> openSearchRepository.save(openSearchIndex.serviceIndexName(), chunk.getItems()))
                 .listener(stepLoggingListener)
                 .build();
     }
@@ -51,10 +50,5 @@ public class BookOpenSearchSyncStepConfig {
                 libraryStockRepository,
                 CHUNK_SIZE
         );
-    }
-
-    @Bean
-    public BookOpenSearchWriter bookOpenSearchWriter() {
-        return new BookOpenSearchWriter(openSearchClient, openSearchIndex);
     }
 }

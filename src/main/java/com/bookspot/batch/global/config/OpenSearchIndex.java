@@ -7,8 +7,9 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class OpenSearchIndex {
-    public static final String INDEX_PREFIX = "books-";
-    public static final String DOCS = """
+    public static final String SERVICE_ALIAS = "books";
+    public static final String INDEX_PREFIX = SERVICE_ALIAS + "-";
+    public static final String SCHEMA = """
             {
                 "settings": {
                     "analysis": {
@@ -65,9 +66,25 @@ public class OpenSearchIndex {
             }
             """;
 
-    public String indexName() {
+    public String serviceAlias() {
+        return SERVICE_ALIAS;
+    }
+
+    private String indexName(LocalDate date) {
         return INDEX_PREFIX.concat(
-                LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM"))
+                date.format(DateTimeFormatter.ofPattern("yyyy-MM"))
         );
+    }
+
+    public String deletableIndexName() {
+        return indexName(LocalDate.now().minusMonths(2));
+    }
+
+    public String backupIndexName() {
+        return indexName(LocalDate.now().minusMonths(1));
+    }
+
+    public String serviceIndexName() {
+        return indexName(LocalDate.now());
     }
 }

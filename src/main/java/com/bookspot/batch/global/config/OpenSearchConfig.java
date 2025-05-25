@@ -36,22 +36,27 @@ public class OpenSearchConfig {
 
         return new OpenSearchClient(
                 new RestClientTransport(
-                        RestClient.builder(HttpHost.create(serverUrl))
-                                .setHttpClientConfigCallback(
-                                        httpClientBuilder -> httpClientBuilder
-                                                .setDefaultCredentialsProvider(credentialsProvider)
-                                                .setDefaultIOReactorConfig(
-                                                        IOReactorConfig.custom()
-                                                                .setIoThreadCount(
-                                                                        TaskExecutorConfig.MULTI_POOL_SIZE
-                                                                )
-                                                                .build()
-                                                )
-                                )
-                                .build(),
+                        openSearchRestClient(credentialsProvider),
                         new JacksonJsonpMapper(new ObjectMapper())
                 )
         );
+    }
+
+    @Bean
+    public RestClient openSearchRestClient(BasicCredentialsProvider credentialsProvider) {
+        return RestClient.builder(HttpHost.create(serverUrl))
+                .setHttpClientConfigCallback(
+                        httpClientBuilder -> httpClientBuilder
+                                .setDefaultCredentialsProvider(credentialsProvider)
+                                .setDefaultIOReactorConfig(
+                                        IOReactorConfig.custom()
+                                                .setIoThreadCount(
+                                                        TaskExecutorConfig.MULTI_POOL_SIZE
+                                                )
+                                                .build()
+                                )
+                )
+                .build();
     }
 
 }
