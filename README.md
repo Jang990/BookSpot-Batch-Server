@@ -10,8 +10,8 @@
 - 도서관 동기화 Step
     - 다운로드된 도서관 Excel 파일 정보를 DB에 저장
 - 도서관 상세 정보 파싱 Step
-    - [정보나루 도서관 페이지](https://www.data4library.kr/libDataL) 크롤링
-    - 도서관 이름과 주소가 일치하는 도서관의 naru_detail 필드 업데이트
+    - Reader : [정보나루 도서관 페이지](https://www.data4library.kr/libDataL) 크롤링
+    - Writer : 도서관 이름과 주소가 일치하는 도서관의 naru_detail 필드 업데이트
 - afterJob : 다운로드 받은 도서관 Excel 파일 제거
 
 ### 도서관 소장 도서 파일 다운로드 작업
