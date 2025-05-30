@@ -2,8 +2,10 @@ package com.bookspot.batch.job.loan;
 
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.file.csv.AggregatedBook;
+import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.job.BatchJobTest;
 import com.bookspot.batch.step.reader.AggregatedLoanFileReader;
+import com.bookspot.batch.step.service.BookRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,14 +33,17 @@ class LoanAggregatedJobConfigTest {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    BookRepository bookRepository;
+
     String sourceDirectory = "src/test/resources/files/loanSync";
     String outputFilePath = "src/test/resources/files/loanSync/result/aggregated.csv";
 
     @BeforeEach
     void setup() {
-        TestInsertUtils.bookBuilder().isbn13("0000000001001").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().isbn13("0000000001002").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().isbn13("0000000001003").insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().id(1001L).isbn13("0000000001001").insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().id(1002L).isbn13("0000000001002").insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().id(1003L).isbn13("0000000001003").insert(jdbcTemplate);
     }
 
     @AfterEach
@@ -66,6 +71,10 @@ class LoanAggregatedJobConfigTest {
                 outputFilePath
         );
         assertTrue(Files.exists(Path.of(outputFilePath)));
+
+        assertEquals(123, findBook(1001L).getLoanCount());
+        assertEquals(58, findBook(1002L).getLoanCount());
+        assertEquals(1512, findBook(1003L).getLoanCount());
     }
 
     private void assertFile(List<AggregatedBook> expected, String filePath) throws Exception {
@@ -77,5 +86,9 @@ class LoanAggregatedJobConfigTest {
             assertEquals(expectedInfo.isbn13(), actual.isbn13());
             assertEquals(expectedInfo.loanCount(), actual.loanCount());
         }
+    }
+
+    private ConvertedUniqueBook findBook(long id) {
+        return bookRepository.findById(id).orElseThrow(IllegalArgumentException::new);
     }
 }

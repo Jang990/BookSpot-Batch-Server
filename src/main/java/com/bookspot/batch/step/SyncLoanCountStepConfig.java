@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.file.csv.AggregatedBook;
-import com.bookspot.batch.job.loan.LoanSyncJobConfig;
+import com.bookspot.batch.job.loan.LoanAggregatedJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.AggregatedLoanFileReader;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +41,7 @@ public class SyncLoanCountStepConfig {
     @Bean
     @StepScope
     public AggregatedLoanFileReader aggregatedLoanFileReader(
-            @Value(LoanSyncJobConfig.AGGREGATED_FILE_PATH) String aggregatedFilePath) {
+            @Value(LoanAggregatedJobConfig.OUTPUT_FILE_PATH) String aggregatedFilePath) {
         return new AggregatedLoanFileReader(aggregatedFilePath);
     }
 

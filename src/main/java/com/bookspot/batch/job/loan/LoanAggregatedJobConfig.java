@@ -8,7 +8,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
+import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.job.flow.Flow;
+import org.springframework.batch.core.job.flow.JobExecutionDecider;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -36,15 +39,8 @@ public class LoanAggregatedJobConfig {
     private final CustomFilePathValidators filePathValidators;
 
     @Bean
-    public Job loanAggregatedJob(
-            Step loanMapInitStep,
-            Step readLoanCountMasterStep,
-            Step loanMapCleaningStep) {
+    public Job loanAggregatedJob(Flow loanAggregatedFlow) {
         return new JobBuilder("loanAggregatedJob", jobRepository)
-                .start(loanMapInitStep)
-                .next(readLoanCountMasterStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
-                .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
-                .next(loanMapCleaningStep)
                 .validator(
                         FilePathJobParameterValidator.of(
                                 filePathValidators,
@@ -54,12 +50,35 @@ public class LoanAggregatedJobConfig {
                                 )
                         )
                 )
+                .start(loanAggregatedFlow)
+                .end()
+                .build();
+    }
+
+    @Bean
+    public Flow loanAggregatedFlow(
+            AggregationCompletedDecider aggregationCompletedDecider,
+            Step loanMapInitStep,
+            Step readLoanCountMasterStep,
+            Step loanMapCleaningStep,
+            Step syncLoanCountStep) {
+        return new FlowBuilder<Flow>("loanAggregatedFlow")
+                .start(aggregationCompletedDecider)
+                    .on(AggregationCompletedDecider.SKIP_AGGREGATION)
+                        .to(syncLoanCountStep)
+                .from(aggregationCompletedDecider)
+                    .on(AggregationCompletedDecider.EXECUTE_ALL)
+                        .to(loanMapInitStep)
+                        .next(readLoanCountMasterStep) // 도서관 재고 파일(1500개) 정보의 ISBN과 LOAN_COUNT를 메모리에 저장
+                        .next(aggregateBookFileStep())// 인메모리에 저장한 정보를 파일로 저장
+                        .next(loanMapCleaningStep)
+                        .next(syncLoanCountStep)
                 .build();
     }
 
     @Bean
     public Step aggregateBookFileStep() {
-        return new StepBuilder("aggregateBookFileStep", jobRepository)
+        return new StepBuilder(AggregationCompletedDecider.CREATION_FILE_STEP_NAME, jobRepository)
                 .tasklet(saveAggregatedCsvTasklet(null), transactionManager)
                 .build();
     }
