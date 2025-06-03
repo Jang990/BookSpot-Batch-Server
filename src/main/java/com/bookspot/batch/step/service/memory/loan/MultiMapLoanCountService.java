@@ -12,7 +12,7 @@ public class MultiMapLoanCountService implements LoanCountService {
 
     @Override
     public void init() {
-        map = new HashMap<>();
+        map = new HashMap<>(LoanCountService.BOOK_TABLE_SIZE);
     }
 
     @Override
