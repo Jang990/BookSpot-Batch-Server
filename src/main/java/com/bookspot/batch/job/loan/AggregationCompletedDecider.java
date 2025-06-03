@@ -1,6 +1,8 @@
 package com.bookspot.batch.job.loan;
 
+import com.bookspot.batch.job.JobParameterFileService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.StepExecution;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class AggregationCompletedDecider implements JobExecutionDecider {
@@ -22,23 +25,41 @@ public class AggregationCompletedDecider implements JobExecutionDecider {
     private static final FlowExecutionStatus SKIP_AGGREGATION_STATUS = new FlowExecutionStatus(SKIP_AGGREGATION);
 
     private final JobExplorer jobExplorer;
-
+    private final JobParameterFileService jobParameterFileService;
+    private final int PREV_JOB_EXECUTION_IDX = 1;
 
     @Override
     public FlowExecutionStatus decide(JobExecution jobExecution, StepExecution stepExecution) {
-        List<JobExecution> prevJobExecutions = jobExplorer.getJobExecutions(jobExecution.getJobInstance());
-        if(prevJobExecutions.isEmpty())
+        List<JobExecution> jobExecutions = jobExplorer.getJobExecutions(jobExecution.getJobInstance());
+        if (jobExecutions.isEmpty() ||
+                jobExecutions.size() == PREV_JOB_EXECUTION_IDX) {
+            log.trace("이전 작업 시도가 없으므로 모든 작업 시도.");
             return EXECUTE_ALL_STATUS;
+        }
 
-        JobExecution lastJobExecution = prevJobExecutions.getFirst();
-        return isIsFileAlreadyCreated(lastJobExecution) ? SKIP_AGGREGATION_STATUS : EXECUTE_ALL_STATUS;
+        JobExecution prevJobExecution = jobExecutions.get(PREV_JOB_EXECUTION_IDX);
+        if (isIsFileAlreadyCreated(prevJobExecution)) {
+            log.trace("이전에 파일이 성공적으로 생성됐으므로 파일 생성 작업 스킵.");
+            return SKIP_AGGREGATION_STATUS;
+        } else {
+            log.trace("파일이 성공적으로 생성된 적 없으므로 모든 처리 재시도.");
+            return EXECUTE_ALL_STATUS;
+        }
     }
 
-    private boolean isIsFileAlreadyCreated(JobExecution lastJobExecution) {
-        return lastJobExecution.getStepExecutions().stream()
+    private boolean isIsFileAlreadyCreated(JobExecution prevJobExecution) {
+        boolean isCompletedFileCreationStep = prevJobExecution.getStepExecutions().stream()
                 .anyMatch(
                         se -> se.getStepName().equals(CREATION_FILE_STEP_NAME)
-                                && se.getExitStatus() == ExitStatus.COMPLETED
+                                && se.getExitStatus().equals(ExitStatus.COMPLETED)
                 );
+
+        boolean isExistLoanFile = jobParameterFileService.exist(
+                prevJobExecution,
+                LoanAggregatedJobConfig.OUTPUT_FILE_PARAM_NAME
+        );
+
+        return isCompletedFileCreationStep && isExistLoanFile;
     }
+
 }
