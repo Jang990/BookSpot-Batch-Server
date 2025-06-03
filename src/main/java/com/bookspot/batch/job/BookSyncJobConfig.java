@@ -4,10 +4,12 @@ import com.bookspot.batch.job.listener.BookSyncJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.IsbnReader;
+import com.bookspot.batch.step.service.memory.isbn.IsbnPrimitiveHashSet;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
@@ -48,5 +50,13 @@ public class BookSyncJobConfig {
                         )
                 )
                 .build();
+    }
+
+    @Bean
+    @JobScope
+    public IsbnSet isbnSet() {
+//        return new IsbnHashSet();
+//        return new IsbnArraySet();
+        return new IsbnPrimitiveHashSet();
     }
 }
