@@ -65,8 +65,8 @@ Map의 map.contains(isbn13)을 Arrays.binarySearch(isbnArray, isbn13)으로 대�
       - Processor
           - 유효하지 않은 ISBN13 필터링
           - `{ISBN13-대출 수}`객체로 변환
-          - `Arrays.binarySearch(isbnArray, isbn13)`으로 isbn이 있는 인덱스를 찾고 `loanArray`의 값 증가
-      - Writer: `Map`에서 ISBN13을 찾아서 대출 수 증가
+          - `Arrays.binarySearch(isbnArray, isbn13)`으로 isbn이 있는 인덱스를 찾을 수 없다면 필터링
+      - Writer: `Arrays.binarySearch(isbnArray, isbn13)`으로 isbn이 있는 인덱스를 찾고 `loanArray`의 값 증가
   - 대출 수 파일 쓰기 Step
       - `Map`의 요소들을 읽으며 대출 수 종합 파일 생성
   - 대출 수 동기화 Step
