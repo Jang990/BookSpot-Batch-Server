@@ -69,11 +69,11 @@ Map의 map.contains(isbn13)을 Arrays.binarySearch(isbnArray, isbn13)으로 대�
       - Writer: `Arrays.binarySearch(isbnArray, isbn13)`으로 isbn이 있는 인덱스를 찾고 `loanArray`의 값 증가
   - 대출 수 파일 쓰기 Step
       - `Map`의 요소들을 읽으며 대출 수 종합 파일 생성
+  - 집계할 저장소 청소 Step
+      - `isbnArray`와 `loanArray`에 null로 세팅
   - 대출 수 동기화 Step
       - Reader: 대출 수 종합 파일읽기
       - Writer: Book 테이블에 대출 수 반영
-  - 집계할 저장소 청소 Step
-    - `isbnArray`와 `loanArray`에 null로 세팅
 
 
 - `SKIP_AGGREGATION_STATUS` 일 때
