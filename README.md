@@ -57,7 +57,7 @@ Map의 map.contains(isbn13)을 Arrays.binarySearch(isbnArray, isbn13)으로 대�
 
 
 - `EXECUTE_ALL_STATUS` 일 때
-  - 집계할 저장소 초기화 Step
+  - 집계할 메모리 저장소 초기화 Step
     - DB의 ISBN13을 읽어와서 `long[] isbnArray`에 모두 삽입 후 `Arrays.sort(isbnArray)`로 정렬
     - `AtomicIntegerArray loanArray` 생성
   - 대출 수 읽기 Step (파티셔닝 - 멀티스레딩)
@@ -65,11 +65,11 @@ Map의 map.contains(isbn13)을 Arrays.binarySearch(isbnArray, isbn13)으로 대�
       - Processor
           - 유효하지 않은 ISBN13 필터링
           - `{ISBN13-대출 수}`객체로 변환
-          - `Arrays.binarySearch(isbnArray, isbn13)`으로 isbn이 있는 인덱스를 찾을 수 없다면 필터링
-      - Writer: `Arrays.binarySearch(isbnArray, isbn13)`으로 isbn이 있는 인덱스를 찾고 `loanArray`의 값 증가
+          - `Arrays.binarySearch(isbnArray, isbn13)`으로 ISBN13이 있는 인덱스를 찾을 수 없다면 필터링
+      - Writer: 메모리 저장소에 있는 `loanArray` 값 증가
   - 대출 수 파일 쓰기 Step
-      - `Map`의 요소들을 읽으며 대출 수 종합 파일 생성
-  - 집계할 저장소 청소 Step
+      - 메모리 저장소의 요소들을 읽으며 대출 수 종합 파일 생성
+  - 집계할 메모리 저장소 청소 Step
       - `isbnArray`와 `loanArray`에 null로 세팅
   - 대출 수 동기화 Step
       - Reader: 대출 수 종합 파일읽기
