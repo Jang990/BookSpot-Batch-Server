@@ -38,6 +38,8 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class StockNormalizeStepConfig {
+    public static final String STOCK_NORMALIZE_MASTER_STEP = "stockNormalizeMasterStep";
+
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
     private final IsbnMemoryRepository isbnMemoryRepository;
@@ -48,7 +50,7 @@ public class StockNormalizeStepConfig {
     public Step stockNormalizeMasterStep(
             Step stockNormalizeStep,
             TaskExecutorPartitionHandler stockNormalizePartitionHandler) throws IOException {
-        return new StepBuilder("stockNormalizeMasterStep", jobRepository)
+        return new StepBuilder(STOCK_NORMALIZE_MASTER_STEP, jobRepository)
                 .partitioner(stockNormalizeStep.getName(), stockNormalizePartitioner(null))
                 .partitionHandler(stockNormalizePartitionHandler)
                 .build();
