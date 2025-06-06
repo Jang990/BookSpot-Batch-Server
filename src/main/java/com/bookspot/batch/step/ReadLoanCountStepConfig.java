@@ -4,12 +4,15 @@ import com.bookspot.batch.data.LoanCount;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.loan.LoanAggregatedJobConfig;
+import com.bookspot.batch.step.listener.LoanCountStepListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
+import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
 import com.bookspot.batch.step.service.memory.loan.LoanCountService;
+import com.bookspot.batch.step.service.AggregatedBooksCsvWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -46,13 +49,38 @@ public class ReadLoanCountStepConfig {
 
     @Bean
     public Step readLoanCountMasterStep(
+            LoanCountStepListener loanCountStepListener,
             Step readLoanCountStep,
             TaskExecutorPartitionHandler loanCountPartitionHandler) throws IOException {
         return new StepBuilder("readLoanCountMasterStep", jobRepository)
+                .listener(loanCountStepListener)
                 .partitioner(readLoanCountStep.getName(), loanCountPartitioner(null))
                 .partitionHandler(loanCountPartitionHandler)
                 .allowStartIfComplete(true)
                 .build();
+    }
+
+    @Bean
+    @StepScope
+    public LoanCountStepListener loanCountStepListener(
+            LoanCountService loanCountService,
+            IsbnIdReader isbnIdReader,
+            AggregatedBooksCsvWriter aggregatedBooksCsvWriter
+    ) {
+        return new LoanCountStepListener(
+                loanCountService,
+                isbnIdReader,
+                aggregatedBooksCsvWriter
+        );
+    }
+
+    @Bean
+    @StepScope
+    public AggregatedBooksCsvWriter aggregatedBooksCsvWriter(
+            @Value(LoanAggregatedJobConfig.OUTPUT_FILE_PATH) String aggregatedFilePath,
+            LoanCountService loanCountService
+    ) {
+        return new AggregatedBooksCsvWriter(aggregatedFilePath, loanCountService);
     }
 
     @Bean
