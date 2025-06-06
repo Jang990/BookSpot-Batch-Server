@@ -53,7 +53,7 @@ public class BookSyncJobConfig {
     }
 
     @Bean
-    @JobScope
+//    @JobScope
     public IsbnSet isbnSet() {
 //        return new IsbnHashSet();
 //        return new IsbnArraySet();
