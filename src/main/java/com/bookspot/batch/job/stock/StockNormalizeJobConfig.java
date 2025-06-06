@@ -1,8 +1,6 @@
 package com.bookspot.batch.job.stock;
 
-import com.bookspot.batch.job.JobParameterFileService;
 import com.bookspot.batch.job.decider.FileCreationStatusDecider;
-import com.bookspot.batch.job.loan.AggregationCompletedDecider;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
@@ -74,7 +72,7 @@ public class StockNormalizeJobConfig {
                         .next(isbnIdMapCleaningStep)
                         .next(duplicatedBookFilterMasterStep)
                 .from(stockCleansingFileDecider)
-                    .on(FileCreationStatusDecider.SKIP_AGGREGATION)
+                    .on(FileCreationStatusDecider.SKIP_FILE_CREATION)
                         .to(duplicatedBookFilterMasterStep)
                 .build();
     }

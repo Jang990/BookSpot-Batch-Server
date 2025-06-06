@@ -1,6 +1,5 @@
 package com.bookspot.batch.job.decider;
 
-import com.bookspot.batch.job.JobParameterFileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
@@ -16,11 +15,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileCreationStatusDecider implements JobExecutionDecider {
     public static final String EXECUTE_ALL = "EXECUTE_ALL";
-    public static final String SKIP_AGGREGATION = "SKIP_AGGREGATION";
+    public static final String SKIP_FILE_CREATION = "SKIP_FILE_CREATION";
 
     private static final int PREV_JOB_EXECUTION_IDX = 1;
     private static final FlowExecutionStatus EXECUTE_ALL_STATUS = new FlowExecutionStatus(EXECUTE_ALL);
-    private static final FlowExecutionStatus SKIP_AGGREGATION_STATUS = new FlowExecutionStatus(SKIP_AGGREGATION);
+    private static final FlowExecutionStatus SKIP_FILE_CREATION_STATUS = new FlowExecutionStatus(SKIP_FILE_CREATION);
 
     private final String fileCreationStepName;
     private final JobExplorer jobExplorer;
@@ -37,7 +36,7 @@ public class FileCreationStatusDecider implements JobExecutionDecider {
         JobExecution prevJobExecution = jobExecutions.get(PREV_JOB_EXECUTION_IDX);
         if (isAlreadyCompleted(prevJobExecution)) {
             log.trace("이전에 파일이 성공적으로 생성됐으므로 파일 생성 작업 스킵.");
-            return SKIP_AGGREGATION_STATUS;
+            return SKIP_FILE_CREATION_STATUS;
         } else {
             log.trace("파일이 성공적으로 생성된 적 없으므로 모든 처리 재시도.");
             return EXECUTE_ALL_STATUS;
