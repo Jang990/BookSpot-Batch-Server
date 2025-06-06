@@ -1,6 +1,7 @@
 package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.global.FileService;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDataMapper;
 import com.bookspot.batch.step.reader.file.csv.stock.StockCsvDelimiterTokenizer;
 import org.springframework.batch.core.ExitStatus;
@@ -21,10 +22,16 @@ import java.nio.file.Files;
 public class StockCsvFileReaderAndDeleter extends FlatFileItemReader<StockCsvData> {
     private final StepExecution stepExecution;
     private final Resource deleteTarget;
+    private final FileService fileService;
 
-    public StockCsvFileReaderAndDeleter(StepExecution stepExecution, Resource resource) throws Exception {
+    public StockCsvFileReaderAndDeleter(
+            StepExecution stepExecution,
+            Resource resource,
+            FileService fileService
+    ) throws Exception {
         this.stepExecution = stepExecution;
         this.deleteTarget = resource;
+        this.fileService = fileService;
 
         setName("stockCsvFileReader");
         setEncoding("euc-kr");
@@ -47,10 +54,6 @@ public class StockCsvFileReaderAndDeleter extends FlatFileItemReader<StockCsvDat
         if(!stepExecution.getExitStatus().equals(ExitStatus.COMPLETED))
             return;
 
-        try {
-            Files.delete(deleteTarget.getFile().toPath());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        fileService.delete(deleteTarget);
     }
 }

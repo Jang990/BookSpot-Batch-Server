@@ -61,7 +61,7 @@ public class InsertStockStepConfig {
     @Bean
     @StepScope
     public MultiResourcePartitioner insertStockPartitioner(
-            @Value(StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
+            @Value(StockSyncJobConfig.DUPLICATED_FILTER_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
         Path rootPath = Paths.get(root);

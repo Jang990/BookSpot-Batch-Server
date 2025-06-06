@@ -4,6 +4,7 @@ import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.stock.StockNormalizeJobConfig;
+import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.DuplicatedBookIdFilter;
@@ -61,7 +62,7 @@ public class DuplicatedBookFilterStepConfig {
     @Bean
     @StepScope
     public MultiResourcePartitioner duplicatedBookFilterPartitioner(
-            @Value(StockNormalizeJobConfig.NORMALIZE_DIR_PARAM) String root) throws IOException {
+            @Value(StockSyncJobConfig.NORMALIZE_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
         Path rootPath = Paths.get(root);
@@ -104,7 +105,7 @@ public class DuplicatedBookFilterStepConfig {
     @Bean
     @StepScope
     public StockNormalizeFileWriter duplicatedBookIdWriter(
-            @Value(StockNormalizeJobConfig.DUPLICATED_FILTER_DIR_PARAM) String normalizeDirPath,
+            @Value(StockSyncJobConfig.DUPLICATED_FILTER_DIR_PARAM) String normalizeDirPath,
             @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) {
         String outputFile = normalizeDirPath.concat("/")
                 .concat(StockFilenameUtil.toFiltered(file.getFilename()))

@@ -60,7 +60,7 @@ public class DeleteStockFileStepConfig {
     @Bean
     @StepScope
     public MultiResourcePartitioner deleteStockFilePartitioner(
-            @Value(StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
+            @Value(StockSyncJobConfig.DUPLICATED_FILTER_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
         Path rootPath = Paths.get(root);

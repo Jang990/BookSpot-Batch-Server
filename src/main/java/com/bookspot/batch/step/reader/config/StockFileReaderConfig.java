@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.reader.config;
 
+import com.bookspot.batch.global.FileService;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.reader.*;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,9 @@ public class StockFileReaderConfig {
     @StepScope
     public StockCsvFileReaderAndDeleter stockCsvFileReaderAndDeleter(
             @Value("#{stepExecution}") StepExecution stepExecution,
-            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) throws Exception {
-        return new StockCsvFileReaderAndDeleter(stepExecution, file);
+            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
+            FileService fileService
+    ) throws Exception {
+        return new StockCsvFileReaderAndDeleter(stepExecution, file, fileService);
     }
 }
