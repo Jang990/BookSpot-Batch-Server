@@ -7,7 +7,11 @@ import java.util.HashMap;
 
 @Service
 public class IsbnJdkMemoryRepository implements IsbnMemoryRepository {
-    private static LongLongHashMap store = new LongLongHashMap();
+    private static LongLongHashMap store;
+
+    public void init() {
+        store = new LongLongHashMap(3_000_000);
+    }
 
     public void add(Isbn13MemoryData data) {
         store.put(Long.parseLong(data.isbn13()), data.bookId());
@@ -28,6 +32,6 @@ public class IsbnJdkMemoryRepository implements IsbnMemoryRepository {
     }
 
     public void clearMemory() {
-        store.clear();
+        store = null;
     }
 }

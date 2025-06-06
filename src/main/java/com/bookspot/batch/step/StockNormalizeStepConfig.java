@@ -10,16 +10,22 @@ import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
+import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.reader.StockCsvFileReaderAndDeleter;
+import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import com.bookspot.batch.step.writer.file.stock.StockNormalizeFileWriter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
+import org.springframework.batch.core.StepExecutionListener;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.item.support.CompositeItemProcessor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +48,8 @@ public class StockNormalizeStepConfig {
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
+
+    private final IsbnIdReader isbnIdReader;
     private final IsbnMemoryRepository isbnMemoryRepository;
 
     private static final int CHUNK_SIZE = 1_000;
@@ -51,6 +59,31 @@ public class StockNormalizeStepConfig {
             Step stockNormalizeStep,
             TaskExecutorPartitionHandler stockNormalizePartitionHandler) throws IOException {
         return new StepBuilder(STOCK_NORMALIZE_MASTER_STEP, jobRepository)
+                .listener(new StepExecutionListener() {
+                    @Override
+                    public void beforeStep(StepExecution stepExecution) {
+                        StepExecutionListener.super.beforeStep(stepExecution);
+
+                        try {
+                            isbnIdReader.open(new ExecutionContext());
+                            isbnMemoryRepository.init();
+
+                            Isbn13MemoryData data = null;
+                            while ((data = isbnIdReader.read()) != null)
+                                isbnMemoryRepository.add(data);
+
+                            isbnIdReader.close();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    @Override
+                    public ExitStatus afterStep(StepExecution stepExecution) {
+                        isbnMemoryRepository.clearMemory();
+                        return StepExecutionListener.super.afterStep(stepExecution);
+                    }
+                })
                 .partitioner(stockNormalizeStep.getName(), stockNormalizePartitioner(null))
                 .partitionHandler(stockNormalizePartitionHandler)
                 .build();

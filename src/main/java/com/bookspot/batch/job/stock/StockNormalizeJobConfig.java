@@ -1,17 +1,12 @@
 package com.bookspot.batch.job.stock;
 
-import com.bookspot.batch.job.decider.FileCreationStatusDecider;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
-import com.bookspot.batch.step.StockNormalizeStepConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.explore.JobExplorer;
-import org.springframework.batch.core.job.builder.FlowBuilder;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.job.flow.Flow;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +29,10 @@ public class StockNormalizeJobConfig {
     public static final String DUPLICATED_FILTER_DIR_PARAM = "#{jobParameters['filteredDir']}";
 
     @Bean
-    public Job stockNormalizeJob(Flow stockCleansingFlow) {
+    public Job stockNormalizeJob(
+            Step stockNormalizeMasterStep,
+            Step duplicatedBookFilterMasterStep
+    ) {
         return new JobBuilder("stockNormalizeJob", jobRepository)
                 .validator(
                         FilePathJobParameterValidator.of(
@@ -51,37 +49,8 @@ public class StockNormalizeJobConfig {
                                 )
                         )
                 )
-                .start(stockCleansingFlow)
-                .end()
+                .start(stockNormalizeMasterStep)
+                .next(duplicatedBookFilterMasterStep)
                 .build();
-    }
-
-    @Bean
-    public Flow stockCleansingFlow(
-            FileCreationStatusDecider stockCleansingFileDecider,
-            Step isbnIdMapInitStep,
-            Step stockNormalizeMasterStep,
-            Step isbnIdMapCleaningStep,
-            Step duplicatedBookFilterMasterStep
-    ) {
-        return new FlowBuilder<Flow>("stockCleansingFlow")
-                .start(stockCleansingFileDecider)
-                    .on(FileCreationStatusDecider.EXECUTE_ALL)
-                        .to(isbnIdMapInitStep)
-                        .next(stockNormalizeMasterStep)
-                        .next(isbnIdMapCleaningStep)
-                        .next(duplicatedBookFilterMasterStep)
-                .from(stockCleansingFileDecider)
-                    .on(FileCreationStatusDecider.SKIP_FILE_CREATION)
-                        .to(duplicatedBookFilterMasterStep)
-                .build();
-    }
-
-    @Bean
-    public FileCreationStatusDecider stockCleansingFileDecider(JobExplorer jobExplorer) {
-        return new FileCreationStatusDecider(
-                StockNormalizeStepConfig.STOCK_NORMALIZE_MASTER_STEP,
-                jobExplorer
-        );
     }
 }
