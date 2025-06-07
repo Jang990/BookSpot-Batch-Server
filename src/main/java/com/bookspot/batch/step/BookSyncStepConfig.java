@@ -4,6 +4,7 @@ import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.BookSyncJobConfig;
+import com.bookspot.batch.step.listener.BookSyncStepListener;
 import com.bookspot.batch.step.listener.InvalidIsbn13LoggingListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
@@ -12,10 +13,13 @@ import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.InMemoryIsbnFilter;
 import com.bookspot.batch.step.processor.TitleEllipsisConverter;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
+import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
+import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import com.bookspot.batch.step.writer.book.UniqueBookInfoWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
@@ -50,11 +54,19 @@ public class BookSyncStepConfig {
     @Bean
     public Step bookSyncPartitionMasterStep(
             Step bookSyncStep,
+            BookSyncStepListener bookSyncStepListener,
             TaskExecutorPartitionHandler bookSyncPartitionHandler) throws IOException {
         return new StepBuilder("bookSyncPartitionMasterStep", jobRepository)
+                .listener(bookSyncStepListener)
                 .partitioner(bookSyncStep.getName(), bookSyncCsvPartitioner(null))
                 .partitionHandler(bookSyncPartitionHandler)
                 .build();
+    }
+
+    @Bean
+    @JobScope
+    public BookSyncStepListener bookSyncStepListener(IsbnReader isbnReader, IsbnSet isbnSet) {
+        return new BookSyncStepListener(isbnReader, isbnSet);
     }
 
     @Bean
