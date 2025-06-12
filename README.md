@@ -61,6 +61,8 @@ Map의 map.contains(isbn13)을 Arrays.binarySearch(isbnArray, isbn13)으로 대�
     - afterStep: 메모리 저장소 내용을 파일로 생성 + 집계한 메모리 저장소 청소
       - 메모리 저장소의 내용으로 대출 수 집계 파일 생성
       - `isbnArray`와 `loanArray`에 null로 세팅
+
+
 - 대출 수 동기화 Step (ChunkSize - 3,000)
     - Reader: 대출 수 종합 파일읽기
     - Writer: Book 테이블에 대출 수 반영
@@ -81,26 +83,32 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
           - `{bookId, libraryId}` 객체로 변환
       - Writer: `{bookId, libraryId}` 정보가 담긴 csv 파일 생성
   - afterStep: 사용이 끝난 `Map<ISBN13,BookDbId>` 메모리 정리
+
 - 중복 책 필터링 MasterStep
-  - 중복된 {책ID, 도서관ID} 제거. `{1,1},{2,1},{1,1} => {1,1},{2,1}` 
-  - 중복 책 필터링 SlaveStep
-    - `BookIdSet`을 `@StepScope`로 생성
-    - Reader: 정제된 도서관 소장 도서 csv 파일 읽기
-    - Processor: `BookIdSet`에 존재하면 필터링. 존재하지 않는다면 `add(BookId)`
-    - Writer: 중복을 제거한 도서관 소장 도서 파일 생성
-- 소장 도서 동기화 Job (파티셔닝 - 멀티 스레딩)
-    - Insert Step
-        - BeforeStep: LibraryStock 테이블에서 도서관이 가지고 있는 BookId를 `Set`에 추가
-        - Reader: 정제된 csv 파일 읽기
-        - Processor: `Set`에 존재하는 BookId를 필터링
-        - Writer: 도서관 재고 테이블에 Insert
-    - Delete 파일 생성 Step
-        - BeforeStep: LibraryStock 테이블에서 도서관이 가지고 있는 BookId를 `Map`에 `{BookId, False}`로 세팅
-        - Reader: 정제된 csv 파일 읽기
-        - Writer: 등장한 BookId을 Map에서 찾아서 True로 세팅
-        - AfterStep: 등장하지 않은(False) BookId를 파일로 저장
-    - Delete Step
-        - Delete 파일을 읽고 사라진 도서관 소장 도서 정보 Delete
+  - 중복된 {책ID, 도서관ID} 제거. `{1,1},{2,1},{1,1} => {1,1},{2,1}`
+  - 중복 책 필터링 SlaveStep (ChunkSize - 800)
+      - `BookIdSet`을 `@StepScope`로 생성
+      - Reader: 정제된 도서관 소장 도서 csv 파일 읽기
+      - Processor: `BookIdSet`에 존재하면 필터링. 존재하지 않는다면 `add(BookId)`
+      - Writer: 중복을 제거한 도서관 소장 도서 파일 생성
+
+<br>
+
+- Insert Step (파티셔닝 - 멀티스레딩) (ChunkSize - 15_000) 
+  - `Library_Stock` 테이블에서 도서관이 가지고 있는 BookId를 가져와서 `@StepScope`로 `BookIdSet` 생성
+  - Reader: 정제된 csv 파일 읽기
+  - Processor: `BookIdSet`에 존재하는 BookId를 필터링
+  - Writer: 필터링되지 않은 데이터를 `Library_Stock` 테이블에 Insert
+
+<br>
+
+- Delete 파일 생성 Step (파티셔닝 - 멀티스레딩)
+  - `Library_Stock` 테이블에서 도서관이 가지고 있는 BookId를 가져와서 
+    `Map<BookId,Boolean>`에 `{BookId, False}`로 추가 + `@StepScope`로 생성
+  - 정제된 csv 파일 읽어서 등장한 BookId을 Map에서 모두 찾아서 True로 세팅
+  - csv파일에 등장하지 않은(False) BookId를 파일로 저장 
+- Delete Step (파티셔닝 - 멀티스레딩) (ChunkSize - 5,000)
+  - Delete 파일을 읽고 사라진 도서관 소장 도서 정보 Delete
 
 ### 데이터 옵션
 - [정보나루 API](https://data4library.kr/apiUtilization) : 일일 30,000건 제한
