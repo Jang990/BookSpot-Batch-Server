@@ -6,13 +6,13 @@
 
 
 ### 도서관 동기화 작업
-- beforeJob : 정보나루에서 도서관 Excel 파일 다운로드
-- 도서관 동기화 Step
-    - 다운로드된 도서관 Excel 파일 정보를 DB에 저장
-- 도서관 상세 정보 파싱 Step
+- 도서관 동기화 Step (ChunkSize -  200)
+    - BeforeStep: 정보나루에서 도서관 Excel 파일 다운로드
+    - Reader: 다운로드된 도서관 Excel 파일 읽기 - `close()` 호출 시 읽은 파일 삭제
+    - Writer: DB 저장
+- 도서관 상세 정보 파싱 Step (ChunkSize -  200)
     - Reader : [정보나루 도서관 페이지](https://www.data4library.kr/libDataL) 크롤링
     - Writer : 도서관 이름과 주소가 일치하는 도서관의 naru_detail 필드 업데이트
-- afterJob : 다운로드 받은 도서관 Excel 파일 제거
 
 ### 도서관 소장 도서 파일 다운로드 작업
 1월 기준. 1500개의 파일. 17.5GB의 전체 파일 크기
