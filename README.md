@@ -71,8 +71,23 @@ Insert Step에서 사용하는 Set이 HashSet<Long> => LongHashSet으로 변경�
 Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBooleanHahsMap으로 변경됨
 ```
 
-- 도서관 소장 도서 데이터 정제 Job
-    - Map 초기화
+- 도서관 소장 도서 데이터 정제 MasterStep
+  - beforeStep: `Map<ISBN13,BookDbId>` 초기화
+  - 도서관 소장 도서 데이터 정제 SlaveStep (ChunkSize - 1,000)
+      - 책제목,발행년도,저자,대출수,... => 책ID,도서관ID
+      - Reader: 도서관 소장 도서 csv 파일 읽기 - `close()` 호출 시 읽은 파일 삭제
+      - Processor
+          - 유효하지 않은 ISBN13 필터링
+          - `{bookId, libraryId}` 객체로 변환
+      - Writer: `{bookId, libraryId}` 정보가 담긴 csv 파일 생성
+  - afterStep: 사용이 끝난 `Map<ISBN13,BookDbId>` 메모리 정리
+- 중복 책 필터링 MasterStep
+  - 중복된 {책ID, 도서관ID} 제거. `{1,1},{2,1},{1,1} => {1,1},{2,1}` 
+  - 중복 책 필터링 SlaveStep
+    - `BookIdSet`을 `@StepScope`로 생성
+    - Reader: 정제된 도서관 소장 도서 csv 파일 읽기
+    - Processor: `BookIdSet`에 존재하면 필터링. 존재하지 않는다면 `add(BookId)`
+    - Writer: 중복을 제거한 도서관 소장 도서 파일 생성
 - 소장 도서 동기화 Job (파티셔닝 - 멀티 스레딩)
     - Insert Step
         - BeforeStep: LibraryStock 테이블에서 도서관이 가지고 있는 BookId를 `Set`에 추가
