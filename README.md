@@ -51,7 +51,7 @@ Map의 map.contains(isbn13)을 Arrays.binarySearch(isbnArray, isbn13)으로 대�
     - beforeStep: 집계할 메모리 저장소 초기화
         - DB의 ISBN13을 읽어와서 `long[] isbnArray`에 모두 삽입 후 `Arrays.sort(isbnArray)`로 정렬
         - `AtomicIntegerArray loanArray` 생성
-    - 대출 수 읽기 Slave Step
+    - 대출 수 읽기 Slave Step - `allowStartIfComplete(true)` (ChunkSize - 1,000)
         - Reader: 도서관 소장 도서 csv 파일 읽기
         - Processor
             - 유효하지 않은 ISBN13 필터링
@@ -61,7 +61,7 @@ Map의 map.contains(isbn13)을 Arrays.binarySearch(isbnArray, isbn13)으로 대�
     - afterStep: 메모리 저장소 내용을 파일로 생성 + 집계한 메모리 저장소 청소
       - 메모리 저장소의 내용으로 대출 수 집계 파일 생성
       - `isbnArray`와 `loanArray`에 null로 세팅
-- 대출 수 동기화 Step
+- 대출 수 동기화 Step (ChunkSize - 3,000)
     - Reader: 대출 수 종합 파일읽기
     - Writer: Book 테이블에 대출 수 반영
 
