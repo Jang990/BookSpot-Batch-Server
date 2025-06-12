@@ -28,16 +28,17 @@
 IsbnSet의 내부 구현이 HashSet => LongHashSet으로 변경됨
 ```
 
-- beforeJob: Book 테이블에서 ISBN13을 읽어와서 `IsbnSet` 초기화
-- 책 정보 동기화 Step (파티셔닝 - 멀티 스레딩)
-    - Reader: 도서관 소장 도서 csv 파일 읽기
-    - Processor
-        - 유효하지 않은 ISBN13 필터링
-        - `IsbnSet` 필터링
-        - 300자를 초과하는 제목을 `...`으로 생략
-        - DB에 저장할 타입으로 변환
-    - Writer: Book 테이블에 저장
-- afterJob: `IsbnSet` `clearAll()`
+- 책 정보 동기화 Master Step (파티셔닝 - 멀티 스레딩)
+    - beforeStep: Book 테이블에서 ISBN13을 읽어와서 `IsbnSet` 초기화
+    - 책 정보 동기화 Slave Step (ChunkSize - 1,500)
+      - Reader: 도서관 소장 도서 csv 파일 읽기
+      - Processor
+          - 유효하지 않은 ISBN13 필터링
+          - `IsbnSet` 필터링
+          - 300자를 초과하는 제목을 `...`으로 생략
+          - DB에 저장할 타입으로 변환
+      - Writer: Book 테이블에 저장
+    - afterStep: `IsbnSet clearAll()` 호출
 
 ### 대출 수 동기화 작업
 
