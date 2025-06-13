@@ -11,6 +11,7 @@ import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import com.bookspot.batch.step.writer.LibraryWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -45,11 +46,12 @@ public class LibraryStepConfig {
     @Bean
     @StepScope
     public LibraryExcelFileReaderAndDeleter libraryExcelFileReaderAndDeleter(
+            @Value("#{stepExecution}") StepExecution stepExecution,
             FileService fileService,
             LibraryExcelRowMapper libraryExcelRowMapper,
             @Value(LibrarySyncJobConfig.LIBRARY_FILE_PARAM) String filePath
     ) {
-        return new LibraryExcelFileReaderAndDeleter(fileService, libraryExcelRowMapper, filePath);
+        return new LibraryExcelFileReaderAndDeleter(stepExecution, fileService, libraryExcelRowMapper, filePath);
     }
 
     @Bean
