@@ -7,9 +7,9 @@ import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.ExistsStockFilter;
 import com.bookspot.batch.step.reader.StockNormalizedFileReader;
+import com.bookspot.batch.step.service.memory.isbn.BookIdSet;
 import com.bookspot.batch.step.writer.stock.LibraryStockWriter;
 import lombok.RequiredArgsConstructor;
-import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
@@ -94,7 +94,7 @@ public class InsertStockStepConfig {
 
     @Bean
     @StepScope
-    public ExistsStockFilter existsStockFilter(LongHashSet libraryBookIdSet) {
+    public ExistsStockFilter existsStockFilter(BookIdSet libraryBookIdSet) {
         return new ExistsStockFilter(libraryBookIdSet);
     }
 

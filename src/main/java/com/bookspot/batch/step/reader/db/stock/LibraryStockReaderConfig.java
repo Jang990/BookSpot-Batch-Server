@@ -4,6 +4,7 @@ import com.bookspot.batch.data.LibraryStockDto;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
+import com.bookspot.batch.step.service.memory.isbn.BookIdSet;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.collections.impl.map.mutable.primitive.LongBooleanHashMap;
 import org.eclipse.collections.impl.set.mutable.primitive.LongHashSet;
@@ -22,8 +23,8 @@ public class LibraryStockReaderConfig {
 
     @Bean
     @StepScope
-    public LongHashSet libraryBookIdSet(LibraryStockReader libraryStockReader) throws Exception {
-        LongHashSet bookIdSet = new LongHashSet();
+    public BookIdSet libraryBookIdSet(LibraryStockReader libraryStockReader) throws Exception {
+        BookIdSet bookIdSet = new BookIdSet();
 
         LibraryStockDto stock;
         while ((stock = libraryStockReader.read()) != null) {
