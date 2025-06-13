@@ -11,6 +11,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -19,6 +20,7 @@ import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -28,6 +30,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @BatchJobTest
 class StockSyncJobConfigTest {
@@ -45,7 +48,7 @@ class StockSyncJobConfigTest {
     @Autowired
     Job stockSyncJob;
 
-    @MockBean
+    @SpyBean
     FileService fileService;
 
     @BeforeEach
@@ -85,6 +88,8 @@ class StockSyncJobConfigTest {
 
     @Test
     void test() throws Exception {
+        doNothing().when(fileService).delete(any());
+
         jobLauncherTestUtils.setJob(stockSyncJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(
                 new JobParametersBuilder()

@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
+import com.bookspot.batch.global.FileService;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
@@ -79,6 +80,7 @@ public class DeleteStockFileStepConfig {
 
     @Bean
     public Step deleteStockFileStep(
+            DeletedStockFileCreator deletedStockFileCreator,
             StockNormalizedFileReader stockNormalizedFileReader,
             ExistsStockChecker existsStockChecker,
             StepLoggingListener stepLoggingListener) {
@@ -87,21 +89,24 @@ public class DeleteStockFileStepConfig {
                 .reader(stockNormalizedFileReader)
                 .writer(existsStockChecker)
                 .listener(stepLoggingListener)
-                .listener(deletedStockFileCreator(existsStockChecker, null, null))
+                .listener(deletedStockFileCreator)
                 .build();
     }
 
     @Bean
     @StepScope
     public DeletedStockFileCreator deletedStockFileCreator(
+            FileService fileService,
             ExistsStockChecker existsStockChecker,
             @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
-            @Value(StockSyncJobConfig.DELETE_DIR_PARAM) String deleteDir) {
+            @Value(StockSyncJobConfig.DELETE_DIR_PARAM) String deleteDir) throws IOException {
+        String filePath = deleteDir.concat("/")
+                .concat(StockFilenameUtil.toDelete(file.getFilename()))
+                .concat(".csv");
         return new DeletedStockFileCreator(
+                fileService,
                 existsStockChecker,
-                deleteDir.concat("/")
-                        .concat(StockFilenameUtil.toDelete(file.getFilename()))
-                        .concat(".csv")
+                filePath
         );
     }
 
