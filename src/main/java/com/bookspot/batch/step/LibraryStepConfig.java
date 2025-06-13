@@ -2,9 +2,11 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.Library;
 import com.bookspot.batch.job.LibrarySyncJobConfig;
+import com.bookspot.batch.step.listener.LibrarySyncStepListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.LibraryExcelFileReader;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryExcelRowMapper;
+import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import com.bookspot.batch.step.writer.LibraryWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -27,12 +29,14 @@ public class LibraryStepConfig {
 
     @Bean
     public Step librarySyncStep(
+            LibraryFileDownloader libraryFileDownloader,
             LibraryExcelFileReader libraryExcelFileReader,
             LibraryWriter libraryWriter) {
         return new StepBuilder("librarySyncStep", jobRepository)
                 .<Library, Library>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryExcelFileReader)
                 .writer(libraryWriter)
+                .listener(new LibrarySyncStepListener(libraryFileDownloader))
                 .listener(stepLoggingListener)
                 .build();
     }
