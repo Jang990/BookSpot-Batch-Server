@@ -12,10 +12,4 @@ public class LibrarySyncStepListener implements StepExecutionListener {
     public void beforeStep(StepExecution stepExecution) {
         libraryFileDownloader.download();
     }
-
-    @Override
-    public ExitStatus afterStep(StepExecution stepExecution) {
-        libraryFileDownloader.delete();
-        return StepExecutionListener.super.afterStep(stepExecution);
-    }
 }

@@ -19,16 +19,4 @@ public class LibraryFileDownloader {
     public void download() {
         naruFileDownloader.downloadSync(URL, requestCreator.create(), targetFilePath);
     }
-
-    public void delete() {
-        if(deleteFile(targetFilePath))
-            log.info("도서관 CSV 파일 삭제 완료");
-        else
-            log.warn("도서관 CSV 파일 삭제 실패");
-    }
-
-    private boolean deleteFile(String path) {
-        File file = new File(path);
-        return file.delete();
-    }
 }

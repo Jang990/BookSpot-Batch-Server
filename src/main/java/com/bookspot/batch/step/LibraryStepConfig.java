@@ -1,10 +1,11 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.Library;
+import com.bookspot.batch.global.FileService;
 import com.bookspot.batch.job.LibrarySyncJobConfig;
 import com.bookspot.batch.step.listener.LibrarySyncStepListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
-import com.bookspot.batch.step.reader.LibraryExcelFileReader;
+import com.bookspot.batch.step.reader.LibraryExcelFileReaderAndDeleter;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryExcelRowMapper;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
 import com.bookspot.batch.step.writer.LibraryWriter;
@@ -30,11 +31,11 @@ public class LibraryStepConfig {
     @Bean
     public Step librarySyncStep(
             LibraryFileDownloader libraryFileDownloader,
-            LibraryExcelFileReader libraryExcelFileReader,
+            LibraryExcelFileReaderAndDeleter libraryExcelFileReaderAndDeleter,
             LibraryWriter libraryWriter) {
         return new StepBuilder("librarySyncStep", jobRepository)
                 .<Library, Library>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
-                .reader(libraryExcelFileReader)
+                .reader(libraryExcelFileReaderAndDeleter)
                 .writer(libraryWriter)
                 .listener(new LibrarySyncStepListener(libraryFileDownloader))
                 .listener(stepLoggingListener)
@@ -43,10 +44,12 @@ public class LibraryStepConfig {
 
     @Bean
     @StepScope
-    public LibraryExcelFileReader libraryExcelFileReader(
+    public LibraryExcelFileReaderAndDeleter libraryExcelFileReaderAndDeleter(
+            FileService fileService,
             LibraryExcelRowMapper libraryExcelRowMapper,
-            @Value(LibrarySyncJobConfig.LIBRARY_FILE_PARAM) String filePath) {
-        return new LibraryExcelFileReader(libraryExcelRowMapper, filePath);
+            @Value(LibrarySyncJobConfig.LIBRARY_FILE_PARAM) String filePath
+    ) {
+        return new LibraryExcelFileReaderAndDeleter(fileService, libraryExcelRowMapper, filePath);
     }
 
     @Bean
