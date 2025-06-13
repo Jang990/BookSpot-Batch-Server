@@ -56,7 +56,6 @@ public class ReadLoanCountStepConfig {
                 .listener(loanCountStepListener)
                 .partitioner(readLoanCountStep.getName(), loanCountPartitioner(null))
                 .partitionHandler(loanCountPartitionHandler)
-                .allowStartIfComplete(true)
                 .build();
     }
 
@@ -106,6 +105,7 @@ public class ReadLoanCountStepConfig {
                         }
                 )
                 .listener(stepLoggingListener)
+                .allowStartIfComplete(true)
                 .faultTolerant()
                 .skip(InvalidIsbn13Exception.class)
                 .skipLimit(200)
