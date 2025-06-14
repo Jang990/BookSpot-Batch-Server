@@ -103,10 +103,11 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
 <br>
 
 - Delete 파일 생성 Step (파티셔닝 - 멀티스레딩)
-  - `Library_Stock` 테이블에서 도서관이 가지고 있는 BookId를 가져와서 
+  - beforeStep: `Library_Stock` 테이블에서 도서관이 가지고 있는 BookId를 가져와서 
     `Map<BookId,Boolean>`에 `{BookId, False}`로 추가 + `@StepScope`로 생성
-  - 정제된 csv 파일 읽어서 등장한 BookId을 Map에서 모두 찾아서 True로 세팅
-  - csv파일에 등장하지 않은(False) BookId를 파일로 저장 
+  - Reader: 정제된 csv 파일 읽기  
+  - Writer: 등장한 BookId을 Map에서 찾아서 True로 세팅
+  - afterStep: csv파일에 등장하지 않은(False) BookId를 파일로 저장
 - Delete Step (파티셔닝 - 멀티스레딩) (ChunkSize - 5,000)
   - Delete 파일을 읽고 사라진 도서관 소장 도서 정보 Delete
 
