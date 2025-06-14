@@ -17,12 +17,18 @@ public class BookSpotParentJobConfig {
     public static final String MONTH_PARAM = "#{jobParameters['month']}";
 
     public static final String LIBRARY_FILE_PARAM_NAME = "libraryFilePath";
+    public static final String DOWNLOAD_DIR_PARAM_NAME = "downloadDir";
     public static final String STOCK_DIR_PARAM_NAME = "libraryBookDir";
 
     @Bean
-    public Job bookSpotParentJob(Step librarySyncJobStep, Step bookSyncJobStep) {
+    public Job bookSpotParentJob(
+            Step librarySyncJobStep,
+            Step stockFileJobStep,
+            Step bookSyncJobStep
+    ) {
         return new JobBuilder("bookSpotParentJob", jobRepository)
                 .start(librarySyncJobStep)
+                .next(stockFileJobStep)
                 .next(bookSyncJobStep)
                 .build();
     }
