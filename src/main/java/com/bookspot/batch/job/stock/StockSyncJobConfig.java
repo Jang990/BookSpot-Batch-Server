@@ -1,5 +1,7 @@
 package com.bookspot.batch.job.stock;
 
+import com.bookspot.batch.job.BookSpotParentJobConfig;
+import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
@@ -7,7 +9,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.job.JobParametersExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,6 +43,35 @@ public class StockSyncJobConfig {
 
     private final CustomFilePathValidators filePathValidators;
     private final JobRepository jobRepository;
+
+    @Bean
+    public Step stockSyncJobStep(Job stockSyncJob, JobLauncher jobLauncher) {
+        return new StepBuilder("stockSyncJobStep", jobRepository)
+                .job(stockSyncJob)
+                .launcher(jobLauncher)
+                .parametersExtractor(stockSyncJobParamExtractor())
+                .build();
+    }
+
+
+    @Bean
+    public JobParametersExtractor stockSyncJobParamExtractor() {
+        return new CommonStringJobParamExtractor(
+                Map.of(
+                        BookSpotParentJobConfig.STOCK_DIR_PARAM_NAME,
+                        SOURCE_DIR_PARAM_NAME,
+
+                        BookSpotParentJobConfig.NORMALIZE_DIR_PARAM_NAME,
+                        NORMALIZE_DIR_PARAM_NAME,
+
+                        BookSpotParentJobConfig.DUPLICATED_FILTER_DIR_PARAM_NAME,
+                        DUPLICATED_FILTER_DIR_PARAM_NAME,
+
+                        BookSpotParentJobConfig.DELETE_DIR_PARAM_NAME,
+                        DELETE_DIR_PARAM_NAME
+                )
+        );
+    }
 
     @Bean
     public Job stockSyncJob(
