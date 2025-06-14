@@ -2,7 +2,6 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
-import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.service.memory.isbn.IsbnPrimitiveHashSet;
 import com.bookspot.batch.step.service.memory.isbn.IsbnSet;
 import lombok.RequiredArgsConstructor;
@@ -35,9 +34,7 @@ public class BookSyncJobConfig {
     public static final String MOVE_DIR_PARAM = "#{jobParameters['moveDir']}";*/
 
     @Bean
-    public Job bookSyncJob(
-            Step bookSyncPartitionMasterStep,
-            IsbnReader isbnReader, IsbnSet isbnSet) {
+    public Job bookSyncJob(Step bookSyncPartitionMasterStep) {
         return new JobBuilder("bookSyncJob", jobRepository)
                 .start(bookSyncPartitionMasterStep)
                 .validator(
