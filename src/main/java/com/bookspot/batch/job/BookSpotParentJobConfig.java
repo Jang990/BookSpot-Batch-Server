@@ -19,17 +19,20 @@ public class BookSpotParentJobConfig {
     public static final String LIBRARY_FILE_PARAM_NAME = "libraryFilePath";
     public static final String DOWNLOAD_DIR_PARAM_NAME = "downloadDir";
     public static final String STOCK_DIR_PARAM_NAME = "libraryBookDir";
+    public static final String LOAN_OUTPUT_FILE_PARAM_NAME = "loanOutputFilePath";
 
     @Bean
     public Job bookSpotParentJob(
             Step librarySyncJobStep,
             Step stockFileJobStep,
-            Step bookSyncJobStep
+            Step bookSyncJobStep,
+            Step loanAggregatedJobStep
     ) {
         return new JobBuilder("bookSpotParentJob", jobRepository)
                 .start(librarySyncJobStep)
                 .next(stockFileJobStep)
                 .next(bookSyncJobStep)
+                .next(loanAggregatedJobStep)
                 .build();
     }
 
