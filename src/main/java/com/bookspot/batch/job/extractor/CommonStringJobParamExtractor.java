@@ -13,6 +13,12 @@ import java.util.Map;
 public class CommonStringJobParamExtractor implements JobParametersExtractor {
     private final Map<String, String> paramNameMap;
 
+    public static final CommonStringJobParamExtractor EmptyExtractor = new CommonStringJobParamExtractor();
+
+    private CommonStringJobParamExtractor() {
+        paramNameMap = Map.of();
+    }
+
     public CommonStringJobParamExtractor(String parentParamName, String childParamName) {
         paramNameMap = Map.of(parentParamName, childParamName);
     }
@@ -39,7 +45,7 @@ public class CommonStringJobParamExtractor implements JobParametersExtractor {
             childParamBuilder.addString(paramNameMap.get(parentParamName), parentParamValue);
         }
 
-        childParamBuilder.addString("temp", "1");
+        childParamBuilder.addString("temp", "12");
 
         return childParamBuilder.toJobParameters();
     }

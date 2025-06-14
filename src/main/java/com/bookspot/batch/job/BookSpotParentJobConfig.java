@@ -31,7 +31,8 @@ public class BookSpotParentJobConfig {
             Step stockFileJobStep,
             Step bookSyncJobStep,
             Step loanAggregatedJobStep,
-            Step stockSyncJobStep
+            Step stockSyncJobStep,
+            Step bookOpenSearchSyncJobStep
     ) {
         return new JobBuilder("bookSpotParentJob", jobRepository)
                 .start(librarySyncJobStep)
@@ -39,6 +40,7 @@ public class BookSpotParentJobConfig {
                 .next(bookSyncJobStep)
                 .next(loanAggregatedJobStep)
                 .next(stockSyncJobStep)
+                .next(bookOpenSearchSyncJobStep)
                 .build();
     }
 

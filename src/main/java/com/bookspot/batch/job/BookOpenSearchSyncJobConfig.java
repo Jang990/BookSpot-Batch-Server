@@ -1,13 +1,16 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.global.config.OpenSearchIndex;
+import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
 import com.bookspot.batch.step.service.OpenSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.job.JobParametersExtractor;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +24,21 @@ public class BookOpenSearchSyncJobConfig {
 
     private final OpenSearchIndex openSearchIndex;
     private final OpenSearchRepository openSearchRepository;
+
+    @Bean
+    public Step bookOpenSearchSyncJobStep(Job bookOpenSearchSyncJob, JobLauncher jobLauncher) {
+        return new StepBuilder("bookOpenSearchSyncJobStep", jobRepository)
+                .job(bookOpenSearchSyncJob)
+                .launcher(jobLauncher)
+                .parametersExtractor(bookOpenSearchSyncJobParamExtractor())
+                .build();
+    }
+
+
+    @Bean
+    public JobParametersExtractor bookOpenSearchSyncJobParamExtractor() {
+        return CommonStringJobParamExtractor.EmptyExtractor;
+    }
 
     @Bean
     public Job bookOpenSearchSyncJob(Step bookOpenSearchSyncStep) {
