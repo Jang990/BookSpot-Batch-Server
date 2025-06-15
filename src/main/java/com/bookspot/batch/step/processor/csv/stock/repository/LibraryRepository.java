@@ -12,7 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class LibraryRepository {
     private final JdbcTemplate jdbcTemplate;
-    private static final String LIBRARY_CODE_QUERY = "SELECT id FROM Library WHERE library_code = ?";
+    private static final String LIBRARY_CODE_QUERY = "SELECT id FROM library WHERE library_code = ?";
     private static final String LIBRARY_STOCK_UPDATED_AT_QUERY = "UPDATE library SET stock_updated_at = ? WHERE id = ?";
 
     public Optional<Long> findId(String libraryCode) {

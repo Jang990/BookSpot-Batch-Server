@@ -75,7 +75,7 @@ public class StockFileManagerStepConfig {
         SqlPagingQueryProviderFactoryBean factoryBean = new SqlPagingQueryProviderFactoryBean();
         factoryBean.setDataSource(dataSource);
         factoryBean.setSelectClause("select id, library_code, naru_detail, stock_updated_at");
-        factoryBean.setFromClause("from Library");
+        factoryBean.setFromClause("from library");
         factoryBean.setWhereClause("where naru_detail is not null");
         factoryBean.setSortKey("id");
         return factoryBean.getObject();
