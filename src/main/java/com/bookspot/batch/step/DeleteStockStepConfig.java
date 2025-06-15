@@ -78,11 +78,11 @@ public class DeleteStockStepConfig {
 
     @Bean
     public Step deleteStockStep(
-            CleansingStockFileReader cleansingStockFileReader,
+            CleansingStockFileReader cleansingStockFileReaderAndDeleter,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("deleteStockStep", jobRepository)
                 .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.DELETE_CHUNK_SIZE, transactionManager)
-                .reader(cleansingStockFileReader)
+                .reader(cleansingStockFileReaderAndDeleter)
                 .writer(libraryStockDeleter())
                 .listener(stepLoggingListener)
                 .build();

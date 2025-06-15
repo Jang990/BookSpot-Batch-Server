@@ -1,6 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.LibraryStock;
+import com.bookspot.batch.global.FileService;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
@@ -8,10 +9,12 @@ import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.DuplicatedBookIdFilter;
 import com.bookspot.batch.step.reader.CleansingStockFileReader;
+import com.bookspot.batch.step.reader.CleansingStockFileReaderAndDeleter;
 import com.bookspot.batch.step.service.memory.isbn.BookIdSet;
 import com.bookspot.batch.step.writer.file.stock.StockCleansingFileWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.partition.support.MultiResourcePartitioner;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
@@ -78,10 +81,13 @@ public class DuplicatedBookFilterStepConfig {
     }
 
     @Bean
-    public Step duplicatedBookFilterStep(StepLoggingListener stepLoggingListener) {
+    public Step duplicatedBookFilterStep(
+            CleansingStockFileReader cleansingStockFileReaderAndDeleter,
+            StepLoggingListener stepLoggingListener
+    ) {
         return new StepBuilder("duplicatedBookFilterStep", jobRepository)
                 .<LibraryStock, LibraryStock>chunk(CHUNK_SIZE, transactionManager)
-                .reader(cleansingFileReader(null))
+                .reader(cleansingStockFileReaderAndDeleter)
                 .processor(duplicatedBookIdFilter())
                 .writer(duplicatedBookIdWriter(null, null))
                 .listener(stepLoggingListener)
@@ -90,9 +96,20 @@ public class DuplicatedBookFilterStepConfig {
 
     @Bean
     @StepScope
-    public CleansingStockFileReader cleansingFileReader(
-            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file) {
+    public CleansingStockFileReader cleansingStockFileReader(
+            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file
+    ) {
         return new CleansingStockFileReader(file);
+    }
+
+    @Bean
+    @StepScope
+    public CleansingStockFileReader cleansingStockFileReaderAndDeleter(
+            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
+            @Value("#{stepExecution}") StepExecution stepExecution,
+            FileService fileService
+    ) {
+        return new CleansingStockFileReaderAndDeleter(file, stepExecution, fileService);
     }
 
     @Bean
