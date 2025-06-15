@@ -2,16 +2,16 @@ package com.bookspot.batch.step.writer.file.stock;
 
 
 import com.bookspot.batch.data.LibraryStock;
-import com.bookspot.batch.global.file.spec.NormalizedStockCsvSpec;
+import com.bookspot.batch.global.file.spec.CleansingStockCsvSpec;
 import org.springframework.batch.item.file.FlatFileItemWriter;
 import org.springframework.core.io.FileSystemResource;
 
-public class StockNormalizeFileWriter extends FlatFileItemWriter<LibraryStock> {
+public class StockCleansingFileWriter extends FlatFileItemWriter<LibraryStock> {
 
-    public StockNormalizeFileWriter(String outputFile) {
+    public StockCleansingFileWriter(String outputFile) {
         setResource(new FileSystemResource(outputFile));
         setLineAggregator(
-                item -> NormalizedStockCsvSpec.createLine(
+                item -> CleansingStockCsvSpec.createLine(
                         item.getBookId(),
                         item.getLibraryId()
                 )

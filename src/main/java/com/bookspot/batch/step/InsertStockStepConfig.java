@@ -6,7 +6,7 @@ import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.ExistsStockFilter;
-import com.bookspot.batch.step.reader.StockNormalizedFileReader;
+import com.bookspot.batch.step.reader.CleansingStockFileReader;
 import com.bookspot.batch.step.service.memory.isbn.BookIdSet;
 import com.bookspot.batch.step.writer.stock.LibraryStockWriter;
 import lombok.RequiredArgsConstructor;
@@ -80,12 +80,12 @@ public class InsertStockStepConfig {
 
     @Bean
     public Step insertStockStep(
-            StockNormalizedFileReader stockNormalizedFileReader,
+            CleansingStockFileReader cleansingStockFileReader,
             ExistsStockFilter existsStockFilter,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("insertStockStep", jobRepository)
                 .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.INSERT_CHUNK_SIZE, transactionManager)
-                .reader(stockNormalizedFileReader)
+                .reader(cleansingStockFileReader)
                 .processor(existsStockFilter)
                 .writer(libraryStockWriter())
                 .listener(stepLoggingListener)

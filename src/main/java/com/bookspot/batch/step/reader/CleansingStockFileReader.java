@@ -1,18 +1,17 @@
 package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.data.LibraryStock;
-import com.bookspot.batch.global.file.spec.NormalizedStockCsvSpec;
+import com.bookspot.batch.global.file.spec.CleansingStockCsvSpec;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
 import java.util.Arrays;
 
-public class StockNormalizedFileReader extends FlatFileItemReader<LibraryStock> {
-    public StockNormalizedFileReader(Resource sourceFile) {
-        setName("stockNormalizedFileReader");
+public class CleansingStockFileReader extends FlatFileItemReader<LibraryStock> {
+    public CleansingStockFileReader(Resource sourceFile) {
+        setName("cleansingStockFileReader");
         setEncoding("UTF-8");
         setResource(sourceFile);
 
@@ -26,8 +25,8 @@ public class StockNormalizedFileReader extends FlatFileItemReader<LibraryStock> 
         lineMapper.setLineTokenizer(tokenizer);
         lineMapper.setFieldSetMapper(fieldSet ->
                 new LibraryStock(
-                        fieldSet.readLong(NormalizedStockCsvSpec.LIBRARY_ID.value()),
-                        fieldSet.readLong(NormalizedStockCsvSpec.BOOK_ID.value())
+                        fieldSet.readLong(CleansingStockCsvSpec.LIBRARY_ID.value()),
+                        fieldSet.readLong(CleansingStockCsvSpec.BOOK_ID.value())
                 )
         );
         return lineMapper;
@@ -36,8 +35,8 @@ public class StockNormalizedFileReader extends FlatFileItemReader<LibraryStock> 
     private DelimitedLineTokenizer delimitedLineTokenizer() {
         DelimitedLineTokenizer tokenizer = new DelimitedLineTokenizer();
         tokenizer.setNames(
-                Arrays.stream(NormalizedStockCsvSpec.values())
-                        .map(NormalizedStockCsvSpec::value)
+                Arrays.stream(CleansingStockCsvSpec.values())
+                        .map(CleansingStockCsvSpec::value)
                         .toArray(String[]::new)
         );
         return tokenizer;

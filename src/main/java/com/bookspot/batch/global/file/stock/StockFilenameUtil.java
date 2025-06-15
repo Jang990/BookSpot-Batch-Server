@@ -13,9 +13,9 @@ public class StockFilenameUtil {
         return String.format("%d_%s", element.libraryId(), element.referenceDate());
     }
 
-    public static String toNormalized(String filename) {
+    public static String toCleansing(String filename) {
         StockFilenameElement element = parse(filename);
-        return String.format("%d_%s_normalized", element.libraryId(), element.referenceDate());
+        return String.format("%d_%s_cleansing", element.libraryId(), element.referenceDate());
     }
 
     public static String toFiltered(String filename) {

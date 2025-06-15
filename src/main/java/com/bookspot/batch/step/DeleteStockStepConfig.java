@@ -5,7 +5,7 @@ import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
-import com.bookspot.batch.step.reader.StockNormalizedFileReader;
+import com.bookspot.batch.step.reader.CleansingStockFileReader;
 import com.bookspot.batch.step.writer.stock.LibraryStockDeleter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -78,11 +78,11 @@ public class DeleteStockStepConfig {
 
     @Bean
     public Step deleteStockStep(
-            StockNormalizedFileReader stockNormalizedFileReader,
+            CleansingStockFileReader cleansingStockFileReader,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("deleteStockStep", jobRepository)
                 .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.DELETE_CHUNK_SIZE, transactionManager)
-                .reader(stockNormalizedFileReader)
+                .reader(cleansingStockFileReader)
                 .writer(libraryStockDeleter())
                 .listener(stepLoggingListener)
                 .build();

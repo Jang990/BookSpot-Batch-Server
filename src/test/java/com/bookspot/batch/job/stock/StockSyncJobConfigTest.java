@@ -6,12 +6,11 @@ import com.bookspot.batch.TestQueryUtil;
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.global.FileService;
 import com.bookspot.batch.job.BatchJobTest;
-import com.bookspot.batch.step.reader.StockNormalizedFileReader;
+import com.bookspot.batch.step.reader.CleansingStockFileReader;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
@@ -19,7 +18,6 @@ import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -35,7 +33,7 @@ import static org.mockito.Mockito.*;
 @BatchJobTest
 class StockSyncJobConfigTest {
     final String SOURCE_DIR = "src/test/resources/files/stockSync";
-    final String NORMALIZED_DIR = "src/test/resources/files/stockSync/normalized";
+    final String CLEANSING_DIR = "src/test/resources/files/stockSync/cleansing";
     final String FILTERED_DIR = "src/test/resources/files/stockSync/filtered";
     final String DELETE_DIR = "src/test/resources/files/stockSync/delete";
 
@@ -81,7 +79,7 @@ class StockSyncJobConfigTest {
     @AfterEach
     void afterEach() throws IOException {
         TestFileUtil.deleteAll(SOURCE_DIR);
-        TestFileUtil.deleteAll(NORMALIZED_DIR);
+        TestFileUtil.deleteAll(CLEANSING_DIR);
         TestFileUtil.deleteAll(FILTERED_DIR);
         TestFileUtil.deleteAll(DELETE_DIR);
     }
@@ -98,8 +96,8 @@ class StockSyncJobConfigTest {
                                 SOURCE_DIR
                         )
                         .addString(
-                                StockSyncJobConfig.NORMALIZE_DIR_PARAM_NAME,
-                                NORMALIZED_DIR
+                                StockSyncJobConfig.CLEANSING_DIR_PARAM_NAME,
+                                CLEANSING_DIR
                         )
                         .addString(
                                 StockSyncJobConfig.DUPLICATED_FILTER_DIR_PARAM_NAME,
@@ -132,7 +130,7 @@ class StockSyncJobConfigTest {
 
     private void assertResultFile() throws Exception {
         assertResultFile(
-                NORMALIZED_DIR.concat("/10002_2025-03-01_normalized.csv"),
+                CLEANSING_DIR.concat("/10002_2025-03-01_cleansing.csv"),
                 new MyResultSet(104, 10002),
                 new MyResultSet(105, 10002),
                 new MyResultSet(106, 10002),
@@ -157,7 +155,7 @@ class StockSyncJobConfigTest {
     private static void assertResultFile(String resultPath, MyResultSet... resultSets) throws Exception {
         assertTrue(Files.exists(Path.of(resultPath)));
 
-        StockNormalizedFileReader fileReader = new StockNormalizedFileReader(
+        CleansingStockFileReader fileReader = new CleansingStockFileReader(
                 new FileSystemResource(
                         resultPath
                 )

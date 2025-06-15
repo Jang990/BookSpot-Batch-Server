@@ -8,7 +8,7 @@ import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.DeletedStockFileCreator;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
-import com.bookspot.batch.step.reader.StockNormalizedFileReader;
+import com.bookspot.batch.step.reader.CleansingStockFileReader;
 import com.bookspot.batch.step.writer.ExistsStockChecker;
 import lombok.RequiredArgsConstructor;
 import org.eclipse.collections.impl.map.mutable.primitive.LongBooleanHashMap;
@@ -81,12 +81,12 @@ public class DeleteStockFileStepConfig {
     @Bean
     public Step deleteStockFileStep(
             DeletedStockFileCreator deletedStockFileCreator,
-            StockNormalizedFileReader stockNormalizedFileReader,
+            CleansingStockFileReader cleansingStockFileReader,
             ExistsStockChecker existsStockChecker,
             StepLoggingListener stepLoggingListener) {
         return new StepBuilder("deleteStockFileStep", jobRepository)
                 .<LibraryStock, LibraryStock>chunk(StockSyncJobConfig.DELETE_FILE_CHUNK_SIZE, transactionManager)
-                .reader(stockNormalizedFileReader)
+                .reader(cleansingStockFileReader)
                 .writer(existsStockChecker)
                 .listener(stepLoggingListener)
                 .listener(deletedStockFileCreator)

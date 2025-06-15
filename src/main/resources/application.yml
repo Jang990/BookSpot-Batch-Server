@@ -46,7 +46,7 @@ path:
     bookSync: ${path.directory.root}/bookSync
     stockSync: ${path.directory.root}/bookSync
     loanSync: ${path.directory.root}/bookSync
-    normalizedStock: ${path.directory.root}/normalizedStock
+    cleansingStock: ${path.directory.root}/cleansingStock
     filteredStock: ${path.directory.root}/filteredStock
     deletedStock: ${path.directory.root}/deletedStock
   #    stockSync: ${path.directory.root}/stockSync

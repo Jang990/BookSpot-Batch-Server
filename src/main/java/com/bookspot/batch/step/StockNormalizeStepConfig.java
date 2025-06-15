@@ -14,7 +14,7 @@ import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.reader.StockCsvFileReaderAndDeleter;
 import com.bookspot.batch.step.service.memory.bookid.Isbn13MemoryData;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
-import com.bookspot.batch.step.writer.file.stock.StockNormalizeFileWriter;
+import com.bookspot.batch.step.writer.file.stock.StockCleansingFileWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Step;
@@ -44,7 +44,7 @@ import java.util.List;
 @Configuration
 @RequiredArgsConstructor
 public class StockNormalizeStepConfig {
-    public static final String STOCK_NORMALIZE_MASTER_STEP = "stockNormalizeMasterStep";
+    public static final String STOCK_CLEANSING_MASTER_STEP = "stockCleansingMasterStep";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -55,10 +55,10 @@ public class StockNormalizeStepConfig {
     private static final int CHUNK_SIZE = 1_000;
 
     @Bean
-    public Step stockNormalizeMasterStep(
-            Step stockNormalizeStep,
-            TaskExecutorPartitionHandler stockNormalizePartitionHandler) throws IOException {
-        return new StepBuilder(STOCK_NORMALIZE_MASTER_STEP, jobRepository)
+    public Step stockCleansingMasterStep(
+            Step stockCleansingStep,
+            TaskExecutorPartitionHandler stockCleansingPartitionHandler) throws IOException {
+        return new StepBuilder(STOCK_CLEANSING_MASTER_STEP, jobRepository)
                 .listener(new StepExecutionListener() {
                     @Override
                     public void beforeStep(StepExecution stepExecution) {
@@ -84,17 +84,17 @@ public class StockNormalizeStepConfig {
                         return StepExecutionListener.super.afterStep(stepExecution);
                     }
                 })
-                .partitioner(stockNormalizeStep.getName(), stockNormalizePartitioner(null))
-                .partitionHandler(stockNormalizePartitionHandler)
+                .partitioner(stockCleansingStep.getName(), stockCleansingPartitioner(null))
+                .partitionHandler(stockCleansingPartitionHandler)
                 .build();
     }
 
     @Bean
-    public TaskExecutorPartitionHandler stockNormalizePartitionHandler(
-            Step stockNormalizeStep,
+    public TaskExecutorPartitionHandler stockCleansingPartitionHandler(
+            Step stockCleansingStep,
             TaskExecutor multiTaskPool) {
         TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
-        partitionHandler.setStep(stockNormalizeStep);
+        partitionHandler.setStep(stockCleansingStep);
         partitionHandler.setTaskExecutor(multiTaskPool);
         partitionHandler.setGridSize(TaskExecutorConfig.MULTI_POOL_SIZE);
         return partitionHandler;
@@ -102,7 +102,7 @@ public class StockNormalizeStepConfig {
 
     @Bean
     @StepScope
-    public MultiResourcePartitioner stockNormalizePartitioner(
+    public MultiResourcePartitioner stockCleansingPartitioner(
             @Value(StockSyncJobConfig.SOURCE_DIR_PARAM) String root) throws IOException {
         MultiResourcePartitioner partitioner = new MultiResourcePartitioner();
 
@@ -120,13 +120,13 @@ public class StockNormalizeStepConfig {
     }
 
     @Bean
-    public Step stockNormalizeStep(
+    public Step stockCleansingStep(
             StockCsvFileReaderAndDeleter stockCsvFileReaderAndDeleter,
             IsbnValidationFilter isbnValidationFilter,
             StockProcessor stockProcessor,
-            StockNormalizeFileWriter stockNormalizeFileWriter,
+            StockCleansingFileWriter stockCleansingFileWriter,
             StepLoggingListener stepLoggingListener) {
-        return new StepBuilder("stockNormalizeStep", jobRepository)
+        return new StepBuilder("stockCleansingStep", jobRepository)
                 .<StockCsvData, LibraryStock>chunk(CHUNK_SIZE, transactionManager)
                 .reader(stockCsvFileReaderAndDeleter)
                 .processor(
@@ -137,7 +137,7 @@ public class StockNormalizeStepConfig {
                                 )
                         )
                 )
-                .writer(stockNormalizeFileWriter)
+                .writer(stockCleansingFileWriter)
                 .listener(stepLoggingListener)
                 .faultTolerant()
                 .skip(InvalidIsbn13Exception.class)
@@ -147,13 +147,13 @@ public class StockNormalizeStepConfig {
 
     @Bean
     @StepScope
-    public StockNormalizeFileWriter stockNormalizeFileWriter(
+    public StockCleansingFileWriter stockCleansingFileWriter(
             @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file,
-            @Value(StockSyncJobConfig.NORMALIZE_DIR_PARAM) String normalizeDirPath) {
-        String outputFile = normalizeDirPath.concat("/")
-                .concat(StockFilenameUtil.toNormalized(file.getFilename()))
+            @Value(StockSyncJobConfig.CLEANSING_DIR_PARAM) String cleansingDirPath) {
+        String outputFile = cleansingDirPath.concat("/")
+                .concat(StockFilenameUtil.toCleansing(file.getFilename()))
                 .concat(".csv");
-        return new StockNormalizeFileWriter(outputFile);
+        return new StockCleansingFileWriter(outputFile);
     }
 
     @Bean

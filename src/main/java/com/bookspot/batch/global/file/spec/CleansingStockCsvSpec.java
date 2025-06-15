@@ -1,12 +1,12 @@
 package com.bookspot.batch.global.file.spec;
 
-public enum NormalizedStockCsvSpec {
+public enum CleansingStockCsvSpec {
     BOOK_ID("bookId"),
     LIBRARY_ID("libraryId");
 
     private final String fieldName;
 
-    NormalizedStockCsvSpec(String fieldName) {
+    CleansingStockCsvSpec(String fieldName) {
         this.fieldName = fieldName;
     }
 

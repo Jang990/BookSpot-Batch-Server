@@ -25,8 +25,8 @@ public class StockSyncJobConfig {
     public static final String SOURCE_DIR_PARAM_NAME = "sourceDir";
     public static final String SOURCE_DIR_PARAM = "#{jobParameters['sourceDir']}";
 
-    public static final String NORMALIZE_DIR_PARAM_NAME = "normalizeDir";
-    public static final String NORMALIZE_DIR_PARAM = "#{jobParameters['normalizeDir']}";
+    public static final String CLEANSING_DIR_PARAM_NAME = "cleansingDir";
+    public static final String CLEANSING_DIR_PARAM = "#{jobParameters['cleansingDir']}";
 
     public static final String DUPLICATED_FILTER_DIR_PARAM_NAME = "filteredDir";
     public static final String DUPLICATED_FILTER_DIR_PARAM = "#{jobParameters['filteredDir']}";
@@ -61,8 +61,8 @@ public class StockSyncJobConfig {
                         BookSpotParentJobConfig.STOCK_DIR_PARAM_NAME,
                         SOURCE_DIR_PARAM_NAME,
 
-                        BookSpotParentJobConfig.NORMALIZE_DIR_PARAM_NAME,
-                        NORMALIZE_DIR_PARAM_NAME,
+                        BookSpotParentJobConfig.CLEANSING_DIR_PARAM_NAME,
+                        CLEANSING_DIR_PARAM_NAME,
 
                         BookSpotParentJobConfig.DUPLICATED_FILTER_DIR_PARAM_NAME,
                         DUPLICATED_FILTER_DIR_PARAM_NAME,
@@ -75,13 +75,13 @@ public class StockSyncJobConfig {
 
     @Bean
     public Job stockSyncJob(
-            Step stockNormalizeMasterStep,
+            Step stockCleansingMasterStep,
             Step duplicatedBookFilterMasterStep,
             Step insertStockMasterStep,
             Step deleteStockFileMasterStep,
             Step deleteStockMasterStep) {
         return new JobBuilder("stockSyncJob", jobRepository)
-                .start(stockNormalizeMasterStep)
+                .start(stockCleansingMasterStep)
                 .next(duplicatedBookFilterMasterStep)
                 .next(insertStockMasterStep) // 10_000 - 2 | 6m12s543ms  //  6000 | 8m59s362ms // 15000 | 5m8s821ms | 10.7%
                 .next(deleteStockFileMasterStep) // 6000 - 2 | 8m36s647ms
@@ -93,7 +93,7 @@ public class StockSyncJobConfig {
                                         SOURCE_DIR_PARAM_NAME,
                                         FilePathType.REQUIRED_DIRECTORY,
 
-                                        NORMALIZE_DIR_PARAM_NAME,
+                                        CLEANSING_DIR_PARAM_NAME,
                                         FilePathType.REQUIRED_DIRECTORY,
 
                                         DUPLICATED_FILTER_DIR_PARAM_NAME,
