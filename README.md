@@ -88,7 +88,7 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
   - 중복된 {책ID, 도서관ID} 제거. `{1,1},{2,1},{1,1} => {1,1},{2,1}`
   - 중복 책 필터링 SlaveStep (ChunkSize - 800)
       - `BookIdSet`을 `@StepScope`로 생성
-      - Reader: 정제된 도서관 소장 도서 csv 파일 읽기
+      - Reader: 정제된 도서관 소장 도서 csv 파일 읽기 - `close()` 호출 시 읽은 파일 삭제
       - Processor: `BookIdSet`에 존재하면 필터링. 존재하지 않는다면 `add(BookId)`
       - Writer: 중복을 제거한 도서관 소장 도서 파일 생성
 
@@ -105,11 +105,11 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
 - Delete 파일 생성 Step (파티셔닝 - 멀티스레딩)
   - beforeStep: `Library_Stock` 테이블에서 도서관이 가지고 있는 BookId를 가져와서 
     `Map<BookId,Boolean>`에 `{BookId, False}`로 추가 + `@StepScope`로 생성
-  - Reader: 정제된 csv 파일 읽기  
+  - Reader: 정제된 csv 파일 읽기 - `close()` 호출 시 읽은 파일 삭제
   - Writer: 등장한 BookId을 Map에서 찾아서 True로 세팅
   - afterStep: csv파일에 등장하지 않은(False) BookId를 파일로 저장
 - Delete Step (파티셔닝 - 멀티스레딩) (ChunkSize - 5,000)
-  - Delete 파일을 읽고 사라진 도서관 소장 도서 정보 Delete
+  - Delete 파일을 읽고 사라진 도서관 소장 도서 정보 Delete - `close()` 호출 시 읽은 파일 삭제
 
 ### 데이터 옵션
 - [정보나루 API](https://data4library.kr/apiUtilization) : 일일 30,000건 제한
