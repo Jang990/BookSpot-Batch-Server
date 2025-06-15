@@ -2,13 +2,7 @@ package com.bookspot.batch;
 
 import com.bookspot.batch.global.properties.files.BookSpotDirectoryProperties;
 import com.bookspot.batch.global.properties.files.BookSpotFileProperties;
-import com.bookspot.batch.job.BookSyncJobConfig;
-import com.bookspot.batch.job.LibrarySyncJobConfig;
-import com.bookspot.batch.job.StockFileJobConfig;
-import com.bookspot.batch.job.loan.LoanAggregatedJobConfig;
-import com.bookspot.batch.job.loan.LoanSyncJobConfig;
-import com.bookspot.batch.job.stock.StockNormalizeJobConfig;
-import com.bookspot.batch.job.stock.StockSyncJobConfig;
+import com.bookspot.batch.job.BookSpotParentJobConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
@@ -29,104 +23,43 @@ public class TempRunner implements CommandLineRunner {
     private final BookSpotDirectoryProperties directoryProperties;
     private final BookSpotFileProperties fileProperties;
 
-    private final Job librarySyncJob;
-    private final Job stockFileJob;
-    private final Job bookSyncJob;
-
-    private final Job loanAggregatedJob;
-    private final Job loanSyncJob;
-
-    private final Job stockNormalizeJob;
-    private final Job stockSyncJob;
-
-    private final Job bookOpenSearchSyncJob;
+    private final Job bookSpotParentJob;
 
     /*private final Job bookCodeJob;*/
 
     @Override
     public void run(String... args) {
         execute(
-                librarySyncJob,
+                bookSpotParentJob,
                 new JobParametersBuilder()
                         .addString(
-                                LibrarySyncJobConfig.LIBRARY_FILE_PARAM_NAME,
+                                BookSpotParentJobConfig.LIBRARY_FILE_PARAM_NAME,
                                 fileProperties.library()
                         )
-        );
-
-        execute(
-                stockFileJob,
-                new JobParametersBuilder()
                         .addString(
-                                StockFileJobConfig.DOWNLOAD_DIR_PARAM_NAME,
+                                BookSpotParentJobConfig.STOCK_DIR_PARAM_NAME,
                                 directoryProperties.bookSync()
                         )
-        );
-
-        execute(
-                bookSyncJob,
-                new JobParametersBuilder()
                         .addString(
-                                BookSyncJobConfig.SOURCE_DIR_PARAM_NAME,
+                                BookSpotParentJobConfig.DOWNLOAD_DIR_PARAM_NAME,
                                 directoryProperties.bookSync()
                         )
-        );
-
-        execute(
-                loanAggregatedJob,
-                new JobParametersBuilder()
                         .addString(
-                                LoanAggregatedJobConfig.DIRECTORY_PARAM_NAME,
-                                directoryProperties.loanSync()
-                        )
-                        .addString(
-                                LoanAggregatedJobConfig.OUTPUT_FILE_PARAM_NAME,
+                                BookSpotParentJobConfig.LOAN_OUTPUT_FILE_PARAM_NAME,
                                 fileProperties.loan()
                         )
-        );
-
-        execute(
-                loanSyncJob,
-                new JobParametersBuilder()
                         .addString(
-                                LoanSyncJobConfig.AGGREGATED_FILE_PARAM_NAME,
-                                fileProperties.loan()
-                        )
-        );
-
-        execute(
-                stockNormalizeJob,
-                new JobParametersBuilder()
-                        .addString(
-                                StockNormalizeJobConfig.SOURCE_DIR_PARAM_NAME,
-                                directoryProperties.stockSync()
+                                BookSpotParentJobConfig.CLEANSING_DIR_PARAM_NAME,
+                                directoryProperties.cleansingStock()
                         )
                         .addString(
-                                StockNormalizeJobConfig.NORMALIZE_DIR_PARAM_NAME,
-                                directoryProperties.normalizedStock()
-                        )
-                        .addString(
-                                StockNormalizeJobConfig.DUPLICATED_FILTER_DIR_PARAM_NAME,
-                                directoryProperties.filteredStock()
-                        )
-        );
-
-        execute(
-                stockSyncJob,
-                new JobParametersBuilder()
-                        .addString(
-                                StockSyncJobConfig.SOURCE_DIR_PARAM_NAME,
+                                BookSpotParentJobConfig.DUPLICATED_FILTER_DIR_PARAM_NAME,
                                 directoryProperties.filteredStock()
                         )
                         .addString(
-                                StockSyncJobConfig.DELETE_DIR_PARAM_NAME,
+                                BookSpotParentJobConfig.DELETE_DIR_PARAM_NAME,
                                 directoryProperties.deletedStock()
                         )
-        );
-
-        execute(
-                bookOpenSearchSyncJob,
-                new JobParametersBuilder()
         );
     }
 
