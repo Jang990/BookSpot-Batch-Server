@@ -111,6 +111,23 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
 - Delete Step (파티셔닝 - 멀티스레딩) (ChunkSize - 5,000)
   - Delete 파일을 읽고 사라진 도서관 소장 도서 정보 Delete - `close()` 호출 시 읽은 파일 삭제
 
+
+### 책 정보 OpenSearch 동기화 작업
+
+- OpenSearch 인덱스 생성 Step
+  - (25년 6월 기준) books-2025-06 인덱스 생성
+- OpenSearch 동기화 Step (ChunkSize - 500)
+  - Reader: 책 테이블 정보 읽기
+  - Processor: Document로 변환하기
+  - Writer: OpenSearch로 Bulk Insert
+- OpenSearch 인덱스 청소 Step
+    - (25년 6월 기준) books-2025-06 인덱스에 books Alias 부여.
+    - (25년 6월 기준) books-2025-05 인덱스에 books Alias 제거.
+    - (25년 6월 기준) books-2025-04 인덱스 제거. 
+
+- 
+
+
 ### 데이터 옵션
 - [정보나루 API](https://data4library.kr/apiUtilization) : 일일 30,000건 제한
 - [알라딘 API](https://blog.aladin.co.kr/openapi) : 일일 5,000건 - 서비스 URL 필요
