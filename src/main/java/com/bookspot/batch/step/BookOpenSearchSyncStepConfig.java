@@ -19,7 +19,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @RequiredArgsConstructor
 public class BookOpenSearchSyncStepConfig {
-    private static final int CHUNK_SIZE = 500;
+    private static final int CHUNK_SIZE = 300;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
