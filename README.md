@@ -30,7 +30,7 @@ IsbnSet의 내부 구현이 HashSet => LongHashSet으로 변경됨
 
 - 책 정보 동기화 Master Step (파티셔닝 - 멀티 스레딩)
     - beforeStep: Book 테이블에서 ISBN13을 읽어와서 `IsbnSet` 초기화
-    - 책 정보 동기화 Slave Step (ChunkSize - 1,500)
+    - 책 정보 동기화 Slave Step (ChunkSize - 1,300)
       - Reader: 도서관 소장 도서 csv 파일 읽기
       - Processor
           - 유효하지 않은 ISBN13 필터링
@@ -75,7 +75,7 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
 
 - 도서관 소장 도서 데이터 정제 MasterStep
   - beforeStep: `Map<ISBN13,BookDbId>` 초기화
-  - 도서관 소장 도서 데이터 정제 SlaveStep (ChunkSize - 1,000)
+  - 도서관 소장 도서 데이터 정제 SlaveStep (ChunkSize - 800)
       - 책제목,발행년도,저자,대출수,... => 책ID,도서관ID
       - Reader: 도서관 소장 도서 csv 파일 읽기 - `close()` 호출 시 읽은 파일 삭제
       - Processor
@@ -86,7 +86,7 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
 
 - 중복 책 필터링 MasterStep
   - 중복된 {책ID, 도서관ID} 제거. `{1,1},{2,1},{1,1} => {1,1},{2,1}`
-  - 중복 책 필터링 SlaveStep (ChunkSize - 800)
+  - 중복 책 필터링 SlaveStep (ChunkSize - 1,500)
       - `BookIdSet`을 `@StepScope`로 생성
       - Reader: 정제된 도서관 소장 도서 csv 파일 읽기 - `close()` 호출 시 읽은 파일 삭제
       - Processor: `BookIdSet`에 존재하면 필터링. 존재하지 않는다면 `add(BookId)`
