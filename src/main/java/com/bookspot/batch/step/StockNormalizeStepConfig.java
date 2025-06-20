@@ -52,7 +52,7 @@ public class StockNormalizeStepConfig {
     private final IsbnIdReader isbnIdReader;
     private final IsbnMemoryRepository isbnMemoryRepository;
 
-    private static final int CHUNK_SIZE = 1_000;
+    private static final int CHUNK_SIZE = 800;
 
     @Bean
     public Step stockCleansingMasterStep(

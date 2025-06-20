@@ -44,7 +44,7 @@ import java.nio.file.Paths;
 @Configuration
 @RequiredArgsConstructor
 public class BookSyncStepConfig {
-    private static final int CHUNK_SIZE = 1_500;
+    private static final int CHUNK_SIZE = 1_300;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
