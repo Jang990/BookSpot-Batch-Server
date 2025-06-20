@@ -114,6 +114,8 @@ DROP TABLE IF EXISTS book_codes;
 DROP TABLE IF EXISTS library_stock;
 DROP TABLE IF EXISTS library;
 DROP TABLE IF EXISTS book;
+DROP TABLE IF EXISTS book_code;
+
 
 -- bookspot.book_codes definition
 CREATE TABLE `book_codes` (
@@ -171,4 +173,11 @@ CREATE TABLE `library_stock` (
   KEY `library_stock_FK_1` (`library_id`),
   CONSTRAINT `library_stock_FK` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`),
   CONSTRAINT `library_stock_FK_1` FOREIGN KEY (`library_id`) REFERENCES `library` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- bookspot_sample.book_code definition
+CREATE TABLE `book_code` (
+  `id` int NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
