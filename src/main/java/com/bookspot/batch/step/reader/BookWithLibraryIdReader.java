@@ -3,6 +3,7 @@ package com.bookspot.batch.step.reader;
 import com.bookspot.batch.data.LibraryIds;
 import com.bookspot.batch.data.BookDocument;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
+import com.bookspot.batch.step.service.BookCodeResolver;
 import com.bookspot.batch.step.service.LibraryStockRepository;
 import com.bookspot.batch.step.service.BookRepository;
 import org.springframework.batch.item.*;
@@ -17,6 +18,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
 
     private final BookRepository bookRepository;
     private final LibraryStockRepository libraryStockRepository;
+    private final BookCodeResolver bookCodeResolver;
     private final int pageSize;
 
     private ExecutionContext executionContext;
@@ -27,6 +29,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
     public BookWithLibraryIdReader(
             BookRepository bookRepository,
             LibraryStockRepository libraryStockRepository,
+            BookCodeResolver bookCodeResolver,
             int pageSize) {
         Objects.requireNonNull(bookRepository);
         Objects.requireNonNull(libraryStockRepository);
@@ -35,6 +38,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
 
         this.bookRepository = bookRepository;
         this.libraryStockRepository = libraryStockRepository;
+        this.bookCodeResolver = bookCodeResolver;
         this.pageSize = pageSize;
     }
 
@@ -97,7 +101,8 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
                         book.getLoanCount(),
                         book.getSubjectCode(),
                         book.getPublicationYear() == null ? null : book.getPublicationYear().getValue(),
-                        libraryIdMap.getOrDefault(book.getId(), new LinkedList<>())
+                        libraryIdMap.getOrDefault(book.getId(), new LinkedList<>()),
+                        book.getSubjectCode() == null ? List.of() : bookCodeResolver.resolve(book.getSubjectCode())
                 ))
                 .collect(Collectors.toList());
     }

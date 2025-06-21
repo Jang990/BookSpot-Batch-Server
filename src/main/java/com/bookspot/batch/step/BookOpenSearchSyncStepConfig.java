@@ -1,12 +1,11 @@
 package com.bookspot.batch.step;
 
+import com.bookspot.batch.data.BookCode;
 import com.bookspot.batch.data.BookDocument;
 import com.bookspot.batch.global.config.OpenSearchIndex;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
-import com.bookspot.batch.step.service.LibraryStockRepository;
-import com.bookspot.batch.step.service.BookRepository;
-import com.bookspot.batch.step.service.OpenSearchRepository;
+import com.bookspot.batch.step.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -15,6 +14,10 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 @RequiredArgsConstructor
@@ -30,6 +33,7 @@ public class BookOpenSearchSyncStepConfig {
 
     private final OpenSearchIndex openSearchIndex;
     private final OpenSearchRepository openSearchRepository;
+    private final BookCodeRepository bookCodeRepository;
 
 
     @Bean
@@ -48,7 +52,18 @@ public class BookOpenSearchSyncStepConfig {
         return new BookWithLibraryIdReader(
                 bookRepository,
                 libraryStockRepository,
+                bookCodeResolver(),
                 CHUNK_SIZE
         );
+    }
+
+    @Bean
+    @StepScope
+    public BookCodeResolver bookCodeResolver() {
+        List<BookCode> bookCodes = bookCodeRepository.findAll();
+        Map<Integer, String> bookCodeMap = new HashMap<>();
+        for (BookCode bookCode : bookCodes)
+            bookCodeMap.put(bookCode.getId(), bookCode.getName());
+        return new BookCodeResolver(bookCodeMap);
     }
 }

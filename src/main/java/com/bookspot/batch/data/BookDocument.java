@@ -24,11 +24,15 @@ public class BookDocument {
     @JsonProperty("library_ids")
     private List<String> libraryIdsArrayString;
 
+    @JsonProperty("book_categories")
+    private List<String> bookCategoriesArrayString;
+
     public BookDocument(
             String bookId, String isbn13, String title,
             String author, String publisher, int loanCount,
             Integer subjectCode, Integer publicationYear,
-            List<String> libraryIds) {
+            List<String> libraryIds, List<String> bookCategories
+    ) {
         this.bookId = bookId;
         this.isbn13 = isbn13;
         this.title = title;
@@ -37,6 +41,7 @@ public class BookDocument {
         this.loanCount = loanCount;
         this.subjectCode = subjectCode;
         this.publicationYear = publicationYear;
-        libraryIdsArrayString = libraryIds;
+        this.libraryIdsArrayString = libraryIds;
+        this.bookCategoriesArrayString = bookCategories;
     }
 }

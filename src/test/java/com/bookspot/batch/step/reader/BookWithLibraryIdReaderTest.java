@@ -1,6 +1,7 @@
 package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.TestInsertUtils;
+import com.bookspot.batch.step.service.BookCodeResolver;
 import com.bookspot.batch.step.service.LibraryStockRepository;
 import com.bookspot.batch.step.service.BookRepository;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ class BookWithLibraryIdReaderTest {
     @Autowired
     BookRepository bookRepository;
     @Autowired LibraryStockRepository libraryStockRepository;
+    @Autowired BookCodeResolver bookCodeResolver;
 
     private void initData() {
         TestInsertUtils.bookBuilder().id(1).insert(jdbcTemplate);
@@ -51,7 +53,7 @@ class BookWithLibraryIdReaderTest {
     void 정상처리() throws Exception {
         initData();
         BookWithLibraryIdReader reader = new BookWithLibraryIdReader(
-                bookRepository, libraryStockRepository, 2
+                bookRepository, libraryStockRepository, bookCodeResolver, 2
         );
         ExecutionContext ec = new ExecutionContext();
         reader.open(ec);
@@ -71,7 +73,7 @@ class BookWithLibraryIdReaderTest {
     void 진행된_페이지_불러오기_가능() throws Exception {
         initData();
         BookWithLibraryIdReader reader = new BookWithLibraryIdReader(
-                bookRepository, libraryStockRepository, 2
+                bookRepository, libraryStockRepository, bookCodeResolver, 2
         );
 
         ExecutionContext ec = new ExecutionContext();
@@ -88,7 +90,7 @@ class BookWithLibraryIdReaderTest {
     @Test
     void 데이터가_없는_경우() throws Exception {
         BookWithLibraryIdReader reader = new BookWithLibraryIdReader(
-                bookRepository, libraryStockRepository, 2
+                bookRepository, libraryStockRepository, bookCodeResolver, 2
         );
 
         ExecutionContext ec = new ExecutionContext();

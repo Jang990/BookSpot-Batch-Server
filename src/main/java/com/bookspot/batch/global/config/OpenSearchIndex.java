@@ -60,6 +60,9 @@ public class OpenSearchIndex {
                         },
                         "library_ids": {
                             "type": "keyword"
+                        },
+                        "book_categories": {
+                            "type": "keyword"
                         }
                     }
                 }
