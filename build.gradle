@@ -59,6 +59,9 @@ dependencies {
 	implementation("org.opensearch.client:opensearch-java:2.11.0")
 	implementation("jakarta.json:jakarta.json-api")
 
+	// Slack 알람
+	implementation "com.slack.api:slack-api-client:1.45.3"
+
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
