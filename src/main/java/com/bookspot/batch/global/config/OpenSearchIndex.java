@@ -12,6 +12,8 @@ public class OpenSearchIndex {
     public static final String SCHEMA = """
             {
                 "settings": {
+                    "number_of_shards": 2,
+                    "number_of_replicas": 0,
                     "analysis": {
                         // 토크나이저 정의
                         "tokenizer": {
