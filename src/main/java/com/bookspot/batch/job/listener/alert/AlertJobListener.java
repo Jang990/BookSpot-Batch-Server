@@ -28,24 +28,5 @@ public class AlertJobListener implements JobExecutionListener {
             alertService.error(alertMessage);
         }
     }
-
-    private AlertMessage toAlertMessage(JobExecution execution) {
-        String title = "[JOB] " + execution.getJobInstance().getJobName() + " 결과";
-
-        List<AlertBody> bodies = List.of(
-                new AlertBody("상태", execution.getStatus().name()),
-                new AlertBody("시작 시각", execution.getStartTime().toString()),
-                new AlertBody("종료 시각", execution.getEndTime().toString()),
-                new AlertBody("실패 이유", getFailureMessages(execution))
-        );
-
-        return new AlertMessage(title, bodies);
-    }
-
-    private String getFailureMessages(JobExecution execution) {
-        return execution.getAllFailureExceptions().stream()
-                .map(Throwable::getMessage)
-                .collect(Collectors.joining("\n"));
-    }
 }
 
