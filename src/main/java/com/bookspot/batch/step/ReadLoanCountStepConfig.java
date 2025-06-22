@@ -6,6 +6,7 @@ import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.loan.LoanAggregatedJobConfig;
 import com.bookspot.batch.step.listener.LoanCountStepListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
@@ -51,9 +52,12 @@ public class ReadLoanCountStepConfig {
     public Step readLoanCountMasterStep(
             LoanCountStepListener loanCountStepListener,
             Step readLoanCountStep,
-            TaskExecutorPartitionHandler loanCountPartitionHandler) throws IOException {
+            AlertStepListener alertStepListener,
+            TaskExecutorPartitionHandler loanCountPartitionHandler
+    ) throws IOException {
         return new StepBuilder("readLoanCountMasterStep", jobRepository)
                 .listener(loanCountStepListener)
+                .listener(alertStepListener)
                 .partitioner(readLoanCountStep.getName(), loanCountPartitioner(null))
                 .partitionHandler(loanCountPartitionHandler)
                 .build();

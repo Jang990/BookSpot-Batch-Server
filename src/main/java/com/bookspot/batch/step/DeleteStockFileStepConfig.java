@@ -7,6 +7,7 @@ import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.DeletedStockFileCreator;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.reader.CleansingStockFileReader;
 import com.bookspot.batch.step.writer.ExistsStockChecker;
@@ -40,9 +41,11 @@ public class DeleteStockFileStepConfig {
     @Bean
     public Step deleteStockFileMasterStep(
             Step deleteStockFileStep,
+            AlertStepListener alertStepListener,
             TaskExecutorPartitionHandler deleteStockFilePartitionHandler) throws IOException {
         return new StepBuilder("deleteStockFileMasterStep", jobRepository)
                 .partitioner(deleteStockFileStep.getName(), deleteStockFilePartitioner(null))
+                .listener(alertStepListener)
                 .partitionHandler(deleteStockFilePartitionHandler)
                 .build();
     }

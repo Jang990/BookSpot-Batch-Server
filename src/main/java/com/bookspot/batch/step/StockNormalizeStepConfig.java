@@ -6,6 +6,7 @@ import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
@@ -57,7 +58,9 @@ public class StockNormalizeStepConfig {
     @Bean
     public Step stockCleansingMasterStep(
             Step stockCleansingStep,
-            TaskExecutorPartitionHandler stockCleansingPartitionHandler) throws IOException {
+            TaskExecutorPartitionHandler stockCleansingPartitionHandler,
+            AlertStepListener alertStepListener
+    ) throws IOException {
         return new StepBuilder(STOCK_CLEANSING_MASTER_STEP, jobRepository)
                 .listener(new StepExecutionListener() {
                     @Override
@@ -84,6 +87,7 @@ public class StockNormalizeStepConfig {
                         return StepExecutionListener.super.afterStep(stepExecution);
                     }
                 })
+                .listener(alertStepListener)
                 .partitioner(stockCleansingStep.getName(), stockCleansingPartitioner(null))
                 .partitionHandler(stockCleansingPartitionHandler)
                 .build();

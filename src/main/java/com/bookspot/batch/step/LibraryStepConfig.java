@@ -5,6 +5,7 @@ import com.bookspot.batch.global.FileService;
 import com.bookspot.batch.job.LibrarySyncJobConfig;
 import com.bookspot.batch.step.listener.LibrarySyncStepListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.reader.LibraryExcelFileReaderAndDeleter;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryExcelRowMapper;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
@@ -33,13 +34,16 @@ public class LibraryStepConfig {
     public Step librarySyncStep(
             LibraryFileDownloader libraryFileDownloader,
             LibraryExcelFileReaderAndDeleter libraryExcelFileReaderAndDeleter,
-            LibraryWriter libraryWriter) {
+            LibraryWriter libraryWriter,
+            AlertStepListener alertStepListener
+    ) {
         return new StepBuilder("librarySyncStep", jobRepository)
                 .<Library, Library>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryExcelFileReaderAndDeleter)
                 .writer(libraryWriter)
                 .listener(new LibrarySyncStepListener(libraryFileDownloader))
                 .listener(stepLoggingListener)
+                .listener(alertStepListener)
                 .build();
     }
 

@@ -3,6 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.file.csv.AggregatedBook;
 import com.bookspot.batch.job.loan.LoanAggregatedJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.reader.AggregatedLoanFileReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
@@ -29,12 +30,13 @@ public class SyncLoanCountStepConfig {
     private static final int CHUNK_SIZE = 3_000;
 
     @Bean
-    public Step syncLoanCountStep() {
+    public Step syncLoanCountStep(AlertStepListener alertStepListener) {
         return new StepBuilder("syncLoanCountStep", jobRepository)
                 .<AggregatedBook, AggregatedBook>chunk(CHUNK_SIZE, transactionManager)
                 .reader(aggregatedLoanFileReader(null))
                 .writer(stockBookWriter())
                 .listener(stepLoggingListener)
+                .listener(alertStepListener)
                 .build();
     }
 

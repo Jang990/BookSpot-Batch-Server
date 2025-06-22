@@ -4,6 +4,7 @@ import com.bookspot.batch.data.BookCode;
 import com.bookspot.batch.data.BookDocument;
 import com.bookspot.batch.global.config.OpenSearchIndex;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
 import com.bookspot.batch.step.service.*;
 import lombok.RequiredArgsConstructor;
@@ -37,12 +38,13 @@ public class BookOpenSearchSyncStepConfig {
 
 
     @Bean
-    public Step bookOpenSearchSyncStep() throws Exception {
+    public Step bookOpenSearchSyncStep(AlertStepListener alertStepListener) throws Exception {
         return new StepBuilder("bookOpenSearchSyncStep", jobRepository)
                 .<BookDocument, BookDocument>chunk(CHUNK_SIZE, transactionManager)
                 .reader(bookWithLibraryIdReader())
                 .writer(chunk -> openSearchRepository.save(openSearchIndex.serviceIndexName(), chunk.getItems()))
                 .listener(stepLoggingListener)
+                .listener(alertStepListener)
                 .build();
     }
 

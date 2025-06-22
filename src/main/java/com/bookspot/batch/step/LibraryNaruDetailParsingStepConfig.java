@@ -2,6 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.crawler.LibraryNaruDetail;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.reader.LibraryNaruDetailReader;
 import com.bookspot.batch.step.writer.LibraryNaruDetailWriter;
 import lombok.RequiredArgsConstructor;
@@ -24,12 +25,15 @@ public class LibraryNaruDetailParsingStepConfig {
     @Bean
     public Step libraryNaruDetailParsingStep(
             LibraryNaruDetailReader libraryNaruDetailReader,
-            LibraryNaruDetailWriter libraryNaruDetailWriter) {
+            LibraryNaruDetailWriter libraryNaruDetailWriter,
+            AlertStepListener alertStepListener
+    ) {
         return new StepBuilder("libraryNaruDetailParsingStep", jobRepository)
                 .<LibraryNaruDetail, LibraryNaruDetail>chunk(LibraryStepConst.LIBRARY_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryNaruDetailReader)
                 .writer(libraryNaruDetailWriter)
                 .listener(stepLoggingListener)
+                .listener(alertStepListener)
                 .build();
     }
 

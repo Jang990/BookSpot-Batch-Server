@@ -4,6 +4,7 @@ import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.ExistsStockFilter;
 import com.bookspot.batch.step.reader.CleansingStockFileReader;
@@ -40,8 +41,10 @@ public class InsertStockStepConfig {
     @Bean
     public Step insertStockMasterStep(
             Step insertStockStep,
+            AlertStepListener alertStepListener,
             TaskExecutorPartitionHandler insertStockPartitionHandler) throws IOException {
         return new StepBuilder("insertStockMasterStep", jobRepository)
+                .listener(alertStepListener)
                 .partitioner(insertStockStep.getName(), insertStockPartitioner(null))
                 .partitionHandler(insertStockPartitionHandler)
                 .build();

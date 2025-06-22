@@ -6,6 +6,7 @@ import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.stock.StockSyncJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.DuplicatedBookIdFilter;
 import com.bookspot.batch.step.reader.CleansingStockFileReader;
@@ -43,8 +44,10 @@ public class DuplicatedBookFilterStepConfig {
     @Bean
     public Step duplicatedBookFilterMasterStep(
             Step duplicatedBookFilterStep,
+            AlertStepListener alertStepListener,
             TaskExecutorPartitionHandler duplicatedBookFilterPartitionHandler) throws IOException {
         return new StepBuilder("duplicatedBookFilterMasterStep", jobRepository)
+                .listener(alertStepListener)
                 .partitioner(duplicatedBookFilterStep.getName(), duplicatedBookFilterPartitioner(null))
                 .partitionHandler(duplicatedBookFilterPartitionHandler)
                 .build();

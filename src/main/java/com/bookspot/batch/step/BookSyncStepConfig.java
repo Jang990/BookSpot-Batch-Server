@@ -7,6 +7,7 @@ import com.bookspot.batch.job.BookSyncJobConfig;
 import com.bookspot.batch.step.listener.BookSyncStepListener;
 import com.bookspot.batch.step.listener.InvalidIsbn13LoggingListener;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.StockCsvToBookConvertor;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
@@ -54,10 +55,12 @@ public class BookSyncStepConfig {
     @Bean
     public Step bookSyncPartitionMasterStep(
             Step bookSyncStep,
+            AlertStepListener alertStepListener,
             BookSyncStepListener bookSyncStepListener,
             TaskExecutorPartitionHandler bookSyncPartitionHandler) throws IOException {
         return new StepBuilder("bookSyncPartitionMasterStep", jobRepository)
                 .listener(bookSyncStepListener)
+                .listener(alertStepListener)
                 .partitioner(bookSyncStep.getName(), bookSyncCsvPartitioner(null))
                 .partitionHandler(bookSyncPartitionHandler)
                 .build();

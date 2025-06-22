@@ -5,6 +5,7 @@ import com.bookspot.batch.data.crawler.StockFileData;
 import com.bookspot.batch.global.file.NaruFileDownloader;
 import com.bookspot.batch.job.StockFileJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
+import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.processor.StockFilePathParser;
 import com.bookspot.batch.global.file.stock.StockFileDownloader;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,10 @@ public class StockFileManagerStepConfig {
     private final StepLoggingListener stepLoggingListener;
 
     @Bean
-    public Step stockCsvDownloadStep(StockFileDownloader stockFileDownloader) throws Exception {
+    public Step stockCsvDownloadStep(
+            StockFileDownloader stockFileDownloader,
+            AlertStepListener alertStepListener
+    ) throws Exception {
         return new StepBuilder("stockCsvDownloadStep", jobRepository)
                 .<LibraryForFileParsing, StockFileData>chunk(STOCK_CSV_DOWNLOAD_CHUNK_SIZE, platformTransactionManager)
                 .reader(libraryForFileParsingReader())
@@ -49,6 +53,7 @@ public class StockFileManagerStepConfig {
                     }
                 })
                 .listener(stepLoggingListener)
+                .listener(alertStepListener)
                 .build();
     }
 
