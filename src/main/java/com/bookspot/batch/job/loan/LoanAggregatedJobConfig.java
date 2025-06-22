@@ -2,6 +2,7 @@ package com.bookspot.batch.job.loan;
 
 import com.bookspot.batch.job.BookSpotParentJobConfig;
 import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
+import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
@@ -56,6 +57,7 @@ public class LoanAggregatedJobConfig {
 
     @Bean
     public Job loanAggregatedJob(
+            AlertJobListener alertJobListener,
             Step readLoanCountMasterStep,
             Step syncLoanCountStep
     ) {
@@ -69,6 +71,7 @@ public class LoanAggregatedJobConfig {
                                 )
                         )
                 )
+                .listener(alertJobListener)
                 .start(readLoanCountMasterStep)
                 .next(syncLoanCountStep)
                 .build();

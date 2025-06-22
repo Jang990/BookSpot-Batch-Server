@@ -1,6 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
+import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.service.memory.isbn.IsbnPrimitiveHashSet;
@@ -60,9 +61,13 @@ public class BookSyncJobConfig {
     }
 
     @Bean
-    public Job bookSyncJob(Step bookSyncPartitionMasterStep) {
+    public Job bookSyncJob(
+            AlertJobListener alertJobListener,
+            Step bookSyncPartitionMasterStep
+    ) {
         return new JobBuilder("bookSyncJob", jobRepository)
                 .start(bookSyncPartitionMasterStep)
+                .listener(alertJobListener)
                 .validator(
                         FilePathJobParameterValidator.REQUIRED_DIRECTORY(
                                 filePathValidators,

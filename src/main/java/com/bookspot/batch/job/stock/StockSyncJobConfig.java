@@ -2,6 +2,7 @@ package com.bookspot.batch.job.stock;
 
 import com.bookspot.batch.job.BookSpotParentJobConfig;
 import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
+import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.file.FilePathType;
@@ -75,6 +76,7 @@ public class StockSyncJobConfig {
 
     @Bean
     public Job stockSyncJob(
+            AlertJobListener alertJobListener,
             Step stockCleansingMasterStep,
             Step duplicatedBookFilterMasterStep,
             Step insertStockMasterStep,
@@ -86,6 +88,7 @@ public class StockSyncJobConfig {
                 .next(insertStockMasterStep) // 10_000 - 2 | 6m12s543ms  //  6000 | 8m59s362ms // 15000 | 5m8s821ms | 10.7%
                 .next(deleteStockFileMasterStep) // 6000 - 2 | 8m36s647ms
                 .next(deleteStockMasterStep) // 6000 - 2 | 4s11ms
+                .listener(alertJobListener)
                 .validator(
                         FilePathJobParameterValidator.of(
                                 filePathValidators,

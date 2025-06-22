@@ -1,6 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
+import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import lombok.RequiredArgsConstructor;
@@ -42,10 +43,14 @@ public class StockFileJobConfig {
     }
 
     @Bean
-    public Job stockFileJob(Step stockCsvDownloadStep) {
+    public Job stockFileJob(
+            AlertJobListener alertJobListener,
+            Step stockCsvDownloadStep
+    ) {
         // naru_detail이 있는 도서관 파일 다운로드
         return new JobBuilder("stockFileJob", jobRepository)
                 .start(stockCsvDownloadStep)
+                .listener(alertJobListener)
                 .validator(
                         FilePathJobParameterValidator.REQUIRED_DIRECTORY(
                                 filePathValidators,

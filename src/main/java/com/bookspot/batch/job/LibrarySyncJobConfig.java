@@ -3,6 +3,7 @@ package com.bookspot.batch.job;
 import com.bookspot.batch.global.crawler.naru.NaruRequestCreator;
 import com.bookspot.batch.global.file.NaruFileDownloader;
 import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
+import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import com.bookspot.batch.job.validator.file.CustomFilePathValidators;
 import com.bookspot.batch.job.validator.FilePathJobParameterValidator;
 import com.bookspot.batch.step.reader.file.excel.library.LibraryFileDownloader;
@@ -48,11 +49,14 @@ public class LibrarySyncJobConfig {
     @Bean
     public Job librarySyncJob(
             Step librarySyncStep,
-            Step libraryNaruDetailParsingStep) {
+            AlertJobListener alertJobListener,
+            Step libraryNaruDetailParsingStep
+    ) {
         return new JobBuilder("librarySyncJob", jobRepository)
                 // 도서관 파일 정보 저장 -> naru_detail 파싱
                 .start(librarySyncStep)
                 .next(libraryNaruDetailParsingStep)
+                .listener(alertJobListener)
                 .validator(FilePathJobParameterValidator.OPTIONAL_FILE(customFilePathValidators, LIBRARY_FILE_PARAM_NAME))
                 .build();
     }
