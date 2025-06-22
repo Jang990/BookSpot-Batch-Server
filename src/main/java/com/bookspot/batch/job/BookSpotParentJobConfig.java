@@ -1,5 +1,6 @@
 package com.bookspot.batch.job;
 
+import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -27,6 +28,7 @@ public class BookSpotParentJobConfig {
 
     @Bean
     public Job bookSpotParentJob(
+            AlertJobListener alertJobListener,
             Step librarySyncJobStep,
             Step stockFileJobStep,
             Step bookSyncJobStep,
@@ -41,6 +43,7 @@ public class BookSpotParentJobConfig {
                 .next(loanAggregatedJobStep)
                 .next(stockSyncJobStep)
                 .next(bookOpenSearchSyncJobStep)
+                .listener(alertJobListener)
                 .build();
     }
 
