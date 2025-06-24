@@ -19,10 +19,10 @@
 ## 🧐 Structure
 ![북스팟아키텍쳐](https://github.com/user-attachments/assets/cbca0ff3-7ae6-4c1c-9fbc-fb44f97d8c65)
 
+<br>
 
 ## 🏭 Batch Process
 ![BookSpot-Batch](https://github.com/user-attachments/assets/b37032c1-e75f-4f87-b2ef-2263906e6eee)
-
 
 ### 🏛️ 도서관 동기화 작업
 - 도서관 동기화 Step (ChunkSize -  200)
@@ -144,6 +144,7 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
     - (25년 6월 기준) books-2025-05 인덱스에 books Alias 제거.
     - (25년 6월 기준) books-2025-04 인덱스 제거. 
 
+<br>
 
 ### 🔗 데이터 옵션
 - [정보나루 API](https://data4library.kr/apiUtilization) : 일일 30,000건 제한
