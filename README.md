@@ -1,11 +1,30 @@
-# BookSpot-Batch-Server
+## 🎠 About
+보고 싶은 책을 검색하고 해당 책을 보유한 도서관을 지도에서 확인할 수 있는 BookSpot 서비스의 소스 데이터를 저장하는 Batch 서버 코드 저장소
+
+<br>
+
+## ⚙️ Technology Stack
+
+✨ **Backend(API + Batch)**
+
+<img src="https://img.shields.io/badge/Java21-5382a1?style=for-the-badge&logo=&logoColor=white"><img src="https://img.shields.io/badge/springboot 3.1.5-6DB33F?style=for-the-badge&logo=springboot&logoColor=white"><img src="https://img.shields.io/badge/JPA-59666C?style=for-the-badge&logo=hibernate&logoColor=white"><img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white"><img src="https://img.shields.io/badge/OpenSearch-005EB8?style=for-the-badge&logo=opensearch&logoColor=white">
+
+✨ **Frontend**
+
+<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=white"><img src="https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"><img src="https://img.shields.io/badge/next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white"><img src="https://img.shields.io/badge/tailwindcss-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white">
+
+<br>
 
 
-## Batch 처리 과정
+## 🧐 Structure
+![북스팟아키텍쳐](https://github.com/user-attachments/assets/cbca0ff3-7ae6-4c1c-9fbc-fb44f97d8c65)
+
+
+## 🏭 Batch Process
 ![BookSpot-Batch](https://github.com/user-attachments/assets/b37032c1-e75f-4f87-b2ef-2263906e6eee)
 
 
-### 도서관 동기화 작업
+### 🏛️ 도서관 동기화 작업
 - 도서관 동기화 Step (ChunkSize -  200)
     - BeforeStep: 정보나루에서 도서관 Excel 파일 다운로드
     - Reader: 다운로드된 도서관 Excel 파일 읽기 - `close()` 호출 시 읽은 파일 삭제
@@ -14,7 +33,7 @@
     - Reader : [정보나루 도서관 페이지](https://www.data4library.kr/libDataL) 크롤링
     - Writer : 도서관 이름과 주소가 일치하는 도서관의 naru_detail 필드 업데이트
 
-### 도서관 소장 도서 파일 다운로드 작업
+### 📥 도서관 소장 도서 파일 다운로드 작업
 1월 기준. 1500개의 파일. 17.5GB의 전체 파일 크기
 
 - 파일 다운로드 Step (ChunkSize - 10)
@@ -22,7 +41,7 @@
     - Processor: 가장 최근 소장 도서 csv 파일 경로를 크롤링
     - Writer: 도서관 소장 도서 csv 파일 다운로드
 
-### 책 동기화 작업
+### 📚 책 동기화 작업
 
 ```
 IsbnSet의 내부 구현이 HashSet => LongHashSet으로 변경됨
@@ -40,7 +59,7 @@ IsbnSet의 내부 구현이 HashSet => LongHashSet으로 변경됨
       - Writer: Book 테이블에 저장
     - afterStep: `IsbnSet clearAll()` 호출
 
-### 대출 수 동기화 작업
+### 🔢 대출 수 동기화 작업
 
 ```
 Map<Long, AtomicInteger> => long[], AtomicIntegerArray로 변경됨
@@ -67,7 +86,7 @@ Map의 map.contains(isbn13)을 Arrays.binarySearch(isbnArray, isbn13)으로 대�
     - Reader: 대출 수 종합 파일읽기
     - Writer: Book 테이블에 대출 수 반영
 
-### 도서관 소장 도서 동기화 작업
+### 🗂️ 도서관 소장 도서 동기화 작업
 ```
 Insert Step에서 사용하는 Set이 HashSet<Long> => LongHashSet으로 변경됨
 Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBooleanHahsMap으로 변경됨
@@ -112,7 +131,7 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
   - Delete 파일을 읽고 사라진 도서관 소장 도서 정보 Delete - `close()` 호출 시 읽은 파일 삭제
 
 
-### 책 정보 OpenSearch 동기화 작업
+### 🔍 책 정보 OpenSearch 동기화 작업
 
 - OpenSearch 인덱스 생성 Step
   - (25년 6월 기준) books-2025-06 인덱스 생성
@@ -125,14 +144,12 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
     - (25년 6월 기준) books-2025-05 인덱스에 books Alias 제거.
     - (25년 6월 기준) books-2025-04 인덱스 제거. 
 
-- 
 
-
-### 데이터 옵션
+### 🔗 데이터 옵션
 - [정보나루 API](https://data4library.kr/apiUtilization) : 일일 30,000건 제한
 - [알라딘 API](https://blog.aladin.co.kr/openapi) : 일일 5,000건 - 서비스 URL 필요
 - [네이버 책 API](https://developers.naver.com/docs/serviceapi/search/book/book.md) : 일일 25,000건
 - [카카오 책 API](https://developers.kakao.com/docs/latest/ko/daum-search/dev-guide#search-book) : 일일 총 5만건, API 별 3만건
 - [정보나루 최신 소장 도서 CSV 파일](https://data4library.kr/openDataL) : 크롤링 방식
 
-csv 파일 선택
+일일 제한없이 처리할 수 있는 CSV 파일 크롤링 방식 선택.
