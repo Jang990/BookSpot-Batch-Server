@@ -3,6 +3,7 @@ package com.bookspot.batch.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -27,11 +28,15 @@ public class BookDocument {
     @JsonProperty("book_categories")
     private List<String> bookCategoriesArrayString;
 
+    @JsonProperty("created_at")
+    private String createdAt;
+
     public BookDocument(
             String bookId, String isbn13, String title,
             String author, String publisher, int loanCount,
             Integer subjectCode, Integer publicationYear,
-            List<String> libraryIds, List<String> bookCategories
+            List<String> libraryIds, List<String> bookCategories,
+            LocalDate createdAt
     ) {
         this.bookId = bookId;
         this.isbn13 = isbn13;
@@ -43,5 +48,6 @@ public class BookDocument {
         this.publicationYear = publicationYear;
         this.libraryIdsArrayString = libraryIds;
         this.bookCategoriesArrayString = bookCategories;
+        this.createdAt = createdAt.toString();
     }
 }

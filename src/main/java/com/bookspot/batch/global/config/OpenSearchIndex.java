@@ -65,6 +65,10 @@ public class OpenSearchIndex {
                         },
                         "book_categories": {
                             "type": "keyword"
+                        },
+                        "created_at": {
+                            "type": "date",
+                            "format": "yyyy-MM-dd"
                         }
                     }
                 }

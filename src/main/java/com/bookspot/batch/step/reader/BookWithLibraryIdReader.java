@@ -102,7 +102,8 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
                         book.getSubjectCode(),
                         book.getPublicationYear() == null ? null : book.getPublicationYear().getValue(),
                         libraryIdMap.getOrDefault(book.getId(), new LinkedList<>()),
-                        book.getSubjectCode() == null ? List.of() : bookCodeResolver.resolve(book.getSubjectCode())
+                        book.getSubjectCode() == null ? List.of() : bookCodeResolver.resolve(book.getSubjectCode()),
+                        book.getCreatedAt()
                 ))
                 .collect(Collectors.toList());
     }
