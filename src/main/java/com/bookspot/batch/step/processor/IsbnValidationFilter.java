@@ -9,15 +9,15 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Service
 @RequiredArgsConstructor
 public class IsbnValidationFilter implements ItemProcessor<StockCsvData, StockCsvData> {
     private final IsbnValidator isbnValidator;
+    private final long libraryId;
 
     @Override
     public StockCsvData process(StockCsvData item) throws Exception {
         if (isbnValidator.isInValid(item.getIsbn())) {
-            throw new InvalidIsbn13Exception();
+            throw new InvalidIsbn13Exception(libraryId);
         }
 
         /*if (!isbnValidator.isBookType(item.getIsbn())) {

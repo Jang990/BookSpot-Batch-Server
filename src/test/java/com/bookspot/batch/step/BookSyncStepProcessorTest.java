@@ -35,7 +35,7 @@ public class BookSyncStepProcessorTest {
     @BeforeEach
     void beforeEach() {
         processor = config.bookSyncProcessor(
-                new IsbnValidationFilter(new IsbnValidator()),
+                new IsbnValidationFilter(new IsbnValidator(), 1L),
                 new InMemoryIsbnFilter(isbnSet),
                 new TitleEllipsisConverter(),
                 new StockCsvToBookConvertor(new BookClassificationParser(), new YearParser())

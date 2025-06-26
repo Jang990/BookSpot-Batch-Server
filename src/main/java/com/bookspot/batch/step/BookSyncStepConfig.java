@@ -3,6 +3,7 @@ package com.bookspot.batch.step;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.global.config.TaskExecutorConfig;
+import com.bookspot.batch.global.file.stock.StockFilenameUtil;
 import com.bookspot.batch.job.BookSyncJobConfig;
 import com.bookspot.batch.step.listener.BookSyncStepListener;
 import com.bookspot.batch.step.listener.InvalidIsbn13LoggingListener;
@@ -13,6 +14,7 @@ import com.bookspot.batch.step.processor.StockCsvToBookConvertor;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.InMemoryIsbnFilter;
 import com.bookspot.batch.step.processor.TitleEllipsisConverter;
+import com.bookspot.batch.step.processor.csv.IsbnValidator;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.IsbnReader;
 import com.bookspot.batch.step.reader.StockCsvFileReader;
@@ -114,6 +116,18 @@ public class BookSyncStepConfig {
                 inMemoryIsbnFilter,
                 titleEllipsisConverter,
                 stockCsvToBookConvertor
+        );
+    }
+
+    @Bean
+    @StepScope
+    public IsbnValidationFilter isbnValidationFilter(
+            IsbnValidator isbnValidator,
+            @Value(StockCsvPartitionConfig.STEP_EXECUTION_FILE) Resource file
+    ) {
+        return new IsbnValidationFilter(
+                isbnValidator,
+                StockFilenameUtil.parse(file.getFilename()).libraryId()
         );
     }
 
