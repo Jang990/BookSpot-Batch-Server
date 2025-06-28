@@ -3,7 +3,7 @@ package com.bookspot.batch.job;
 import com.bookspot.batch.global.config.OpenSearchIndex;
 import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
 import com.bookspot.batch.job.listener.alert.AlertJobListener;
-import com.bookspot.batch.step.service.OpenSearchRepository;
+import com.bookspot.batch.step.service.opensearch.OpenSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
