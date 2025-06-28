@@ -1,11 +1,13 @@
-package com.bookspot.batch.step.service;
+package com.bookspot.batch.step.service.opensearch;
 
 import com.bookspot.batch.data.BookDocument;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.opensearch.client.Request;
 import org.opensearch.client.Response;
+import org.opensearch.client.ResponseException;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch._types.OpenSearchException;
@@ -38,8 +40,21 @@ public class OpenSearchRepository {
         try {
             openSearchClient.bulk(br.build());
         } catch (IOException e) {
+            handleIf504Error(e);
             throw new RuntimeException("Bulk Insert 실패: " + indexName, e);
         }
+    }
+
+    // TODO: 별로지만 일단 504만 처리함. catch문 개선 필요
+    private void handleIf504Error(IOException exception) {
+        if(!(exception instanceof ResponseException re))
+            return;
+
+        boolean is504Error = re.getResponse().getStatusLine().getStatusCode()
+                        == HttpStatus.SC_GATEWAY_TIMEOUT;
+
+        if(is504Error)
+            throw new OpenSearch504Exception(re);
     }
 
     public boolean addAlias(String indexName, String alias) {
@@ -54,6 +69,7 @@ public class OpenSearchRepository {
             );
             return response.acknowledged();
         } catch (IOException e) {
+            handleIf504Error(e);
             throw new RuntimeException("Alias 추가 실패: " + alias, e);
         }
     }
@@ -73,6 +89,7 @@ public class OpenSearchRepository {
             System.out.println(e.getMessage());
             throw e;
         } catch (IOException e) {
+            handleIf504Error(e);
             throw new RuntimeException("Alias 제거 실패: " + alias, e);
         }
     }
@@ -82,6 +99,7 @@ public class OpenSearchRepository {
             DeleteIndexResponse response = openSearchClient.indices().delete(d -> d.index(indexName));
             return response.acknowledged();
         } catch (IOException e) {
+            handleIf504Error(e);
             throw new RuntimeException("인덱스 삭제 실패: " + indexName, e);
         }
     }
@@ -94,6 +112,7 @@ public class OpenSearchRepository {
             int status = resp.getStatusLine().getStatusCode();
             return status >= 200 && status < 300;
         } catch (IOException e) {
+            handleIf504Error(e);
             throw new RuntimeException("인덱스 생성 실패: " + indexName, e);
         }
     }

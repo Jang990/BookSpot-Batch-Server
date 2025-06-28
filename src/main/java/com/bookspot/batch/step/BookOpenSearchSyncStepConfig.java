@@ -7,6 +7,7 @@ import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
 import com.bookspot.batch.step.service.*;
+import com.bookspot.batch.step.service.opensearch.OpenSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
