@@ -7,6 +7,8 @@ import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
 import com.bookspot.batch.step.service.*;
+import com.bookspot.batch.step.service.opensearch.OpenSearch504Exception;
+import com.bookspot.batch.step.service.opensearch.OpenSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -14,6 +16,8 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.retry.backoff.ExponentialBackOffPolicy;
+import org.springframework.retry.backoff.NoBackOffPolicy;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.HashMap;
@@ -45,6 +49,10 @@ public class BookOpenSearchSyncStepConfig {
                 .writer(chunk -> openSearchRepository.save(openSearchIndex.serviceIndexName(), chunk.getItems()))
                 .listener(stepLoggingListener)
                 .listener(alertStepListener)
+                .faultTolerant()
+                .retry(OpenSearch504Exception.class)
+                .retryLimit(3)
+                .backOffPolicy(new ExponentialBackOffPolicy())
                 .build();
     }
 
