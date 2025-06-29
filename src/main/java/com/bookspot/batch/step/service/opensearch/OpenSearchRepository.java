@@ -85,9 +85,6 @@ public class OpenSearchRepository {
                     )
             );
             return response.acknowledged();
-        } catch (OpenSearchException e) {
-            System.out.println(e.getMessage());
-            throw e;
         } catch (IOException e) {
             handleIf504Error(e);
             throw new RuntimeException("Alias 제거 실패: " + alias, e);
