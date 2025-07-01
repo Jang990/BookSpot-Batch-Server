@@ -1,10 +1,14 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
+import com.bookspot.batch.infra.opensearch.IndexName;
+import com.bookspot.batch.infra.opensearch.IndexNameCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchIndex;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -14,6 +18,8 @@ import org.springframework.batch.test.JobLauncherTestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.jdbc.core.JdbcTemplate;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,10 +37,13 @@ class BookOpenSearchSyncJobConfigTest {
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @MockBean
-    OpenSearchIndex openSearchIndex;
+    IndexNameCreator indexNameCreator;
 
     @Autowired
     OpenSearchRepository repository;
+
+    @Mock
+    IndexName mockIndexName;
 
     private final String SERVICE_ALIAS = "test-books";
     private final String SERVICE_INDEX = "test-books-service";
@@ -47,10 +56,12 @@ class BookOpenSearchSyncJobConfigTest {
         deleteIfExist(BACKUP_INDEX);
         deleteIfExist(DELETABLE_INDEX);
 
-        when(openSearchIndex.serviceAlias()).thenReturn(SERVICE_ALIAS);
-        when(openSearchIndex.serviceIndexName()).thenReturn(SERVICE_INDEX);
-        when(openSearchIndex.backupIndexName()).thenReturn(BACKUP_INDEX);
-        when(openSearchIndex.deletableIndexName()).thenReturn(DELETABLE_INDEX);
+        when(indexNameCreator.create(any())).thenReturn(mockIndexName);
+
+        when(mockIndexName.serviceAlias()).thenReturn(SERVICE_ALIAS);
+        when(mockIndexName.serviceIndexName()).thenReturn(SERVICE_INDEX);
+        when(mockIndexName.backupIndexName()).thenReturn(BACKUP_INDEX);
+        when(mockIndexName.deletableIndexName()).thenReturn(DELETABLE_INDEX);
 
         createIndexIfExist(BACKUP_INDEX);
         createIndexIfExist(DELETABLE_INDEX);
@@ -84,7 +95,9 @@ class BookOpenSearchSyncJobConfigTest {
     void 정상처리() throws Exception {
         jobLauncherTestUtils.setJob(bookOpenSearchSyncJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(
-                new JobParametersBuilder().toJobParameters()
+                new JobParametersBuilder()
+                        .addLocalDate(BookSpotParentJobConfig.MONTH_PARAM_NAME, LocalDate.now())
+                        .toJobParameters()
         );
 
         assertEquals(jobExecution.getExitStatus(), ExitStatus.COMPLETED);

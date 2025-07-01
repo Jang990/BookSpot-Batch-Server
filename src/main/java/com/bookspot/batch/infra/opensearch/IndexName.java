@@ -10,6 +10,10 @@ public record IndexName(LocalDate base) {
         );
     }
 
+    public String serviceAlias() {
+        return OpenSearchIndex.SERVICE_ALIAS;
+    }
+
     public String deletableIndexName() {
         return indexName(base.minusMonths(2));
     }

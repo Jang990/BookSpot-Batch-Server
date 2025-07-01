@@ -7,8 +7,8 @@ import java.time.format.DateTimeFormatter;
 
 @Component
 public class OpenSearchIndex {
-    public static final String SERVICE_ALIAS = "books";
-    public static final String INDEX_PREFIX = SERVICE_ALIAS + "-";
+    static final String SERVICE_ALIAS = "books";
+    static final String INDEX_PREFIX = SERVICE_ALIAS + "-";
     public static final String SCHEMA = """
             {
                 "settings": {
