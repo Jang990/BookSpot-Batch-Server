@@ -17,7 +17,7 @@ import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.ExponentialBackOffPolicy;
-import org.springframework.retry.backoff.NoBackOffPolicy;
+import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.util.HashMap;
@@ -28,6 +28,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BookOpenSearchSyncStepConfig {
     private static final int CHUNK_SIZE = 300;
+    private static final long BACK_OFF_DELAY = 350L;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -52,8 +53,15 @@ public class BookOpenSearchSyncStepConfig {
                 .faultTolerant()
                 .retry(OpenSearch504Exception.class)
                 .retryLimit(3)
-                .backOffPolicy(new ExponentialBackOffPolicy())
+                .backOffPolicy(openSearchFixedBackOffPolicy())
                 .build();
+    }
+
+    @Bean
+    public FixedBackOffPolicy openSearchFixedBackOffPolicy() {
+        FixedBackOffPolicy openSearchFixedBackOffPolicy = new FixedBackOffPolicy();
+        openSearchFixedBackOffPolicy.setBackOffPeriod(BACK_OFF_DELAY);
+        return openSearchFixedBackOffPolicy;
     }
 
     @Bean
