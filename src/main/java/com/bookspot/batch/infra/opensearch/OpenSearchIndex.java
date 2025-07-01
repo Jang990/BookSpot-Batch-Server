@@ -1,4 +1,4 @@
-package com.bookspot.batch.global.config;
+package com.bookspot.batch.infra.opensearch;
 
 import org.springframework.stereotype.Component;
 
@@ -79,7 +79,7 @@ public class OpenSearchIndex {
         return SERVICE_ALIAS;
     }
 
-    public String indexName(LocalDate date) {
+    String indexName(LocalDate date) {
         return INDEX_PREFIX.concat(
                 date.format(DateTimeFormatter.ofPattern("yyyy-MM"))
         );

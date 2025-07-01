@@ -1,7 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
-import com.bookspot.batch.global.config.OpenSearchIndex;
+import com.bookspot.batch.infra.opensearch.OpenSearchIndex;
 import com.bookspot.batch.step.service.opensearch.OpenSearchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

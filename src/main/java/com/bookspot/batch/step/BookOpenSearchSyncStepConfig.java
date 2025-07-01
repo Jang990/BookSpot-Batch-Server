@@ -2,7 +2,7 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.BookCode;
 import com.bookspot.batch.data.BookDocument;
-import com.bookspot.batch.global.config.OpenSearchIndex;
+import com.bookspot.batch.infra.opensearch.OpenSearchIndex;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;

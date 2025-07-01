@@ -1,7 +1,5 @@
 package com.bookspot.batch.infra.opensearch;
 
-import com.bookspot.batch.global.config.OpenSearchIndex;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
