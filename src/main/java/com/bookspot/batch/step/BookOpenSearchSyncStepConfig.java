@@ -28,7 +28,7 @@ import java.util.Map;
 public class BookOpenSearchSyncStepConfig {
     private static final int CHUNK_SIZE = 300;
     private static final int RETRY_LIMIT = 5;
-    private static final long BACK_OFF_DELAY = 350L;
+    private static final long BACK_OFF_DELAY = 250L;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
