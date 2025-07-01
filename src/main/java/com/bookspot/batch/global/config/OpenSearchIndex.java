@@ -79,7 +79,7 @@ public class OpenSearchIndex {
         return SERVICE_ALIAS;
     }
 
-    private String indexName(LocalDate date) {
+    public String indexName(LocalDate date) {
         return INDEX_PREFIX.concat(
                 date.format(DateTimeFormatter.ofPattern("yyyy-MM"))
         );
