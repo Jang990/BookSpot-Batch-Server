@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.service.opensearch;
+package com.bookspot.batch.infra.opensearch;
 
 import com.bookspot.batch.data.BookDocument;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,6 @@ import org.opensearch.client.Response;
 import org.opensearch.client.ResponseException;
 import org.opensearch.client.RestClient;
 import org.opensearch.client.opensearch.OpenSearchClient;
-import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
 import org.opensearch.client.opensearch.indices.UpdateAliasesResponse;

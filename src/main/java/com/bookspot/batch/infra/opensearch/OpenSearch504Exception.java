@@ -1,4 +1,4 @@
-package com.bookspot.batch.step.service.opensearch;
+package com.bookspot.batch.infra.opensearch;
 
 public class OpenSearch504Exception extends RuntimeException {
     public OpenSearch504Exception(Throwable cause) {

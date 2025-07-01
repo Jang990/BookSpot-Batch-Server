@@ -2,7 +2,7 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.infra.opensearch.OpenSearchIndex;
-import com.bookspot.batch.step.service.opensearch.OpenSearchRepository;
+import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opensearch.client.opensearch._types.OpenSearchException;
