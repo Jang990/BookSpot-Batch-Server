@@ -2,7 +2,7 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.infra.opensearch.BookIndexSpec;
-import com.bookspot.batch.infra.opensearch.IndexNameCreator;
+import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class BookOpenSearchSyncJobConfigTest {
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @MockBean
-    IndexNameCreator indexNameCreator;
+    IndexSpecCreator indexSpecCreator;
 
     @Autowired
     OpenSearchRepository repository;
@@ -54,7 +54,7 @@ class BookOpenSearchSyncJobConfigTest {
         deleteIfExist(BACKUP_INDEX);
         deleteIfExist(DELETABLE_INDEX);
 
-        when(indexNameCreator.create(any())).thenReturn(mockBookIndexSpec);
+        when(indexSpecCreator.create(any())).thenReturn(mockBookIndexSpec);
 
         when(mockBookIndexSpec.serviceAlias()).thenReturn(SERVICE_ALIAS);
         when(mockBookIndexSpec.serviceIndexName()).thenReturn(SERVICE_INDEX);

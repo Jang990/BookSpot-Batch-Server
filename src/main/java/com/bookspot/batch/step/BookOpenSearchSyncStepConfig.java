@@ -41,7 +41,7 @@ public class BookOpenSearchSyncStepConfig {
 
     private final OpenSearchRepository openSearchRepository;
     private final BookCodeRepository bookCodeRepository;
-    private final IndexNameCreator indexNameCreator;
+    private final IndexSpecCreator indexSpecCreator;
 
 
     @Bean
@@ -64,7 +64,7 @@ public class BookOpenSearchSyncStepConfig {
     public ItemWriter<BookDocument> bookDocumentItemWriter(
             @Value(BookSpotParentJobConfig.MONTH_PARAM) LocalDate baseDate
     ) {
-        BookIndexSpec bookIndexSpec = indexNameCreator.create(baseDate);
+        BookIndexSpec bookIndexSpec = indexSpecCreator.create(baseDate);
         return chunk -> openSearchRepository.save(
                 bookIndexSpec.serviceIndexName(), chunk.getItems()
         );

@@ -1,7 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.infra.opensearch.BookIndexSpec;
-import com.bookspot.batch.infra.opensearch.IndexNameCreator;
+import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
 import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
@@ -30,7 +30,7 @@ public class BookOpenSearchSyncJobConfig {
     private final PlatformTransactionManager transactionManager;
 
     private final OpenSearchRepository openSearchRepository;
-    private final IndexNameCreator indexNameCreator;
+    private final IndexSpecCreator indexSpecCreator;
 
     @Bean
     public Step bookOpenSearchSyncJobStep(Job bookOpenSearchSyncJob, JobLauncher jobLauncher) {
@@ -73,7 +73,7 @@ public class BookOpenSearchSyncJobConfig {
             @Value(BookSpotParentJobConfig.MONTH_PARAM) LocalDate baseDate
     ) {
         return (contribution, chunkContext) -> {
-            BookIndexSpec bookIndexSpec = indexNameCreator.create(baseDate);
+            BookIndexSpec bookIndexSpec = indexSpecCreator.create(baseDate);
             openSearchRepository.createIndex(bookIndexSpec.serviceIndexName(), BookIndexSpec.SCHEMA);
             return RepeatStatus.FINISHED;
         };
@@ -92,7 +92,7 @@ public class BookOpenSearchSyncJobConfig {
             @Value(BookSpotParentJobConfig.MONTH_PARAM) LocalDate baseDate
     ) {
         return (contribution, chunkContext) -> {
-            BookIndexSpec bookIndexSpec = indexNameCreator.create(baseDate);
+            BookIndexSpec bookIndexSpec = indexSpecCreator.create(baseDate);
             openSearchRepository.delete(bookIndexSpec.deletableIndexName());
             openSearchRepository.addAlias(bookIndexSpec.serviceIndexName(), bookIndexSpec.serviceAlias());
             openSearchRepository.removeAlias(bookIndexSpec.backupIndexName(), bookIndexSpec.serviceAlias());
