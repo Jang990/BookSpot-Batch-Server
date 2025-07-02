@@ -2,23 +2,25 @@ package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.BookCode;
 import com.bookspot.batch.data.BookDocument;
-import com.bookspot.batch.infra.opensearch.OpenSearchIndex;
+import com.bookspot.batch.infra.opensearch.*;
+import com.bookspot.batch.job.BookSpotParentJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
 import com.bookspot.batch.step.service.*;
-import com.bookspot.batch.infra.opensearch.OpenSearch504Exception;
-import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.ItemWriter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.retry.backoff.FixedBackOffPolicy;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,9 +39,9 @@ public class BookOpenSearchSyncStepConfig {
     private final BookRepository bookRepository;
     private final LibraryStockRepository libraryStockRepository;
 
-    private final OpenSearchIndex openSearchIndex;
     private final OpenSearchRepository openSearchRepository;
     private final BookCodeRepository bookCodeRepository;
+    private final IndexNameCreator indexNameCreator;
 
 
     @Bean
@@ -47,7 +49,7 @@ public class BookOpenSearchSyncStepConfig {
         return new StepBuilder("bookOpenSearchSyncStep", jobRepository)
                 .<BookDocument, BookDocument>chunk(CHUNK_SIZE, transactionManager)
                 .reader(bookWithLibraryIdReader())
-                .writer(chunk -> openSearchRepository.save(openSearchIndex.serviceIndexName(), chunk.getItems()))
+                .writer(bookDocumentItemWriter(null))
                 .listener(stepLoggingListener)
                 .listener(alertStepListener)
                 .faultTolerant()
@@ -55,6 +57,17 @@ public class BookOpenSearchSyncStepConfig {
                 .retryLimit(RETRY_LIMIT)
                 .backOffPolicy(openSearchFixedBackOffPolicy())
                 .build();
+    }
+
+    @Bean
+    @StepScope
+    public ItemWriter<BookDocument> bookDocumentItemWriter(
+            @Value(BookSpotParentJobConfig.MONTH_PARAM) LocalDate baseDate
+    ) {
+        BookIndexSpec bookIndexSpec = indexNameCreator.create(baseDate);
+        return chunk -> openSearchRepository.save(
+                bookIndexSpec.serviceIndexName(), chunk.getItems()
+        );
     }
 
     @Bean
