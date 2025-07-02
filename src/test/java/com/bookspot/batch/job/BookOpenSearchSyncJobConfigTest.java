@@ -1,14 +1,13 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
-import com.bookspot.batch.infra.opensearch.IndexName;
+import com.bookspot.batch.infra.opensearch.BookIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexNameCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchIndex;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.opensearch.client.opensearch._types.OpenSearchException;
 import org.springframework.batch.core.ExitStatus;
 import org.springframework.batch.core.Job;
@@ -43,7 +42,7 @@ class BookOpenSearchSyncJobConfigTest {
     OpenSearchRepository repository;
 
     @Mock
-    IndexName mockIndexName;
+    BookIndexSpec mockBookIndexSpec;
 
     private final String SERVICE_ALIAS = "test-books";
     private final String SERVICE_INDEX = "test-books-service";
@@ -56,12 +55,12 @@ class BookOpenSearchSyncJobConfigTest {
         deleteIfExist(BACKUP_INDEX);
         deleteIfExist(DELETABLE_INDEX);
 
-        when(indexNameCreator.create(any())).thenReturn(mockIndexName);
+        when(indexNameCreator.create(any())).thenReturn(mockBookIndexSpec);
 
-        when(mockIndexName.serviceAlias()).thenReturn(SERVICE_ALIAS);
-        when(mockIndexName.serviceIndexName()).thenReturn(SERVICE_INDEX);
-        when(mockIndexName.backupIndexName()).thenReturn(BACKUP_INDEX);
-        when(mockIndexName.deletableIndexName()).thenReturn(DELETABLE_INDEX);
+        when(mockBookIndexSpec.serviceAlias()).thenReturn(SERVICE_ALIAS);
+        when(mockBookIndexSpec.serviceIndexName()).thenReturn(SERVICE_INDEX);
+        when(mockBookIndexSpec.backupIndexName()).thenReturn(BACKUP_INDEX);
+        when(mockBookIndexSpec.deletableIndexName()).thenReturn(DELETABLE_INDEX);
 
         createIndexIfExist(BACKUP_INDEX);
         createIndexIfExist(DELETABLE_INDEX);

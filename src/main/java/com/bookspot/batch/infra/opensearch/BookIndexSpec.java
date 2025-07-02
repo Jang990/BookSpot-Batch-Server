@@ -3,7 +3,7 @@ package com.bookspot.batch.infra.opensearch;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public record IndexName(LocalDate base) {
+public record BookIndexSpec(LocalDate base) {
     private String indexName(LocalDate date) {
         return OpenSearchIndex.INDEX_PREFIX.concat(
                 date.format(DateTimeFormatter.ofPattern("yyyy-MM"))

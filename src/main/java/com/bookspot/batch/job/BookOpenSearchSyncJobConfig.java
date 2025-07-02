@@ -1,13 +1,12 @@
 package com.bookspot.batch.job;
 
-import com.bookspot.batch.infra.opensearch.IndexName;
+import com.bookspot.batch.infra.opensearch.BookIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexNameCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchIndex;
 import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
 import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -76,8 +75,8 @@ public class BookOpenSearchSyncJobConfig {
             @Value(BookSpotParentJobConfig.MONTH_PARAM) LocalDate baseDate
     ) {
         return (contribution, chunkContext) -> {
-            IndexName indexName = indexNameCreator.create(baseDate);
-            openSearchRepository.createIndex(indexName.serviceIndexName(), OpenSearchIndex.SCHEMA);
+            BookIndexSpec bookIndexSpec = indexNameCreator.create(baseDate);
+            openSearchRepository.createIndex(bookIndexSpec.serviceIndexName(), OpenSearchIndex.SCHEMA);
             return RepeatStatus.FINISHED;
         };
     }
@@ -95,10 +94,10 @@ public class BookOpenSearchSyncJobConfig {
             @Value(BookSpotParentJobConfig.MONTH_PARAM) LocalDate baseDate
     ) {
         return (contribution, chunkContext) -> {
-            IndexName indexName = indexNameCreator.create(baseDate);
-            openSearchRepository.delete(indexName.deletableIndexName());
-            openSearchRepository.addAlias(indexName.serviceIndexName(), indexName.serviceAlias());
-            openSearchRepository.removeAlias(indexName.backupIndexName(), indexName.serviceAlias());
+            BookIndexSpec bookIndexSpec = indexNameCreator.create(baseDate);
+            openSearchRepository.delete(bookIndexSpec.deletableIndexName());
+            openSearchRepository.addAlias(bookIndexSpec.serviceIndexName(), bookIndexSpec.serviceAlias());
+            openSearchRepository.removeAlias(bookIndexSpec.backupIndexName(), bookIndexSpec.serviceAlias());
             return RepeatStatus.FINISHED;
         };
     }

@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Component
 public class IndexNameCreator {
-    public IndexName create(LocalDate date) {
-        return new IndexName(date);
+    public BookIndexSpec create(LocalDate date) {
+        return new BookIndexSpec(date);
     }
 }
