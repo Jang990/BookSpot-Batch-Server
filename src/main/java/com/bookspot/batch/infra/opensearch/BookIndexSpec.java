@@ -12,7 +12,6 @@ public record BookIndexSpec(LocalDate base) {
                     "number_of_shards": 2,
                     "number_of_replicas": 0,
                     "analysis": {
-                        // 토크나이저 정의
                         "tokenizer": {
                             "my_tokenizer": {
                                 "type": "nori_tokenizer",
