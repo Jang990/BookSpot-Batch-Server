@@ -2,7 +2,6 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.infra.opensearch.BookIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexNameCreator;
-import com.bookspot.batch.infra.opensearch.OpenSearchIndex;
 import com.bookspot.batch.job.extractor.CommonStringJobParamExtractor;
 import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
@@ -30,7 +29,6 @@ public class BookOpenSearchSyncJobConfig {
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
 
-    private final OpenSearchIndex openSearchIndex;
     private final OpenSearchRepository openSearchRepository;
     private final IndexNameCreator indexNameCreator;
 
@@ -76,7 +74,7 @@ public class BookOpenSearchSyncJobConfig {
     ) {
         return (contribution, chunkContext) -> {
             BookIndexSpec bookIndexSpec = indexNameCreator.create(baseDate);
-            openSearchRepository.createIndex(bookIndexSpec.serviceIndexName(), OpenSearchIndex.SCHEMA);
+            openSearchRepository.createIndex(bookIndexSpec.serviceIndexName(), BookIndexSpec.SCHEMA);
             return RepeatStatus.FINISHED;
         };
     }

@@ -3,7 +3,6 @@ package com.bookspot.batch.job;
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.infra.opensearch.BookIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexNameCreator;
-import com.bookspot.batch.infra.opensearch.OpenSearchIndex;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,7 +103,7 @@ class BookOpenSearchSyncJobConfigTest {
 
     private void createIndexIfExist(String indexName) {
         try {
-            repository.createIndex(indexName, OpenSearchIndex.SCHEMA);
+            repository.createIndex(indexName, BookIndexSpec.SCHEMA);
         } catch (RuntimeException e) {}
     }
 }
