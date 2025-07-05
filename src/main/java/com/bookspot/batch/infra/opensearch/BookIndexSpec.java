@@ -1,21 +1,17 @@
-package com.bookspot.batch.global.config;
-
-import org.springframework.stereotype.Component;
+package com.bookspot.batch.infra.opensearch;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-@Component
-public class OpenSearchIndex {
-    public static final String SERVICE_ALIAS = "books";
-    public static final String INDEX_PREFIX = SERVICE_ALIAS + "-";
+public record BookIndexSpec(LocalDate base) {
+    private static final String SERVICE_ALIAS = "books";
+    private static final String INDEX_PREFIX = SERVICE_ALIAS + "-";
     public static final String SCHEMA = """
             {
                 "settings": {
                     "number_of_shards": 2,
                     "number_of_replicas": 0,
                     "analysis": {
-                        // 토크나이저 정의
                         "tokenizer": {
                             "my_tokenizer": {
                                 "type": "nori_tokenizer",
@@ -75,25 +71,25 @@ public class OpenSearchIndex {
             }
             """;
 
-    public String serviceAlias() {
-        return SERVICE_ALIAS;
-    }
-
     private String indexName(LocalDate date) {
         return INDEX_PREFIX.concat(
                 date.format(DateTimeFormatter.ofPattern("yyyy-MM"))
         );
     }
 
+    public String serviceAlias() {
+        return SERVICE_ALIAS;
+    }
+
     public String deletableIndexName() {
-        return indexName(LocalDate.now().minusMonths(2));
+        return indexName(base.minusMonths(2));
     }
 
     public String backupIndexName() {
-        return indexName(LocalDate.now().minusMonths(1));
+        return indexName(base.minusMonths(1));
     }
 
     public String serviceIndexName() {
-        return indexName(LocalDate.now());
+        return indexName(base);
     }
 }
