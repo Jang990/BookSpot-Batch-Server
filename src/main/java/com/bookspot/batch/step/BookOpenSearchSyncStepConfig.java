@@ -8,6 +8,7 @@ import com.bookspot.batch.step.listener.StepLoggingListener;
 import com.bookspot.batch.step.listener.alert.AlertStepListener;
 import com.bookspot.batch.step.reader.BookWithLibraryIdReader;
 import com.bookspot.batch.step.service.*;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
@@ -28,7 +29,7 @@ import java.util.Map;
 @Configuration
 @RequiredArgsConstructor
 public class BookOpenSearchSyncStepConfig {
-    private static final int CHUNK_SIZE = 500;
+    private static final int CHUNK_SIZE = 250;
     private static final int RETRY_LIMIT = 5;
     private static final long BACK_OFF_DELAY = 250L;
 
@@ -36,7 +37,7 @@ public class BookOpenSearchSyncStepConfig {
     private final PlatformTransactionManager transactionManager;
     private final StepLoggingListener stepLoggingListener;
 
-    private final BookRepository bookRepository;
+    private final EntityManager entityManager;
     private final LibraryStockRepository libraryStockRepository;
 
     private final OpenSearchRepository openSearchRepository;
@@ -81,7 +82,7 @@ public class BookOpenSearchSyncStepConfig {
     @StepScope
     public BookWithLibraryIdReader bookWithLibraryIdReader() {
         return new BookWithLibraryIdReader(
-                bookRepository,
+                entityManager,
                 libraryStockRepository,
                 bookCodeResolver(),
                 CHUNK_SIZE

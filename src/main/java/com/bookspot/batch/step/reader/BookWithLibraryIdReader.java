@@ -5,9 +5,8 @@ import com.bookspot.batch.data.BookDocument;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.step.service.BookCodeResolver;
 import com.bookspot.batch.step.service.LibraryStockRepository;
-import com.bookspot.batch.step.service.BookRepository;
+import jakarta.persistence.EntityManager;
 import org.springframework.batch.item.*;
-import org.springframework.data.domain.PageRequest;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,8 +14,11 @@ import java.util.stream.Collectors;
 public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemStream {
 
     protected static final String KEY_PAGE = "BookWithLibraryIdReader.currentPage";
+    private static final String BOOK_SQL = """
+            SELECT b FROM ConvertedUniqueBook b WHERE b.id > :lastId ORDER BY b.id ASC
+            """;
 
-    private final BookRepository bookRepository;
+    private final EntityManager entityManager;
     private final LibraryStockRepository libraryStockRepository;
     private final BookCodeResolver bookCodeResolver;
     private final int pageSize;
@@ -24,19 +26,19 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
     private ExecutionContext executionContext;
     private List<BookDocument> currentBatch;
     private int currentIndex;
-    private int currentPage;
+    private long currentPage;
 
     public BookWithLibraryIdReader(
-            BookRepository bookRepository,
+            EntityManager entityManager,
             LibraryStockRepository libraryStockRepository,
             BookCodeResolver bookCodeResolver,
             int pageSize) {
-        Objects.requireNonNull(bookRepository);
+        Objects.requireNonNull(entityManager);
         Objects.requireNonNull(libraryStockRepository);
         if(pageSize <= 0)
             throw new IllegalArgumentException();
 
-        this.bookRepository = bookRepository;
+        this.entityManager = entityManager;
         this.libraryStockRepository = libraryStockRepository;
         this.bookCodeResolver = bookCodeResolver;
         this.pageSize = pageSize;
@@ -46,7 +48,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
     public void open(ExecutionContext executionContext) throws ItemStreamException {
         this.executionContext = executionContext;
         if (executionContext.containsKey(KEY_PAGE)) {
-            currentPage = executionContext.getInt(KEY_PAGE);
+            currentPage = executionContext.getLong(KEY_PAGE);
         } else {
             currentPage = 0;
         }
@@ -64,7 +66,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
     }
 
     private void fetchNextPage() {
-        List<ConvertedUniqueBook> content = bookRepository.findAll(PageRequest.of(currentPage, pageSize)).getContent();
+        List<ConvertedUniqueBook> content = queryBooks();
         if (content.isEmpty()) {
             currentBatch = Collections.emptyList();
             return;
@@ -77,12 +79,26 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
         currentBatch = aggregate(content, libraryIds);
 
         currentIndex = 0;
-        currentPage++;
+        currentPage = lastBookId(content);
         saveState();
     }
 
+    private List<ConvertedUniqueBook> queryBooks() {
+        return entityManager.createQuery(BOOK_SQL, ConvertedUniqueBook.class)
+                .setParameter("lastId", currentPage)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    private long lastBookId(List<ConvertedUniqueBook> content) {
+        return content.stream()
+                .map(ConvertedUniqueBook::getId)
+                .max(Long::compare)
+                .orElseThrow(IllegalArgumentException::new);
+    }
+
     private void saveState() {
-        executionContext.putInt(KEY_PAGE, currentPage);
+        executionContext.putLong(KEY_PAGE, currentPage);
     }
 
     private List<BookDocument> aggregate(

@@ -3,7 +3,7 @@ package com.bookspot.batch.step.reader;
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.step.service.BookCodeResolver;
 import com.bookspot.batch.step.service.LibraryStockRepository;
-import com.bookspot.batch.step.service.BookRepository;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,7 @@ class BookWithLibraryIdReaderTest {
     JdbcTemplate jdbcTemplate;
 
     @Autowired
-    BookRepository bookRepository;
+    EntityManager entityManager;
     @Autowired LibraryStockRepository libraryStockRepository;
     @Autowired BookCodeResolver bookCodeResolver;
 
@@ -49,11 +49,12 @@ class BookWithLibraryIdReaderTest {
                 .bookId(2).libraryId(3).insert(jdbcTemplate);
     }
 
+    // 1 -> 2    ->    3
     @Test
-    void 정상처리() throws Exception {
+    void 모든_데이터를_가져오고_마지막으로_가져온_book_id_정보를_상태로_저장() throws Exception {
         initData();
         BookWithLibraryIdReader reader = new BookWithLibraryIdReader(
-                bookRepository, libraryStockRepository, bookCodeResolver, 2
+                entityManager, libraryStockRepository, bookCodeResolver, 2
         );
         ExecutionContext ec = new ExecutionContext();
         reader.open(ec);
@@ -66,31 +67,35 @@ class BookWithLibraryIdReaderTest {
         assertTrue(reader.read().getLibraryIdsArrayString().isEmpty());
         assertNull(reader.read());
 
-        assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 2);
+        assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 3L);
     }
 
+    // 1 -|여기부터|> 2 -> -> 3
     @Test
-    void 진행된_페이지_불러오기_가능() throws Exception {
+    void 진행된_페이지부터_불러오기_가능() throws Exception {
         initData();
         BookWithLibraryIdReader reader = new BookWithLibraryIdReader(
-                bookRepository, libraryStockRepository, bookCodeResolver, 2
+                entityManager, libraryStockRepository, bookCodeResolver, 2
         );
 
         ExecutionContext ec = new ExecutionContext();
-        ec.put(BookWithLibraryIdReader.KEY_PAGE, 1);
+        ec.put(BookWithLibraryIdReader.KEY_PAGE, 1L);
 
         reader.open(ec);
+
+        assertThat(reader.read().getLibraryIdsArrayString())
+                .containsExactlyInAnyOrder("2", "3");
 
         assertTrue(reader.read().getLibraryIdsArrayString().isEmpty());
         assertNull(reader.read());
 
-        assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 2);
+        assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 3L);
     }
 
     @Test
     void 데이터가_없는_경우() throws Exception {
         BookWithLibraryIdReader reader = new BookWithLibraryIdReader(
-                bookRepository, libraryStockRepository, bookCodeResolver, 2
+                entityManager, libraryStockRepository, bookCodeResolver, 2
         );
 
         ExecutionContext ec = new ExecutionContext();
@@ -98,6 +103,6 @@ class BookWithLibraryIdReaderTest {
 
         assertNull(reader.read());
 
-        assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 0);
+        assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 0L);
     }
 }
