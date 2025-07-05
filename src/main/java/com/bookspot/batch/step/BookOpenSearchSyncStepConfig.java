@@ -29,7 +29,7 @@ import java.util.Map;
 @Configuration
 @RequiredArgsConstructor
 public class BookOpenSearchSyncStepConfig {
-    private static final int CHUNK_SIZE = 500;
+    private static final int CHUNK_SIZE = 250;
     private static final int RETRY_LIMIT = 5;
     private static final long BACK_OFF_DELAY = 250L;
 
