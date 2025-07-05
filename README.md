@@ -135,7 +135,7 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
 
 - OpenSearch 인덱스 생성 Step
   - (25년 6월 기준) books-2025-06 인덱스 생성
-- OpenSearch 동기화 Step (ChunkSize - 500)
+- OpenSearch 동기화 Step (ChunkSize - 250)
   - Reader: 책 테이블 정보 읽기
   - Processor: Document로 변환하기
   - Writer: OpenSearch로 Bulk Insert
