@@ -17,6 +17,12 @@ public record BookIndexSpec(LocalDate base) {
                                 "type": "nori_tokenizer",
                                 "decompound_mode": "mixed"
                             }
+                            "edge_ngram_tokenizer": {
+                                "type": "edge_ngram",
+                                "min_gram": 2,
+                                "max_gram": 4,
+                                "token_chars": ["letter", "digit", "punctuation"]
+                            }
                         },
                         "analyzer": {
                                 "my_nori_analyzer": {
