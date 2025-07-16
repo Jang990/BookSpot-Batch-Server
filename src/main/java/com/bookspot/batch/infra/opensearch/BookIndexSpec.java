@@ -45,6 +45,15 @@ public record BookIndexSpec(LocalDate base) {
                         "title": {
                             "type": "text",
                             "analyzer": "my_nori_analyzer"
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                },
+                                "ngram": {
+                                    "type": "text",
+                                    "analyzer": "my_ngram_analyzer"
+                                }
+                            }
                         },
                         "subject_code": {
                             "type": "short"
