@@ -32,7 +32,8 @@ public record BookIndexSpec(LocalDate base) {
                                 },
                                 "my_ngram_analyzer": {
                                     "type": "custom",
-                                    "tokenizer": "edge_ngram_tokenizer"
+                                    "tokenizer": "edge_ngram_tokenizer",
+                                    "filter": ["lowercase"]
                                 }
                         }
                     }
