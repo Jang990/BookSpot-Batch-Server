@@ -16,6 +16,11 @@ public record BookIndexSpec(LocalDate base) {
                             "my_tokenizer": {
                                 "type": "nori_tokenizer",
                                 "decompound_mode": "mixed"
+                            },
+                            "edge_ngram_tokenizer": {
+                                "type": "edge_ngram",
+                                "min_gram": 2,
+                                "max_gram": 5
                             }
                         },
                         "analyzer": {
@@ -23,6 +28,11 @@ public record BookIndexSpec(LocalDate base) {
                                     "type": "custom",
                                     "tokenizer": "my_tokenizer",
                                     "filter": ["nori_readingform", "nori_part_of_speech", "lowercase"]
+                                },
+                                "my_ngram_analyzer": {
+                                    "type": "custom",
+                                    "tokenizer": "edge_ngram_tokenizer",
+                                    "filter": ["lowercase"]
                                 }
                         }
                     }
@@ -38,7 +48,16 @@ public record BookIndexSpec(LocalDate base) {
                         },
                         "title": {
                             "type": "text",
-                            "analyzer": "my_nori_analyzer"
+                            "analyzer": "my_nori_analyzer",
+                            "fields": {
+                                "keyword": {
+                                    "type": "keyword"
+                                },
+                                "ngram": {
+                                    "type": "text",
+                                    "analyzer": "my_ngram_analyzer"
+                                }
+                            }
                         },
                         "subject_code": {
                             "type": "short"
