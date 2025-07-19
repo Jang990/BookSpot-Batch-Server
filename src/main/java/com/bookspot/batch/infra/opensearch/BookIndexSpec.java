@@ -20,7 +20,7 @@ public record BookIndexSpec(LocalDate base) {
                             "edge_ngram_tokenizer": {
                                 "type": "edge_ngram",
                                 "min_gram": 2,
-                                "max_gram": 4
+                                "max_gram": 5
                             }
                         },
                         "analyzer": {
