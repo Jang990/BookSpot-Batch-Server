@@ -40,7 +40,7 @@ public record BookIndexSpec(LocalDate base) {
                 "mappings": {
                     "dynamic": false,
                     "properties": {
-                        "id": {
+                        "book_id": {
                             "type": "keyword"
                         },
                         "isbn13": {
