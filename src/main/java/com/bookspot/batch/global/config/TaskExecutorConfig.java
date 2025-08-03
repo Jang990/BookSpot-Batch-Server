@@ -51,8 +51,7 @@ public class TaskExecutorConfig {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
         scheduler.setPoolSize(SCHEDULING_POOL_SIZE);
         scheduler.setThreadNamePrefix("scheduling-thread");
-        scheduler.setWaitForTasksToCompleteOnShutdown(true);
-        scheduler.setAwaitTerminationSeconds(30); // 안전 종료 대기 시간
+        scheduler.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
         scheduler.initialize();
         return scheduler;
     }
