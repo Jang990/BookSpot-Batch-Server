@@ -3,10 +3,10 @@ package com.bookspot.batch;
 import com.bookspot.batch.global.properties.files.BookSpotDirectoryProperties;
 import com.bookspot.batch.global.properties.files.BookSpotFileProperties;
 import com.bookspot.batch.job.BookSpotParentJobConfig;
+import com.bookspot.batch.job.launcher.MyBatchJobLauncher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
-import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Service;
@@ -18,18 +18,21 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class TempRunner implements CommandLineRunner {
     // 임시 코드
-    private final JobLauncher jobLauncher;
+    private final MyBatchJobLauncher myBatchJobLauncher;
 
     private final BookSpotDirectoryProperties directoryProperties;
     private final BookSpotFileProperties fileProperties;
 
     private final Job bookSpotParentJob;
 
-    /*private final Job bookCodeJob;*/
+    //    private final Job bookCodeJob;
+    private final Job bookOpenSearchSyncJob;
 
     @Override
     public void run(String... args) {
-        execute(
+//        execute(bookCodeJob, new JobParametersBuilder().addString("abc", "abc"));
+//        execute(bookOpenSearchSyncJob, new JobParametersBuilder());
+        myBatchJobLauncher.launch(
                 bookSpotParentJob,
                 new JobParametersBuilder()
                         .addString(
@@ -61,31 +64,5 @@ public class TempRunner implements CommandLineRunner {
                                 directoryProperties.deletedStock()
                         )
         );
-    }
-
-    public void execute(Job job, JobParametersBuilder builder) {
-        builder.addLocalDate("month", LocalDate.now().withDayOfMonth(1));
-        JobParameters jobParameters = builder.toJobParameters();
-
-        try {
-            JobExecution jobExecution = jobLauncher.run(job, jobParameters);
-            if (isCompleted(jobExecution.getExitStatus())) {
-                log.info("[{}] 성공적으로 작업 마무리", job.getName());
-                return;
-            }
-
-            jobExecution.getAllFailureExceptions()
-                    .forEach(ex -> log.error("{} 실패 사유: {}", job.getName(), ex.getMessage(), ex));
-            throw new JobExecutionException("성공적으로 마치지 못한 Job");
-        } catch (JobInstanceAlreadyCompleteException e) {
-            log.info("[{}]는 이미 성공한 Job. 파라미터 내용 => {}", job.getName(), jobParameters.getParameters());
-        } catch (JobExecutionException e) {
-            log.error("[{}]에서 Job 예외 발생. 파라미터 내용 => {}", job.getName(), jobParameters.getParameters());
-            throw new RuntimeException(e);
-        }
-    }
-
-    private boolean isCompleted(ExitStatus exitStatus) {
-        return exitStatus.equals(ExitStatus.COMPLETED);
     }
 }
