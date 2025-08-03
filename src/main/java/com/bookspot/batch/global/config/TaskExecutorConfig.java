@@ -8,6 +8,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Configuration
 public class TaskExecutorConfig {
     public static final int MULTI_POOL_SIZE = 2;
+    public static final int SCHEDULING_POOL_SIZE = 4;
+    public static final String SCHEDULING_TASK_POOL_NAME = "schedulingTaskPool";
 
     @Bean
     public TaskExecutor multiTaskPool() {
@@ -26,6 +28,17 @@ public class TaskExecutorConfig {
         executor.setCorePoolSize(1);
         executor.setMaxPoolSize(1);
         executor.setThreadNamePrefix("single-csv-thread");
+        executor.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
+        executor.initialize();
+        return executor;
+    }
+
+    @Bean(name = SCHEDULING_TASK_POOL_NAME)
+    public TaskExecutor schedulingTaskPool() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(SCHEDULING_POOL_SIZE);
+        executor.setMaxPoolSize(SCHEDULING_POOL_SIZE);
+        executor.setThreadNamePrefix("scheduling-thread");
         executor.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
         executor.initialize();
         return executor;

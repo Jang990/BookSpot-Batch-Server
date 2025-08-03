@@ -1,11 +1,13 @@
 package com.bookspot.batch.job.launcher;
 
+import com.bookspot.batch.global.config.TaskExecutorConfig;
 import com.bookspot.batch.job.BookSpotParentJobConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.*;
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 public class MyBatchJobLauncher {
     private final JobLauncher jobLauncher;
 
+    @Async(TaskExecutorConfig.SCHEDULING_TASK_POOL_NAME)
     public void launch(Job job, JobParametersBuilder builder) {
         LocalDate now = LocalDate.now();
         builder.addLocalDate(
