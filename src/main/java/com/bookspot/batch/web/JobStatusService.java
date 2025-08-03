@@ -22,4 +22,9 @@ public class JobStatusService {
     public Set<String> findRunningJobName() {
         return jobStatusRepository.getRunningJobNames();
     }
+
+    public boolean hasRunningJob() {
+        return !jobStatusRepository.getRunningJobNames()
+                .isEmpty();
+    }
 }
