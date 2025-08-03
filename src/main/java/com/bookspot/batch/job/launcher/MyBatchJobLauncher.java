@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class MyBatchJobLauncher {
     private final JobLauncher jobLauncher;
 
-    @Async(TaskExecutorConfig.SCHEDULING_TASK_POOL_NAME)
+    @Async(TaskExecutorConfig.JOB_LAUNCHER_TASK_POOL_NAME)
     public void launch(Job job, JobParameters jobParameters) {
         try {
             JobExecution jobExecution = jobLauncher.run(job, jobParameters);
