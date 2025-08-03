@@ -12,6 +12,17 @@ import java.util.stream.Collectors;
 @Component
 public class JobAlertMessageConvertor {
     private static final String JOB_TITLE_FORMAT = "[JOB] jobExecutionId=%d jobName=%s 결과";
+
+    public AlertMessage convertSimple(
+            String title,
+            String bodyHeader,
+            String bodyContent
+    ) {
+        List<AlertBody> bodies = List.of(
+                new AlertBody(bodyHeader, bodyContent)
+        );
+        return new AlertMessage(title, bodies);
+    }
     public AlertMessage convert(JobExecution execution) {
         List<AlertBody> bodies = List.of(
                 new AlertBody("상태", execution.getStatus().toString()),

@@ -3,13 +3,15 @@ package com.bookspot.batch.global.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @Configuration
 public class TaskExecutorConfig {
     public static final int MULTI_POOL_SIZE = 2;
-    public static final int SCHEDULING_POOL_SIZE = 4;
-    public static final String SCHEDULING_TASK_POOL_NAME = "schedulingTaskPool";
+    public static final int SCHEDULING_POOL_SIZE = 2;
+    public static final String JOB_LAUNCHER_TASK_POOL_NAME = "jobLauncherTaskPool";
 
     @Bean
     public TaskExecutor multiTaskPool() {
@@ -33,14 +35,24 @@ public class TaskExecutorConfig {
         return executor;
     }
 
-    @Bean(name = SCHEDULING_TASK_POOL_NAME)
-    public TaskExecutor schedulingTaskPool() {
+    @Bean(name = JOB_LAUNCHER_TASK_POOL_NAME)
+    public TaskExecutor jobLauncherTaskPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(SCHEDULING_POOL_SIZE);
-        executor.setMaxPoolSize(SCHEDULING_POOL_SIZE);
-        executor.setThreadNamePrefix("scheduling-thread");
+        executor.setCorePoolSize(MULTI_POOL_SIZE);
+        executor.setMaxPoolSize(MULTI_POOL_SIZE);
+        executor.setThreadNamePrefix("my-job-launcher-thread");
         executor.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
         executor.initialize();
         return executor;
+    }
+
+    @Bean
+    public TaskScheduler schedulingTaskPool() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(SCHEDULING_POOL_SIZE);
+        scheduler.setThreadNamePrefix("scheduling-thread");
+        scheduler.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
+        scheduler.initialize();
+        return scheduler;
     }
 }
