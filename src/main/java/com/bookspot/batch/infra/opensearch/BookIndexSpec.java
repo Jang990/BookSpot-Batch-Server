@@ -21,6 +21,16 @@ public record BookIndexSpec(LocalDate base) {
                                 "type": "edge_ngram",
                                 "min_gram": 2,
                                 "max_gram": 5
+                            },
+                            "ws_tokenizer": {
+                                "type": "pattern",
+                                "pattern": "[\\\\W_]+"
+                            }
+                        },
+                        "filter": {
+                            "min_length_2": {
+                            "type": "length",
+                            "min": 2
                             }
                         },
                         "analyzer": {
@@ -33,6 +43,14 @@ public record BookIndexSpec(LocalDate base) {
                                     "type": "custom",
                                     "tokenizer": "edge_ngram_tokenizer",
                                     "filter": ["lowercase"]
+                                },
+                                "ws_min2_analyzer": {
+                                    "type":      "custom",
+                                    "tokenizer": "ws_tokenizer",
+                                    "filter": [
+                                        "lowercase",
+                                        "min_length_2"
+                                    ]
                                 }
                         }
                     }
@@ -56,6 +74,10 @@ public record BookIndexSpec(LocalDate base) {
                                 "ngram": {
                                     "type": "text",
                                     "analyzer": "my_ngram_analyzer"
+                                },
+                                "ws": {
+                                    "type": "text",
+                                    "analyzer": "ws_min2_analyzer"
                                 }
                             }
                         },
