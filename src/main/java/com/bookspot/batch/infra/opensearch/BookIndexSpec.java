@@ -79,7 +79,12 @@ public record BookIndexSpec(LocalDate base) {
                             "type": "keyword"
                         },
                         "book_categories": {
-                            "type": "keyword"
+                            "type": "object",
+                            "properties": {
+                              "top_category": { "type": "keyword" },
+                              "mid_category": { "type": "keyword" },
+                              "leaf_category": { "type": "keyword" }
+                            }
                         },
                         "created_at": {
                             "type": "date",
