@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.service;
 
+import com.bookspot.batch.data.BookCategories;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,23 +16,25 @@ public class BookCodeResolver {
     private static final String FORMAT = "%03d.%s";
     private static final String EMPTY = "EMPTY";
 
-    public List<String> resolve(final int bookCode) {
+    public BookCategories resolve(final int bookCode) {
         if(bookCode < CODE_MIN || CODE_MAX < bookCode)
             throw new IllegalArgumentException("도서의 분류 코드는 0~999사이");
 
         int top    = (bookCode / 100) * 100;
         int middle = (bookCode / 10)  * 10;
         int leaf = bookCode;
-        return Stream.of(top, middle, leaf)
-                .distinct()
-                .map(this::format)
-                .filter(s -> {
-                    boolean isValidCode = !s.equals(EMPTY);
-                    if(!isValidCode)
-                        log.trace("존재하지 않는 책 코드 : {}", bookCode);
-                    return isValidCode;
-                })
-                .toList();
+
+        String topStr = format(top);
+        String midStr = format(middle);
+        String leafStr = format(leaf);
+
+        if(topStr.equals(EMPTY))
+            return BookCategories.EMPTY_CATEGORY;
+        if(midStr.equals(EMPTY))
+            return BookCategories.topCategory(topStr);
+        if(leafStr.equals(EMPTY))
+            return BookCategories.midCategory(topStr, midStr);
+        return BookCategories.leafCategory(topStr, midStr, leafStr);
     }
 
     private String format(int bookCode) {
