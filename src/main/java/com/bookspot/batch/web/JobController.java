@@ -20,4 +20,12 @@ public class JobController {
         return ResponseEntity.ok("Job을 진행함");
     }
 
+    @PostMapping("/job/bookOpenSearch/start")
+    public ResponseEntity<String> startOpenSearchJob() {
+        if(jobStatusService.hasRunningJob())
+            return ResponseEntity.badRequest().body("현재 진행중인 Job이 있습니다.");
+        customJobLauncher.launchBookOpenSearchSyncJob();
+        return ResponseEntity.ok("Job을 진행함");
+    }
+
 }
