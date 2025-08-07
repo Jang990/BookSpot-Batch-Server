@@ -80,8 +80,8 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
         currentBatch = aggregate(content, libraryIds);
 
         currentIndex = 0;
-        currentPage = lastBookId(content);
         saveState();
+        currentPage = lastBookId(content);
     }
 
     private List<ConvertedUniqueBook> queryBooks() {
