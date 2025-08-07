@@ -67,6 +67,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
     }
 
     private void fetchNextPage() {
+        saveState();
         List<ConvertedUniqueBook> content = queryBooks();
         if (content.isEmpty()) {
             currentBatch = Collections.emptyList();
@@ -80,7 +81,6 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
         currentBatch = aggregate(content, libraryIds);
 
         currentIndex = 0;
-        saveState();
         currentPage = lastBookId(content);
     }
 
