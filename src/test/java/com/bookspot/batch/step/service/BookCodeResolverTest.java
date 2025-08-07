@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.service;
 
+import com.bookspot.batch.data.BookCategories;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -47,25 +48,25 @@ class BookCodeResolverTest {
 
     @ParameterizedTest
     @MethodSource("args")
-    void 분류코드를_풀어줌(int bookCode, String[] expected) {
+    void 분류코드를_풀어줌(int bookCode, BookCategories expected) {
         assertThat(resolver.resolve(bookCode))
-                .containsExactlyInAnyOrder(expected);
+                .isEqualTo(expected);
     }
 
     static Stream<Arguments> args() {
         return Stream.of(
-                Arguments.of(0, new String[]{"000.총류"}),
-                Arguments.of(1, new String[]{"000.총류", "001.지식 및 학문 일반"}),
-                Arguments.of(19, new String[]{"000.총류", "010.도서학, 서지학", "019.장서목록"}),
-                Arguments.of(32, new String[]{"000.총류", "030.백과사전", "032.중국어"}),
-                Arguments.of(33, new String[]{"000.총류", "030.백과사전", "033.일본어"}),
-                Arguments.of(100, new String[]{"100.철학"}),
-                Arguments.of(102, new String[]{"100.철학","102.잡저"}),
-                Arguments.of(110, new String[]{"100.철학","110.형이상학"}),
-                Arguments.of(112, new String[]{"100.철학","110.형이상학","112.존재론"}),
-                Arguments.of(120, new String[]{"100.철학","120.인식론, 인과론, 인간학"}),
-                Arguments.of(124, new String[]{"100.철학","120.인식론, 인과론, 인간학", "124.목적론"}),
-                Arguments.of(125, new String[]{"100.철학","120.인식론, 인과론, 인간학" /* 존재하지 않음 */})
+                Arguments.of(0, BookCategories.topCategory("000.총류")),
+                Arguments.of(1, BookCategories.leafCategory("000.총류", "000.총류", "001.지식 및 학문 일반")),
+                Arguments.of(19, BookCategories.leafCategory("000.총류", "010.도서학, 서지학", "019.장서목록")),
+                Arguments.of(32, BookCategories.leafCategory("000.총류", "030.백과사전", "032.중국어")),
+                Arguments.of(33, BookCategories.leafCategory("000.총류", "030.백과사전", "033.일본어")),
+                Arguments.of(100, BookCategories.topCategory("100.철학")),
+                Arguments.of(102, BookCategories.leafCategory("100.철학", "100.철학","102.잡저")),
+                Arguments.of(110, BookCategories.midCategory("100.철학","110.형이상학")),
+                Arguments.of(112, BookCategories.leafCategory("100.철학","110.형이상학","112.존재론")),
+                Arguments.of(120, BookCategories.midCategory("100.철학","120.인식론, 인과론, 인간학")),
+                Arguments.of(124, BookCategories.leafCategory("100.철학","120.인식론, 인과론, 인간학", "124.목적론")),
+                Arguments.of(125, BookCategories.midCategory("100.철학","120.인식론, 인과론, 인간학" /* 존재하지 않음 */))
         );
     }
 

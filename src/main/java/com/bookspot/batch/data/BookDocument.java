@@ -26,7 +26,7 @@ public class BookDocument {
     private List<String> libraryIdsArrayString;
 
     @JsonProperty("book_categories")
-    private List<String> bookCategoriesArrayString;
+    private BookCategories bookCategories;
 
     @JsonProperty("created_at")
     private String createdAt;
@@ -35,7 +35,7 @@ public class BookDocument {
             String bookId, String isbn13, String title,
             String author, String publisher, int loanCount,
             Integer subjectCode, Integer publicationYear,
-            List<String> libraryIds, List<String> bookCategories,
+            List<String> libraryIds, BookCategories bookCategories,
             LocalDate createdAt
     ) {
         this.bookId = bookId;
@@ -47,7 +47,8 @@ public class BookDocument {
         this.subjectCode = subjectCode;
         this.publicationYear = publicationYear;
         this.libraryIdsArrayString = libraryIds;
-        this.bookCategoriesArrayString = bookCategories;
+        if(!bookCategories.equals(BookCategories.EMPTY_CATEGORY))
+            this.bookCategories = bookCategories;
         this.createdAt = createdAt.toString();
     }
 }

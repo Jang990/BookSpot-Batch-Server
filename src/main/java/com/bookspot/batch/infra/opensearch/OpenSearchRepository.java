@@ -100,13 +100,14 @@ public class OpenSearchRepository {
         }
     }
 
-    public boolean createIndex(String indexName, String schema) {
+    public void createIndex(String indexName, String schema) {
         try {
             Request req = new Request("PUT", "/" + indexName);
             req.setEntity(new NStringEntity(schema, ContentType.APPLICATION_JSON));
             Response resp = openSearchRestClient.performRequest(req);
             int status = resp.getStatusLine().getStatusCode();
-            return status >= 200 && status < 300;
+            if(status < 200 || 300 <= status)
+                throw new RuntimeException("인덱스 생성 실패: " + resp);
         } catch (IOException e) {
             handleIf504Error(e);
             throw new RuntimeException("인덱스 생성 실패: " + indexName, e);

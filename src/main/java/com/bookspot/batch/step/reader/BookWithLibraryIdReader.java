@@ -1,5 +1,6 @@
 package com.bookspot.batch.step.reader;
 
+import com.bookspot.batch.data.BookCategories;
 import com.bookspot.batch.data.LibraryIds;
 import com.bookspot.batch.data.BookDocument;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
@@ -66,6 +67,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
     }
 
     private void fetchNextPage() {
+        saveState();
         List<ConvertedUniqueBook> content = queryBooks();
         if (content.isEmpty()) {
             currentBatch = Collections.emptyList();
@@ -80,7 +82,6 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
 
         currentIndex = 0;
         currentPage = lastBookId(content);
-        saveState();
     }
 
     private List<ConvertedUniqueBook> queryBooks() {
@@ -118,7 +119,9 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
                         book.getSubjectCode(),
                         book.getPublicationYear() == null ? null : book.getPublicationYear().getValue(),
                         libraryIdMap.getOrDefault(book.getId(), new LinkedList<>()),
-                        book.getSubjectCode() == null ? List.of() : bookCodeResolver.resolve(book.getSubjectCode()),
+                        book.getSubjectCode() == null ?
+                                BookCategories.EMPTY_CATEGORY
+                                : bookCodeResolver.resolve(book.getSubjectCode()),
                         book.getCreatedAt()
                 ))
                 .collect(Collectors.toList());

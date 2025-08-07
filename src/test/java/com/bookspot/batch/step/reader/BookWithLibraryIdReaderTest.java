@@ -49,7 +49,7 @@ class BookWithLibraryIdReaderTest {
                 .bookId(2).libraryId(3).insert(jdbcTemplate);
     }
 
-    // 1 -> 2    ->    3
+    // | 1, 2 | 3 |
     @Test
     void 모든_데이터를_가져오고_마지막으로_가져온_book_id_정보를_상태로_저장() throws Exception {
         initData();
@@ -67,10 +67,10 @@ class BookWithLibraryIdReaderTest {
         assertTrue(reader.read().getLibraryIdsArrayString().isEmpty());
         assertNull(reader.read());
 
-        assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 3L);
+        assertEquals(3L, ec.get(BookWithLibraryIdReader.KEY_PAGE));
     }
 
-    // 1 -|여기부터|> 2 -> -> 3
+    // 1(처리됨) | 2, 3 |
     @Test
     void 진행된_페이지부터_불러오기_가능() throws Exception {
         initData();
@@ -89,7 +89,8 @@ class BookWithLibraryIdReaderTest {
         assertTrue(reader.read().getLibraryIdsArrayString().isEmpty());
         assertNull(reader.read());
 
-        assertEquals(ec.get(BookWithLibraryIdReader.KEY_PAGE), 3L);
+
+        assertEquals(3L, ec.get(BookWithLibraryIdReader.KEY_PAGE));
     }
 
     @Test
