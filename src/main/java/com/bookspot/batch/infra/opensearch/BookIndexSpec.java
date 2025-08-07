@@ -24,7 +24,7 @@ public record BookIndexSpec(LocalDate base) {
                             },
                             "ws_tokenizer": {
                                 "type": "pattern",
-                                "pattern": "[\\\\W_]+"
+                                "pattern": "[\\\\p{Punct}\\\\s_]+"
                             }
                         },
                         "filter": {
