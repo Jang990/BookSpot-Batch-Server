@@ -30,8 +30,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class BookOpenSearchSyncStepConfig {
     private static final int CHUNK_SIZE = 150;
-    private static final int RETRY_LIMIT = 5;
-    private static final long BACK_OFF_DELAY = 250L;
+    private static final int RETRY_LIMIT = 3;
+    private static final long BACK_OFF_DELAY = 300L;
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -54,7 +54,7 @@ public class BookOpenSearchSyncStepConfig {
                 .listener(stepLoggingListener)
                 .listener(alertStepListener)
                 .faultTolerant()
-                .retry(OpenSearch504Exception.class)
+                .retry(OpenSearchRetryableException.class)
                 .retryLimit(RETRY_LIMIT)
                 .backOffPolicy(openSearchFixedBackOffPolicy())
                 .build();

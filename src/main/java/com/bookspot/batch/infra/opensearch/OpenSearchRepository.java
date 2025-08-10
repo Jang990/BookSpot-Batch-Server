@@ -16,6 +16,7 @@ import org.opensearch.client.opensearch.indices.UpdateAliasesResponse;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 @Service
@@ -39,21 +40,26 @@ public class OpenSearchRepository {
         try {
             openSearchClient.bulk(br.build());
         } catch (IOException e) {
-            handleIf504Error(e);
+            handleRetryableError(e);
             throw new RuntimeException("Bulk Insert 실패: " + indexName, e);
         }
     }
 
     // TODO: 별로지만 일단 504만 처리함. catch문 개선 필요
-    private void handleIf504Error(IOException exception) {
+    private void handleRetryableError(IOException exception) {
+        if(exception instanceof SocketTimeoutException)
+            throw new OpenSearchRetryableException(exception);
+
         if(!(exception instanceof ResponseException re))
             return;
 
         boolean is504Error = re.getResponse().getStatusLine().getStatusCode()
                         == HttpStatus.SC_GATEWAY_TIMEOUT;
+        boolean is429Error = re.getResponse().getStatusLine().getStatusCode()
+                == HttpStatus.SC_TOO_MANY_REQUESTS;
 
-        if(is504Error)
-            throw new OpenSearch504Exception(re);
+        if(is504Error || is429Error)
+            throw new OpenSearchRetryableException(re);
     }
 
     public boolean addAlias(String indexName, String alias) {
@@ -68,7 +74,7 @@ public class OpenSearchRepository {
             );
             return response.acknowledged();
         } catch (IOException e) {
-            handleIf504Error(e);
+            handleRetryableError(e);
             throw new RuntimeException("Alias 추가 실패: " + alias, e);
         }
     }
@@ -85,7 +91,7 @@ public class OpenSearchRepository {
             );
             return response.acknowledged();
         } catch (IOException e) {
-            handleIf504Error(e);
+            handleRetryableError(e);
             throw new RuntimeException("Alias 제거 실패: " + alias, e);
         }
     }
@@ -95,7 +101,7 @@ public class OpenSearchRepository {
             DeleteIndexResponse response = openSearchClient.indices().delete(d -> d.index(indexName));
             return response.acknowledged();
         } catch (IOException e) {
-            handleIf504Error(e);
+            handleRetryableError(e);
             throw new RuntimeException("인덱스 삭제 실패: " + indexName, e);
         }
     }
@@ -109,7 +115,7 @@ public class OpenSearchRepository {
             if(status < 200 || 300 <= status)
                 throw new RuntimeException("인덱스 생성 실패: " + resp);
         } catch (IOException e) {
-            handleIf504Error(e);
+            handleRetryableError(e);
             throw new RuntimeException("인덱스 생성 실패: " + indexName, e);
         }
     }
