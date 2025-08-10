@@ -7,6 +7,9 @@ opensearch:
   username: admin
   password: admin
 
+backend.url: "http://localhost:9200"
+
+
 spring:
   batch.job.enabled: false
   profiles:
