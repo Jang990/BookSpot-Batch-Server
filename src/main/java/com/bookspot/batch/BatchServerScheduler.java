@@ -96,11 +96,11 @@ public class BatchServerScheduler {
                             "%d개의 요청 중 %d개의 요청 실패".formatted(urls.size(), failed)
                     )
             );
-            log.error("Backend 웜업 작업 실패. 실패 일시 - {}", LocalDateTime.now());
+            log.error("Backend 웜업 작업 실패. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
             return;
         }
 
-        log.info("Backend 웜업 작업 완료. 완료 일시 - {}", LocalDateTime.now());
+        log.info("Backend 웜업 작업 완료. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
     }
 
 
