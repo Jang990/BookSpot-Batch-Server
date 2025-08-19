@@ -8,29 +8,12 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Getter
-public class BookDocument {
-    @JsonProperty("book_id")
-    private String bookId;
-    private String isbn13;          // isbn
-    private String title;           // 도서명
-    private String author;          // 저자
-    private String publisher;       // 출판사
-    @JsonProperty("loan_count")
-    private int loanCount;
-
-    @JsonProperty("subject_code")
-    private Integer subjectCode; // 주제분류번호
-    @JsonProperty("publication_year")
-    private Integer publicationYear;
-
+public class BookDocument extends BookCommonFields{
     @JsonProperty("library_ids")
     private List<String> libraryIdsArrayString;
 
-    @JsonProperty("book_categories")
-    private BookCategories bookCategories;
-
-    @JsonProperty("created_at")
-    private String createdAt;
+    @JsonProperty("loan_count")
+    private int loanCount;
 
     public BookDocument(
             String bookId, String isbn13, String title,
@@ -39,17 +22,12 @@ public class BookDocument {
             List<String> libraryIds, BookCategories bookCategories,
             LocalDate createdAt
     ) {
-        this.bookId = bookId;
-        this.isbn13 = isbn13;
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
-        this.loanCount = loanCount;
-        this.subjectCode = subjectCode;
-        this.publicationYear = publicationYear;
+        super(
+                bookId, isbn13, title, author,
+                publisher, publicationYear, createdAt,
+                subjectCode, bookCategories
+        );
         this.libraryIdsArrayString = libraryIds;
-        if(!bookCategories.equals(BookCategories.EMPTY_CATEGORY))
-            this.bookCategories = bookCategories;
-        this.createdAt = createdAt.toString();
+        this.loanCount = loanCount;
     }
 }
