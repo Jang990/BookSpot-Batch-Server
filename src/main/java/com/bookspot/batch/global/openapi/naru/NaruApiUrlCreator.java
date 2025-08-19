@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+
 @Component
 @RequiredArgsConstructor
 public class NaruApiUrlCreator {
@@ -14,15 +16,20 @@ public class NaruApiUrlCreator {
     private final NaruApiUrlHolder naruApiUrlHolder;
 
     public String buildLibraryApi(Pageable pageable) {
-        StringBuilder builder = new StringBuilder(naruApiUrlHolder.getLibraryUrl());
-
-        builder.append(
-                getQuerySeparator(builder.toString()));
-        return builder.append(
-                PAGE_SIZE_OPTION_TEMPLATE.formatted(
-                        pageable.getPageNumber(), pageable.getPageSize())).toString();
+        return naruApiUrlHolder.getLibraryUrl()
+                + getQuerySeparator(naruApiUrlHolder.getLibraryUrl())
+                + PAGE_SIZE_OPTION_TEMPLATE.formatted(
+                        pageable.getPageNumber(),
+                        pageable.getPageSize()
+                );
     }
 
+    public String buildTrendApi(LocalDate baseDate) {
+        return naruApiUrlHolder.getTrendUrl() +
+                getQuerySeparator(naruApiUrlHolder.getTrendUrl())+
+                "searchDt=".concat(baseDate.toString());
+    }
+    
     private String getQuerySeparator(String url) {
         if(url.contains(QUERY_STRING_PREFIX))
             return PARAMETER_SEPARATOR;
