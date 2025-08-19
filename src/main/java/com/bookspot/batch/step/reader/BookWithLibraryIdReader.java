@@ -2,7 +2,7 @@ package com.bookspot.batch.step.reader;
 
 import com.bookspot.batch.data.BookCategories;
 import com.bookspot.batch.data.LibraryIds;
-import com.bookspot.batch.data.BookDocument;
+import com.bookspot.batch.data.document.BookDocument;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.step.service.BookCodeResolver;
 import com.bookspot.batch.step.service.LibraryStockRepository;

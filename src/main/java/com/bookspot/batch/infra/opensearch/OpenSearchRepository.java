@@ -1,6 +1,6 @@
 package com.bookspot.batch.infra.opensearch;
 
-import com.bookspot.batch.data.BookDocument;
+import com.bookspot.batch.data.document.BookDocument;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;

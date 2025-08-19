@@ -1,5 +1,6 @@
-package com.bookspot.batch.data;
+package com.bookspot.batch.data.document;
 
+import com.bookspot.batch.data.BookCategories;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
