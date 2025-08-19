@@ -35,19 +35,19 @@ class NaruApiUrlCreatorTest {
                 creator.buildLibraryApi(PageRequest.of(0, 10))
         );
 
-        Mockito.when(holder.getTrendUrl()).thenReturn("something-url-trend?something=1");
+        Mockito.when(holder.getWeeklyTop100Url()).thenReturn("something-url-top100?something=1");
         assertEquals(
-                "something-url-trend?something=1&searchDt=2025-01-01",
-                creator.buildTrendApi(LocalDate.of(2025, 1, 1))
+                "something-url-top100?something=1&startDt=2025-08-11&endDt=2025-08-17",
+                creator.buildWeeklyTop100Api(LocalDate.of(2025, 8, 18))
         );
     }
 
     @Test
-    void 트렌드_api_생성() {
-        Mockito.when(holder.getTrendUrl()).thenReturn("something-url");
+    void 이전주_대출수_TOP_100_api_생성() {
+        Mockito.when(holder.getWeeklyTop100Url()).thenReturn("something-url");
         assertEquals(
-                "something-url?searchDt=2025-08-19",
-                creator.buildTrendApi(LocalDate.of(2025, 8, 19))
+                "something-url?startDt=2025-08-11&endDt=2025-08-17",
+                creator.buildWeeklyTop100Api(LocalDate.of(2025, 8, 18))
         );
     }
 

@@ -10,6 +10,6 @@ public class NaruApiUrlHolder {
     @Value("${api.naru.url.library}")
     private String libraryUrl;
 
-    @Value("${api.naru.url.trend}")
-    private String trendUrl;
+    @Value("${api.naru.url.weeklyTop100}")
+    private String weeklyTop100Url;
 }

@@ -1,6 +1,7 @@
 package com.bookspot.batch.global.openapi.naru;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
@@ -18,18 +19,26 @@ public class NaruApiUrlCreator {
     public String buildLibraryApi(Pageable pageable) {
         return naruApiUrlHolder.getLibraryUrl()
                 + getQuerySeparator(naruApiUrlHolder.getLibraryUrl())
-                + PAGE_SIZE_OPTION_TEMPLATE.formatted(
-                        pageable.getPageNumber(),
-                        pageable.getPageSize()
-                );
+                + toPageQuery(pageable);
     }
 
-    public String buildTrendApi(LocalDate baseDate) {
-        return naruApiUrlHolder.getTrendUrl() +
-                getQuerySeparator(naruApiUrlHolder.getTrendUrl())+
-                "searchDt=".concat(baseDate.toString());
+    public String buildWeeklyTop100Api(LocalDate baseDate) {
+        LocalDate start = baseDate.minusDays(7);
+        LocalDate end = baseDate.minusDays(1);
+
+        return naruApiUrlHolder.getWeeklyTop100Url() +
+                getQuerySeparator(naruApiUrlHolder.getWeeklyTop100Url()) +
+                "startDt=".concat(start.toString()) +
+                PARAMETER_SEPARATOR + "endDt=".concat(end.toString());
     }
-    
+
+    private String toPageQuery(Pageable pageable) {
+        return PAGE_SIZE_OPTION_TEMPLATE.formatted(
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
+    }
+
     private String getQuerySeparator(String url) {
         if(url.contains(QUERY_STRING_PREFIX))
             return PARAMETER_SEPARATOR;
