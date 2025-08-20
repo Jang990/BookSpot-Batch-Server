@@ -118,6 +118,7 @@ public class BatchServerScheduler {
                         customJobLauncher.launchTop50Books(
                                 new RankingConditions(type, gender, age)
                         );
+                        log.info("기간 타입: {}, 성별: {}, 나이: {} 인기도서 top 50 Job 완료", type, gender, age);
                     }
                 }
             }
