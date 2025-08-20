@@ -12,7 +12,6 @@ import java.util.Objects;
 
 public class NaruTop50ApiBuilder {
     private final String apiUrl;
-    private final String format = "json";
     private final LocalDate periodStart;
     private final LocalDate periodEnd;
 
@@ -66,7 +65,6 @@ public class NaruTop50ApiBuilder {
 
     public String build() {
         StringBuilder sb = new StringBuilder(apiUrl);
-        sb.append("?format=").append(format);
         appendParam(sb, "startDt", periodStart.toString());
         appendParam(sb, "endDt", periodEnd.toString());
 

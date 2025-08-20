@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class NaruTop50ApiBuilderTest {
     private static final LocalDate referenceDate = LocalDate.of(2025, 8, 15);
-    private static final String baseUrl = "TEST_URL";
+    private static final String baseUrl = "TEST_URL?key=AAA";
 
     @ParameterizedTest(name = "{1}")
     @MethodSource("args")
@@ -32,33 +32,33 @@ class NaruTop50ApiBuilderTest {
     static Stream<Arguments> args() {
         return Stream.of(
                 Arguments.of(
-                        "TEST_URL?format=json&startDt=2025-08-01&endDt=2025-08-31",
+                        baseUrl.concat("&startDt=2025-08-01&endDt=2025-08-31"),
                         new RankingConditions(RankingType.MONTHLY, RankingGender.ALL, RankingAge.ALL)
                 ),
                 Arguments.of(
-                        "TEST_URL?format=json&startDt=2025-08-11&endDt=2025-08-17",
+                        baseUrl.concat("&startDt=2025-08-11&endDt=2025-08-17"),
                         new RankingConditions(RankingType.WEEKLY, RankingGender.ALL, RankingAge.ALL)
                 ),
 
                 Arguments.of(
-                        "TEST_URL?format=json&startDt=2025-08-11&endDt=2025-08-17&gender=0",
+                        baseUrl.concat("&startDt=2025-08-11&endDt=2025-08-17&gender=0"),
                         new RankingConditions(RankingType.WEEKLY, RankingGender.MALE, RankingAge.ALL)
                 ),
                 Arguments.of(
-                        "TEST_URL?format=json&startDt=2025-08-11&endDt=2025-08-17&gender=1",
+                        baseUrl.concat("&startDt=2025-08-11&endDt=2025-08-17&gender=1"),
                         new RankingConditions(RankingType.WEEKLY, RankingGender.FEMALE, RankingAge.ALL)
                 ),
 
                 Arguments.of(
-                        "TEST_URL?format=json&startDt=2025-08-11&endDt=2025-08-17&from_age=0&to_age=14",
+                        baseUrl.concat("&startDt=2025-08-11&endDt=2025-08-17&from_age=0&to_age=14"),
                         new RankingConditions(RankingType.WEEKLY, RankingGender.ALL, RankingAge.AGE_0_14)
                 ),
                 Arguments.of(
-                        "TEST_URL?format=json&startDt=2025-08-11&endDt=2025-08-17&from_age=20&to_age=29",
+                        baseUrl.concat("&startDt=2025-08-11&endDt=2025-08-17&from_age=20&to_age=29"),
                         new RankingConditions(RankingType.WEEKLY, RankingGender.ALL, RankingAge.AGE_20_29)
                 ),
                 Arguments.of(
-                        "TEST_URL?format=json&startDt=2025-08-11&endDt=2025-08-17&from_age=50",
+                        baseUrl.concat("&startDt=2025-08-11&endDt=2025-08-17&from_age=50"),
                         new RankingConditions(RankingType.WEEKLY, RankingGender.ALL, RankingAge.AGE_50_UP)
                 )
         );
