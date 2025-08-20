@@ -1,9 +1,13 @@
 package com.bookspot.batch;
 
+import com.bookspot.batch.data.document.RankingAge;
+import com.bookspot.batch.data.document.RankingGender;
+import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.job.launcher.CustomJobLauncher;
 import com.bookspot.batch.job.listener.alert.JobAlertMessageConvertor;
 import com.bookspot.batch.service.SimpleRequester;
 import com.bookspot.batch.service.alert.SlackAlertService;
+import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import com.bookspot.batch.web.JobStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +20,10 @@ import org.springframework.web.client.ResourceAccessException;
 import java.time.LocalDate;
 import java.util.List;
 
-
+/**
+ * @see com.bookspot.batch.global.config.TaskExecutorConfig
+ * @see com.bookspot.batch.global.config.SchedulerConfig
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -102,10 +109,18 @@ public class BatchServerScheduler {
         log.info("Backend 웜업 작업 완료. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
     }
 
-    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 00:00
+    @Scheduled(cron = "0 1 0 * * MON") // 매주 월요일 00:01
     public void fetchTop50() {
         try {
-            customJobLauncher.launchTop50Books();
+            for (RankingType type : RankingType.values()) {
+                for (RankingGender gender : RankingGender.values()) {
+                    for (RankingAge age : RankingAge.values()) {
+                        customJobLauncher.launchTop50Books(
+                                new RankingConditions(type, gender, age)
+                        );
+                    }
+                }
+            }
         } catch (Throwable t) {
             slackAlertService.error(
                     convertor.convertSimple(
@@ -117,7 +132,5 @@ public class BatchServerScheduler {
             throw t;
         }
     }
-
-
 
 }

@@ -2,6 +2,9 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.Top50Book;
+import com.bookspot.batch.data.document.RankingAge;
+import com.bookspot.batch.data.document.RankingGender;
+import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
@@ -85,6 +88,18 @@ class Top50BooksJobConfigTest {
                         .addLocalDate(
                                 Top50BooksJobConfig.REFERENCE_DATE_PARAM_NAME,
                                 LocalDate.of(2025, 8, 18)
+                        )
+                        .addString(
+                                Top50BooksJobConfig.COND_PERIOD_PARAM_NAME,
+                                RankingType.WEEKLY.name()
+                        )
+                        .addString(
+                                Top50BooksJobConfig.COND_GENDER_PARAM_NAME,
+                                RankingGender.MALE.name()
+                        )
+                        .addString(
+                                Top50BooksJobConfig.COND_AGE_PARAM_NAME,
+                                RankingAge.AGE_0_14.name()
                         )
                         .toJobParameters()
         );

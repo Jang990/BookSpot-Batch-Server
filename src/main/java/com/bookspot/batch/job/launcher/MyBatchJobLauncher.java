@@ -17,6 +17,14 @@ public class MyBatchJobLauncher {
 
     @Async(TaskExecutorConfig.JOB_LAUNCHER_TASK_POOL_NAME)
     public void launch(Job job, JobParameters jobParameters) {
+        run(job, jobParameters);
+    }
+
+    public void launchSync(Job job, JobParameters jobParameters) {
+        run(job, jobParameters);
+    }
+
+    private void run(Job job, JobParameters jobParameters) {
         try {
             JobExecution jobExecution = jobLauncher.run(job, jobParameters);
             if (isCompleted(jobExecution.getExitStatus())) {
@@ -34,6 +42,7 @@ public class MyBatchJobLauncher {
             throw new RuntimeException(e);
         }
     }
+
 
     private boolean isCompleted(ExitStatus exitStatus) {
         return exitStatus.equals(ExitStatus.COMPLETED);

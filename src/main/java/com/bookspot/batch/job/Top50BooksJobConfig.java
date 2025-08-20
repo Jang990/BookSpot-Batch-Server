@@ -1,11 +1,15 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.data.Top50Book;
+import com.bookspot.batch.data.document.RankingAge;
+import com.bookspot.batch.data.document.RankingGender;
+import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import com.bookspot.batch.step.book.api.Top50BookApiReader;
 import com.bookspot.batch.step.book.api.Top50BookWriter;
+import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import com.bookspot.batch.step.reader.api.top50.WeeklyTop50ApiRequester;
 import com.bookspot.batch.step.service.BookCodeResolver;
 import com.bookspot.batch.step.service.BookRepository;
@@ -52,8 +56,21 @@ public class Top50BooksJobConfig {
 
     @Bean
     @StepScope
-    public Top50BookApiReader top50BookApiReader(@Value(REFERENCE_DATE_PARAM) LocalDate referenceDate) {
-        return new Top50BookApiReader(referenceDate, weeklyTop50ApiRequester);
+    public Top50BookApiReader top50BookApiReader(
+            @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate,
+            @Value(COND_PERIOD_PARAM) String periodType,
+            @Value(COND_GENDER_PARAM) String gender,
+            @Value(COND_AGE_PARAM) String age
+    ) {
+        return new Top50BookApiReader(
+                referenceDate,
+                new RankingConditions(
+                        RankingType.valueOf(periodType),
+                        RankingGender.valueOf(gender),
+                        RankingAge.valueOf(age)
+                ),
+                weeklyTop50ApiRequester
+        );
     }
 
     @Bean
@@ -73,7 +90,7 @@ public class Top50BooksJobConfig {
     public Step bookTop50SyncStep() {
         return new StepBuilder("bookTop50SyncStep", jobRepository)
                 .<Top50Book, Top50Book>chunk(TOP_50, transactionManager)
-                .reader(top50BookApiReader(null))
+                .reader(top50BookApiReader(null, null, null, null))
                 .writer(top50BookWriter(null))
                 .build();
     }
