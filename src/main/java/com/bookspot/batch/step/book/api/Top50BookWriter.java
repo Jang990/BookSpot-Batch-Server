@@ -1,4 +1,4 @@
-package com.bookspot.batch.service.simple;
+package com.bookspot.batch.step.book.api;
 
 import com.bookspot.batch.data.BookCategories;
 import com.bookspot.batch.data.Top50Book;
@@ -9,14 +9,12 @@ import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
-import com.bookspot.batch.step.reader.api.top50.WeeklyTop50ApiRequester;
-import com.bookspot.batch.step.reader.api.top50.WeeklyTop50ResponseSpec;
 import com.bookspot.batch.step.service.BookCodeResolver;
 import com.bookspot.batch.step.service.BookRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.batch.item.Chunk;
+import org.springframework.batch.item.ItemWriter;
 
 import java.time.LocalDate;
 import java.util.LinkedList;
@@ -25,18 +23,17 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component
-@Transactional
 @RequiredArgsConstructor
-public class Top50BooksService {
-    private final WeeklyTop50ApiRequester top50ApiRequester;
+public class Top50BookWriter implements ItemWriter<Top50Book> {
+    private final LocalDate referenceDate;
+    private final String rankingIndexName;
     private final BookRepository bookRepository;
     private final OpenSearchRepository openSearchRepository;
     private final BookCodeResolver bookCodeResolver;
 
-    public void updateTop50Books(LocalDate monday) {
-        List<Top50Book> top50Books = top50ApiRequester.findTop50(monday);
-
+    @Override
+    public void write(Chunk<? extends Top50Book> chunk) throws Exception {
+        List<? extends Top50Book> top50Books = chunk.getItems();
         Map<String, ConvertedUniqueBook> entityMap = bookRepository.findByIsbn13In(isbn13List(top50Books)).stream()
                 .collect(
                         Collectors.toMap(
@@ -52,7 +49,7 @@ public class Top50BooksService {
                 rankingDocuments.add(
                         toDocument(
                                 entityMap.get(top50Book.isbn13()),
-                                rankingResult, monday
+                                rankingResult, referenceDate
                         )
                 );
             } else {
@@ -64,14 +61,13 @@ public class Top50BooksService {
                 rankingDocuments.add(
                         toDocument(
                                 bookRepository.save(entity),
-                                rankingResult, monday
+                                rankingResult, referenceDate
                         )
                 );
             }
         }
 
-        openSearchRepository.save(new BookRankingIndexSpec().serviceIndexName(), rankingDocuments);
-
+        openSearchRepository.save(rankingIndexName, rankingDocuments);
     }
 
     private BookRankingDocument toDocument(ConvertedUniqueBook book, RankingResult rankingResult, LocalDate monday) {
@@ -89,7 +85,7 @@ public class Top50BooksService {
         );
     }
 
-    private List<String> isbn13List(List<Top50Book> top50Books) {
+    private List<String> isbn13List(List<? extends Top50Book> top50Books) {
         return top50Books.stream()
                 .map(Top50Book::isbn13)
                 .toList();

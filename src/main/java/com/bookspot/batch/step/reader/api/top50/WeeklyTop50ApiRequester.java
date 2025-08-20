@@ -31,11 +31,11 @@ public class WeeklyTop50ApiRequester {
     private Top50Book convert(WeeklyTop50ResponseSpec.Doc response) {
         return new Top50Book(
                 response.getRanking(),
-                response.getBookname(),
-                response.getAuthors(),
-                response.getPublisher(),
+                response.getBookname().trim(),
+                response.getAuthors().trim(),
+                response.getPublisher().trim(),
                 Year.of(response.getPublication_year()),
-                response.getIsbn13(),
+                response.getIsbn13().trim(),
                 response.getVol(),
                 response.getClass_no(),
                 response.getLoan_count()

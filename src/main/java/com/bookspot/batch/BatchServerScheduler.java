@@ -4,7 +4,6 @@ import com.bookspot.batch.job.launcher.CustomJobLauncher;
 import com.bookspot.batch.job.listener.alert.JobAlertMessageConvertor;
 import com.bookspot.batch.service.SimpleRequester;
 import com.bookspot.batch.service.alert.SlackAlertService;
-import com.bookspot.batch.service.simple.Top50BooksService;
 import com.bookspot.batch.web.JobStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ public class BatchServerScheduler {
     private final SlackAlertService slackAlertService;
     private final JobAlertMessageConvertor convertor;
     private final SimpleRequester simpleRequester;
-    private final Top50BooksService top50BooksService;
 
     @Value("${backend.url}")
     private String backendUrl;
@@ -106,9 +104,8 @@ public class BatchServerScheduler {
 
     @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 00:00
     public void fetchTop50() {
-        LocalDate monday = LocalDate.now(); // 월요일 기준
         try {
-            top50BooksService.updateTop50Books(monday);
+            customJobLauncher.launchTop50Books();
         } catch (Throwable t) {
             slackAlertService.error(
                     convertor.convertSimple(

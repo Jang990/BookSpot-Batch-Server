@@ -3,12 +3,14 @@ package com.bookspot.batch.job.launcher;
 import com.bookspot.batch.global.properties.files.BookSpotDirectoryProperties;
 import com.bookspot.batch.global.properties.files.BookSpotFileProperties;
 import com.bookspot.batch.job.BookSpotParentJobConfig;
+import com.bookspot.batch.job.Top50BooksJobConfig;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -65,5 +67,14 @@ public class BookSpotJobParamBuilder {
 
     public JobParameters buildOpenSearchParams() {
         return commonBuilder().toJobParameters();
+    }
+
+    public JobParameters buildTop50BooksJobParams(LocalDate referenceDate) {
+        return new JobParametersBuilder()
+                .addLocalDate(
+                        Top50BooksJobConfig.REFERENCE_DATE_PARAM_NAME,
+                        referenceDate
+                )
+                .toJobParameters();
     }
 }

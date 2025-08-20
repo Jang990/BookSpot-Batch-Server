@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class BookCodeMapper {
     public BookCode transform(KdcCode kdcCode) {
-        return new BookCode(kdcCode.code(), kdcCode.name(), kdcCode.parentCode());
+        return new BookCode(kdcCode.code(), kdcCode.name());
     }
 }

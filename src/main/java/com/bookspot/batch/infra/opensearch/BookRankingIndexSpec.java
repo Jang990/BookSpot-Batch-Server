@@ -38,14 +38,14 @@ public record BookRankingIndexSpec() {
                         "created_at": {
                             "type": "date",
                             "format": "yyyy-MM-dd"
-                        }
+                        },
                         "rank": {
                             "type": "short"
                         },
                         "ranking_date": {
                             "type": "date",
                             "format": "yyyy-MM-dd"
-                        }
+                        },
                         "loan_increase": {
                             "type": "integer"
                         },
@@ -57,7 +57,7 @@ public record BookRankingIndexSpec() {
                         },
                         "ranking_gender": {
                             "type": "keyword"
-                        },
+                        }
                     }
                 }
             }
