@@ -1,6 +1,7 @@
 package com.bookspot.batch.service.simple;
 
 import com.bookspot.batch.data.BookCategories;
+import com.bookspot.batch.data.Top50Book;
 import com.bookspot.batch.data.document.BookRankingDocument;
 import com.bookspot.batch.data.document.RankingAge;
 import com.bookspot.batch.data.document.RankingGender;
@@ -18,7 +19,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ public class Top50BooksService {
     private final BookCodeResolver bookCodeResolver;
 
     public void updateTop50Books(LocalDate monday) {
-        List<WeeklyTop50ResponseSpec.Doc> top50Books = top50ApiRequester.findTop50(monday);
+        List<Top50Book> top50Books = top50ApiRequester.findTop50(monday);
 
         Map<String, ConvertedUniqueBook> entityMap = bookRepository.findByIsbn13In(isbn13List(top50Books)).stream()
                 .collect(
@@ -46,17 +46,17 @@ public class Top50BooksService {
                 );
 
         List<BookRankingDocument> rankingDocuments = new LinkedList<>();
-        for (WeeklyTop50ResponseSpec.Doc top50Book : top50Books) {
-            RankingResult rankingResult = new RankingResult(top50Book.getRanking(), top50Book.getLoan_count());
-            if (entityMap.containsKey(top50Book.getIsbn13())) {
+        for (Top50Book top50Book : top50Books) {
+            RankingResult rankingResult = new RankingResult(top50Book.ranking(), top50Book.loanCountInPeriod());
+            if (entityMap.containsKey(top50Book.isbn13())) {
                 rankingDocuments.add(
                         toDocument(
-                                entityMap.get(top50Book.getIsbn13()),
+                                entityMap.get(top50Book.isbn13()),
                                 rankingResult, monday
                         )
                 );
             } else {
-                ConvertedUniqueBook entity = toEntity(top50Book);
+                ConvertedUniqueBook entity = top50Book.toEntity();
                 log.info(
                         "새로 등장한 책 정보 - ID={} Title={} ISBN13={}, ",
                         entity.getId(), entity.getTitle(), entity.getIsbn13()
@@ -74,19 +74,6 @@ public class Top50BooksService {
 
     }
 
-    private ConvertedUniqueBook toEntity(WeeklyTop50ResponseSpec.Doc top50Book) {
-        return new ConvertedUniqueBook(
-                top50Book.getIsbn13(),
-                top50Book.getBookname(),
-                top50Book.getAuthors(),
-                top50Book.getPublisher(),
-                top50Book.getVol(),
-                top50Book.getLoan_count(),
-                (int) top50Book.getClass_no(),
-                Year.of(top50Book.getPublication_year())
-        );
-    }
-
     private BookRankingDocument toDocument(ConvertedUniqueBook book, RankingResult rankingResult, LocalDate monday) {
         return new BookRankingDocument(
                 book.getId().toString(),
@@ -102,9 +89,9 @@ public class Top50BooksService {
         );
     }
 
-    private List<String> isbn13List(List<WeeklyTop50ResponseSpec.Doc> top50Books) {
+    private List<String> isbn13List(List<Top50Book> top50Books) {
         return top50Books.stream()
-                .map(WeeklyTop50ResponseSpec.Doc::getIsbn13)
+                .map(Top50Book::isbn13)
                 .toList();
     }
 }
