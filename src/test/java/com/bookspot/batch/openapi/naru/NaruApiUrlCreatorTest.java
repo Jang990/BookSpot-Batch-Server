@@ -39,7 +39,7 @@ class NaruApiUrlCreatorTest {
                 creator.buildLibraryApi(PageRequest.of(0, 10))
         );
 
-        Mockito.when(holder.getWeeklyTop50Url()).thenReturn("something-url-top100?something=1");
+        Mockito.when(holder.getTop50Books()).thenReturn("something-url-top100?something=1");
         assertEquals(
                 "something-url-top100?something=1&startDt=2025-08-11&endDt=2025-08-17",
                 creator.buildWeeklyTop50Api(
@@ -51,7 +51,7 @@ class NaruApiUrlCreatorTest {
 
     @Test
     void 이전주_대출수_TOP_100_api_생성() {
-        Mockito.when(holder.getWeeklyTop50Url()).thenReturn("something-url");
+        Mockito.when(holder.getTop50Books()).thenReturn("something-url");
         assertEquals(
                 "something-url?startDt=2025-08-11&endDt=2025-08-17",
                 creator.buildWeeklyTop50Api(

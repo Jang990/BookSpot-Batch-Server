@@ -23,16 +23,14 @@ public class NaruApiUrlCreator {
     }
 
     public String buildWeeklyTop50Api(
-            LocalDate baseDate,
+            LocalDate referenceDAte,
             RankingConditions rankingConditions
     ) {
-        LocalDate start = baseDate.minusDays(7);
-        LocalDate end = baseDate.minusDays(1);
-
-        return naruApiUrlHolder.getWeeklyTop50Url() +
-                getQuerySeparator(naruApiUrlHolder.getWeeklyTop50Url()) +
-                "startDt=".concat(start.toString()) +
-                PARAMETER_SEPARATOR + "endDt=".concat(end.toString());
+        return new NaruTop50ApiBuilder(
+                naruApiUrlHolder.getTop50Books(),
+                referenceDAte,
+                rankingConditions
+        ).build();
     }
 
     private String toPageQuery(Pageable pageable) {
