@@ -3,6 +3,7 @@ package com.bookspot.batch.infra.opensearch;
 import com.bookspot.batch.data.document.BookCommonFields;
 import com.bookspot.batch.data.document.BookDocument;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OpenSearchRepository {
@@ -41,6 +43,7 @@ public class OpenSearchRepository {
         try {
             openSearchClient.bulk(br.build());
         } catch (IOException e) {
+            log.error("Bulk Insert 실패 ", e);
             handleRetryableError(e);
             throw new RuntimeException("Bulk Insert 실패: " + indexName, e);
         }
@@ -75,6 +78,7 @@ public class OpenSearchRepository {
             );
             return response.acknowledged();
         } catch (IOException e) {
+            log.error("Alias 추가 실패 ", e);
             handleRetryableError(e);
             throw new RuntimeException("Alias 추가 실패: " + alias, e);
         }
@@ -92,6 +96,7 @@ public class OpenSearchRepository {
             );
             return response.acknowledged();
         } catch (IOException e) {
+            log.error("Alias 제거 실패", e);
             handleRetryableError(e);
             throw new RuntimeException("Alias 제거 실패: " + alias, e);
         }
@@ -102,6 +107,7 @@ public class OpenSearchRepository {
             DeleteIndexResponse response = openSearchClient.indices().delete(d -> d.index(indexName));
             return response.acknowledged();
         } catch (IOException e) {
+            log.error("인덱스 삭제 실패", e);
             handleRetryableError(e);
             throw new RuntimeException("인덱스 삭제 실패: " + indexName, e);
         }
@@ -113,9 +119,12 @@ public class OpenSearchRepository {
             req.setEntity(new NStringEntity(schema, ContentType.APPLICATION_JSON));
             Response resp = openSearchRestClient.performRequest(req);
             int status = resp.getStatusLine().getStatusCode();
-            if(status < 200 || 300 <= status)
+            if (status < 200 || 300 <= status) {
+                log.error("인덱스 생성 실패 response code : {}", status);
                 throw new RuntimeException("인덱스 생성 실패: " + resp);
+            }
         } catch (IOException e) {
+            log.error("인덱스 생성 실패", e);
             handleRetryableError(e);
             throw new RuntimeException("인덱스 생성 실패: " + indexName, e);
         }
