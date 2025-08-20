@@ -9,9 +9,10 @@ import java.time.LocalDate;
 @Getter
 public class BookRankingDocument extends BookCommonFields{
     private int rank;
-
     @JsonProperty("ranking_date")
     private String rankingDate;
+    @JsonProperty("loan_increase")
+    private int loanIncrease;
 
     @JsonProperty("ranking_type")
     private RankingType rankingType;
@@ -22,8 +23,6 @@ public class BookRankingDocument extends BookCommonFields{
     @JsonProperty("ranking_gender")
     private RankingGender rankingGender;
 
-    @JsonProperty("loan_increase")
-    private int loanIncrease;
 
     public BookRankingDocument(
             String bookId, String isbn13, String title, String author,

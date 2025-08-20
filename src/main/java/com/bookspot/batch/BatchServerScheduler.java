@@ -4,6 +4,7 @@ import com.bookspot.batch.job.launcher.CustomJobLauncher;
 import com.bookspot.batch.job.listener.alert.JobAlertMessageConvertor;
 import com.bookspot.batch.service.SimpleRequester;
 import com.bookspot.batch.service.alert.SlackAlertService;
+import com.bookspot.batch.service.simple.Top50BooksService;
 import com.bookspot.batch.web.JobStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,8 +14,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -27,6 +27,7 @@ public class BatchServerScheduler {
     private final SlackAlertService slackAlertService;
     private final JobAlertMessageConvertor convertor;
     private final SimpleRequester simpleRequester;
+    private final Top50BooksService top50BooksService;
 
     @Value("${backend.url}")
     private String backendUrl;
@@ -101,6 +102,23 @@ public class BatchServerScheduler {
         }
 
         log.info("Backend 웜업 작업 완료. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
+    }
+
+    @Scheduled(cron = "0 0 0 * * MON") // 매주 월요일 00:00
+    public void fetchTop50() {
+        LocalDate monday = LocalDate.now(); // 월요일 기준
+        try {
+            top50BooksService.updateTop50Books(monday);
+        } catch (Throwable t) {
+            slackAlertService.error(
+                    convertor.convertSimple(
+                            "Top 50 책 스케줄러",
+                            "책 불러오기 실패",
+                            "진행중 예외 발생".concat(t.toString())
+                    )
+            );
+            throw t;
+        }
     }
 
 

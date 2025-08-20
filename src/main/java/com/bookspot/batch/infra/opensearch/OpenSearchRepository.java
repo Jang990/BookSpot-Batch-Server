@@ -1,5 +1,6 @@
 package com.bookspot.batch.infra.opensearch;
 
+import com.bookspot.batch.data.document.BookCommonFields;
 import com.bookspot.batch.data.document.BookDocument;
 import lombok.RequiredArgsConstructor;
 import org.apache.http.HttpStatus;
@@ -25,9 +26,9 @@ public class OpenSearchRepository {
     private final OpenSearchClient openSearchClient;
     private final RestClient openSearchRestClient;
 
-    public void save(String indexName, List<? extends BookDocument> list) {
+    public void save(String indexName, List<? extends BookCommonFields> list) {
         BulkRequest.Builder br = new BulkRequest.Builder();
-        for (BookDocument bookDocument : list) {
+        for (BookCommonFields bookDocument : list) {
             br.operations(
                     op -> op.index(
                             idx -> idx.index(indexName)

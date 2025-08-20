@@ -90,7 +90,7 @@ public class BookOpenSearchSyncStepConfig {
     }
 
     @Bean
-    @StepScope
+//    @StepScope
     public BookCodeResolver bookCodeResolver() {
         List<BookCode> bookCodes = bookCodeRepository.findAll();
         Map<Integer, String> bookCodeMap = new HashMap<>();

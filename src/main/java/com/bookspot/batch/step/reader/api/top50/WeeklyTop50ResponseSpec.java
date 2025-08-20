@@ -32,18 +32,18 @@ public class WeeklyTop50ResponseSpec {
     @Data
     public static class Doc {
         private int no;
-        private String ranking;
+        private int ranking;
         private String bookname;
         private String authors;
         private String publisher;
-        private String publication_year;
+        private int publication_year;
         private String isbn13;
-        private String addition_symbol;
+        private String addition_symbol; // 03810
         private String vol;
-        private String class_no;
-        private String class_nm;
-        private String bookImageURL;
-        private String bookDtlUrl;
-        private String loan_count;
+        private double class_no; // 813.62
+        private String class_nm; // 문학 > 한국문학 > 소설
+//        private String bookImageURL;
+//        private String bookDtlUrl;
+        private int loan_count;
     }
 }

@@ -7,8 +7,7 @@ opensearch:
   username: admin
   password: admin
 
-backend.url: "http://localhost:9200"
-
+backend.url: http://localhost:8080
 
 spring:
   batch.job.enabled: false
