@@ -110,15 +110,29 @@ public class BatchServerScheduler {
     }
 
     @Scheduled(cron = "0 1 0 * * MON") // 매주 월요일 00:01
-    public void fetchTop50() {
+    public void fetchTop50Weekly() {
+        fetchTop50(RankingType.WEEKLY);
+    }
+
+    @Scheduled(cron = "0 1 0 1 * ?") // 매월 1일 00:01
+    public void fetchTop50Monthly() {
+        fetchTop50(RankingType.MONTHLY);
+    }
+
+    private void fetchTop50(RankingType type) {
+        LocalDate now = LocalDate.now();
         try {
-            for (RankingType type : RankingType.values()) {
-                for (RankingGender gender : RankingGender.values()) {
-                    for (RankingAge age : RankingAge.values()) {
-                        customJobLauncher.launchTop50Books(
-                                new RankingConditions(type, gender, age)
-                        );
-                        log.info("기간 타입: {}, 성별: {}, 나이: {} 인기도서 top 50 Job 완료", type, gender, age);
+            for (RankingGender gender : RankingGender.values()) {
+                for (RankingAge age : RankingAge.values()) {
+                    switch (type) {
+                        case WEEKLY -> {
+                            customJobLauncher.launchTop50BooksOfWeek(now, gender, age);
+                            log.info("성별: {}, 나이: {} 주간 인기도서 top 50 Job 완료", gender, age);
+                        }
+                        case MONTHLY -> {
+                            customJobLauncher.launchTop50BooksOfMonth(now, gender, age);
+                            log.info("성별: {}, 나이: {} 월별 인기도서 top 50 Job 완료", gender, age);
+                        }
                     }
                 }
             }

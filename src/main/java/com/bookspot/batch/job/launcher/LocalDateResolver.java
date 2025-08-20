@@ -10,10 +10,17 @@ import java.time.temporal.TemporalAdjusters;
 @Component
 @RequiredArgsConstructor
 public class LocalDateResolver {
-    private final LocalDateHolder localDateHolder;
-    
-    public LocalDate resolveMondayOfWeek() {
-        LocalDate now = localDateHolder.now();
-        return now.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    public LocalDate resolveMondayOfWeek(LocalDate referenceDate) {
+        return referenceDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+    }
+
+    public LocalDate resolveMondayOfLastWeek(LocalDate referenceDate) {
+        return resolveMondayOfWeek(referenceDate)
+                .minusWeeks(1);
+    }
+
+    public LocalDate resolveFirstDayOfLastMonth(LocalDate referenceDate) {
+        return referenceDate.minusMonths(1)
+                .withDayOfMonth(1);
     }
 }

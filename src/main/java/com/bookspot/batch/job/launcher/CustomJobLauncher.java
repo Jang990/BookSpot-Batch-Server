@@ -1,9 +1,14 @@
 package com.bookspot.batch.job.launcher;
 
+import com.bookspot.batch.data.document.RankingAge;
+import com.bookspot.batch.data.document.RankingGender;
+import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -30,14 +35,30 @@ public class CustomJobLauncher {
         );
     }
 
-    public void launchTop50Books(
-            RankingConditions rankingConditions
+    public void launchTop50BooksOfWeek(
+            LocalDate referenceDate,
+            RankingGender rankingGender,
+            RankingAge rankingAge
     ) {
         myBatchJobLauncher.launchSync(
                 top50BooksJob,
                 paramBuilder.buildTop50BooksJobParams(
-                        localDateResolver.resolveMondayOfWeek(),
-                        rankingConditions
+                        localDateResolver.resolveMondayOfLastWeek(referenceDate),
+                        new RankingConditions(RankingType.WEEKLY, rankingGender, rankingAge)
+                )
+        );
+    }
+
+    public void launchTop50BooksOfMonth(
+            LocalDate referenceDate,
+            RankingGender rankingGender,
+            RankingAge rankingAge
+    ) {
+        myBatchJobLauncher.launchSync(
+                top50BooksJob,
+                paramBuilder.buildTop50BooksJobParams(
+                        localDateResolver.resolveFirstDayOfLastMonth(referenceDate),
+                        new RankingConditions(RankingType.MONTHLY, rankingGender, rankingAge)
                 )
         );
     }
