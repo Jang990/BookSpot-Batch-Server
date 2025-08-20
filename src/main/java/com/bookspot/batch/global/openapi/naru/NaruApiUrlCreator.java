@@ -1,5 +1,6 @@
 package com.bookspot.batch.global.openapi.naru;
 
+import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -21,7 +22,10 @@ public class NaruApiUrlCreator {
                 + toPageQuery(pageable);
     }
 
-    public String buildWeeklyTop50Api(LocalDate baseDate) {
+    public String buildWeeklyTop50Api(
+            LocalDate baseDate,
+            RankingConditions rankingConditions
+    ) {
         LocalDate start = baseDate.minusDays(7);
         LocalDate end = baseDate.minusDays(1);
 

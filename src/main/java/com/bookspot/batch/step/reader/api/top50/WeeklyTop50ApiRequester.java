@@ -17,8 +17,11 @@ public class WeeklyTop50ApiRequester {
     private final ApiRequester apiRequester;
     private final NaruApiUrlCreator naruApiUrlCreator;
 
-    public List<Top50Book> findTop50(LocalDate baseDate) {
-        String url = naruApiUrlCreator.buildWeeklyTop50Api(baseDate);
+    public List<Top50Book> findTop50(
+            LocalDate baseDate,
+            RankingConditions rankingConditions
+    ) {
+        String url = naruApiUrlCreator.buildWeeklyTop50Api(baseDate, rankingConditions);
 
         return apiRequester.get(url, WeeklyTop50ResponseSpec.class).getResponse()
                 .getDocs()

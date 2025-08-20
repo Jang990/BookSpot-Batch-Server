@@ -24,7 +24,7 @@ public class Top50BookApiReader implements ItemReader<Top50Book> {
     @Override
     public Top50Book read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
         if(result == null)
-            result = weeklyTop50ApiRequester.findTop50(referenceDate);
+            result = weeklyTop50ApiRequester.findTop50(referenceDate, rankingConditions);
         if(currentIndex >= result.size())
             return null;
         return result.get(currentIndex++);

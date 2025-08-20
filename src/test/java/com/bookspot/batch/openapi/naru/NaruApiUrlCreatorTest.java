@@ -1,7 +1,11 @@
 package com.bookspot.batch.openapi.naru;
 
+import com.bookspot.batch.data.document.RankingAge;
+import com.bookspot.batch.data.document.RankingGender;
+import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.global.openapi.naru.NaruApiUrlCreator;
 import com.bookspot.batch.global.openapi.naru.NaruApiUrlHolder;
+import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,7 +42,10 @@ class NaruApiUrlCreatorTest {
         Mockito.when(holder.getWeeklyTop50Url()).thenReturn("something-url-top100?something=1");
         assertEquals(
                 "something-url-top100?something=1&startDt=2025-08-11&endDt=2025-08-17",
-                creator.buildWeeklyTop50Api(LocalDate.of(2025, 8, 18))
+                creator.buildWeeklyTop50Api(
+                        LocalDate.of(2025, 8, 18),
+                        new RankingConditions(RankingType.MONTHLY, RankingGender.ALL, RankingAge.ALL)
+                )
         );
     }
 
@@ -47,7 +54,10 @@ class NaruApiUrlCreatorTest {
         Mockito.when(holder.getWeeklyTop50Url()).thenReturn("something-url");
         assertEquals(
                 "something-url?startDt=2025-08-11&endDt=2025-08-17",
-                creator.buildWeeklyTop50Api(LocalDate.of(2025, 8, 18))
+                creator.buildWeeklyTop50Api(
+                        LocalDate.of(2025, 8, 18),
+                        new RankingConditions(RankingType.MONTHLY, RankingGender.ALL, RankingAge.ALL)
+                )
         );
     }
 
