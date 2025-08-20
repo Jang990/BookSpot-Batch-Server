@@ -1,8 +1,5 @@
 package com.bookspot.batch.job.launcher;
 
-import com.bookspot.batch.data.document.RankingAge;
-import com.bookspot.batch.data.document.RankingGender;
-import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
