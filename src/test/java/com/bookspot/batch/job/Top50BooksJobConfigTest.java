@@ -73,7 +73,7 @@ class Top50BooksJobConfigTest {
         TestInsertUtils.bookBuilder().id(1).isbn13("1111111111111").insert(jdbcTemplate);
         TestInsertUtils.bookBuilder().id(2).isbn13("2222222222222").insert(jdbcTemplate);
 
-        when(top50ApiRequester.findTop50(any())).thenReturn(
+        when(top50ApiRequester.findTop50(any(), any())).thenReturn(
                 List.of(
                         createTop50BookResponse(1, "1111111111111"),
                         createTop50BookResponse(2, "2222222222222"),

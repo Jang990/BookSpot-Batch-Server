@@ -1,6 +1,9 @@
 package com.bookspot.batch.step.reader.api.top50;
 
 import com.bookspot.batch.data.Top50Book;
+import com.bookspot.batch.data.document.RankingAge;
+import com.bookspot.batch.data.document.RankingGender;
+import com.bookspot.batch.data.document.RankingType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +22,10 @@ class WeeklyTop50ApiRequesterTest {
 
 //    @Test
     void 주간_대출_수_top50_API_검증() {
-        List<Top50Book> result = requester.findTop50(LocalDate.of(2025, 8, 18));
+        List<Top50Book> result = requester.findTop50(
+                LocalDate.of(2025, 8, 18),
+                new RankingConditions(RankingType.WEEKLY, RankingGender.ALL, RankingAge.ALL)
+        );
         assertEquals(50, result.size());
 
         assertEquals("소년이 온다 :한강 장편소설", result.getFirst().title());
