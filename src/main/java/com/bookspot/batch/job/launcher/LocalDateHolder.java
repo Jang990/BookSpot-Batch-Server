@@ -6,7 +6,7 @@ import java.time.LocalDate;
 
 @Component
 public class LocalDateHolder {
-    LocalDate now() {
+    public LocalDate now() {
         return LocalDate.now();
     }
 }
