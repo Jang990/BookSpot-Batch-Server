@@ -24,29 +24,21 @@ public class Top50BooksLauncher {
 
     @Async(TaskExecutorConfig.JOB_LAUNCHER_TASK_POOL_NAME)
     public void launchAllWeekly(LocalDate referenceDate) {
-        process(referenceDate, RankingType.WEEKLY);
+        myBatchJobLauncher.launchSync(
+                top50BooksJob,
+                bookSpotJobParamBuilder.buildTop50BooksJobParams(
+                        referenceDate
+                )
+        );
     }
 
     @Async(TaskExecutorConfig.JOB_LAUNCHER_TASK_POOL_NAME)
     public void launchAllMonthly(LocalDate referenceDate) {
-        process(referenceDate, RankingType.MONTHLY);
-    }
-
-    private void process(LocalDate referenceDate, RankingType type) {
-        for (RankingGender gender : RankingGender.values()) {
-            for (RankingAge age : RankingAge.values()) {
-                myBatchJobLauncher.launchSync(
-                        top50BooksJob,
-                        bookSpotJobParamBuilder.buildTop50BooksJobParams(
-                                referenceDate,
-                                new RankingConditions(
-                                        type,
-                                        gender, age
-                                )
-                        )
-                );
-                log.info("기간:{}, 성별: {}, 나이: {} 대출 top 50 도서 Job 완료", type, gender, age);
-            }
-        }
+        myBatchJobLauncher.launchSync(
+                top50BooksJob, // TODO: top50 Monthly로 바꾸기
+                bookSpotJobParamBuilder.buildTop50BooksJobParams(
+                        referenceDate
+                )
+        );
     }
 }

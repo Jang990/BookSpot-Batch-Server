@@ -122,19 +122,9 @@ public class BatchServerScheduler {
     private void fetchTop50(RankingType type) {
         LocalDate now = LocalDate.now();
         try {
-            for (RankingGender gender : RankingGender.values()) {
-                for (RankingAge age : RankingAge.values()) {
-                    switch (type) {
-                        case WEEKLY -> {
-                            customJobLauncher.launchTop50BooksOfWeek(now, gender, age);
-                            log.info("성별: {}, 나이: {} 주간 인기도서 top 50 Job 완료", gender, age);
-                        }
-                        case MONTHLY -> {
-                            customJobLauncher.launchTop50BooksOfMonth(now, gender, age);
-                            log.info("성별: {}, 나이: {} 월별 인기도서 top 50 Job 완료", gender, age);
-                        }
-                    }
-                }
+            switch (type) {
+                case WEEKLY -> customJobLauncher.launchTop50BooksOfWeek(now);
+                case MONTHLY -> customJobLauncher.launchTop50BooksOfMonth(now);
             }
         } catch (Throwable t) {
             slackAlertService.error(

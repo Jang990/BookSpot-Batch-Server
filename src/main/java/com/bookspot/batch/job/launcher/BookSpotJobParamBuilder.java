@@ -4,7 +4,6 @@ import com.bookspot.batch.global.properties.files.BookSpotDirectoryProperties;
 import com.bookspot.batch.global.properties.files.BookSpotFileProperties;
 import com.bookspot.batch.job.BookSpotParentJobConfig;
 import com.bookspot.batch.job.Top50BooksJobConfig;
-import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -70,26 +69,11 @@ public class BookSpotJobParamBuilder {
         return commonBuilder().toJobParameters();
     }
 
-    public JobParameters buildTop50BooksJobParams(
-            LocalDate referenceDate,
-            RankingConditions conditions
-    ) {
+    public JobParameters buildTop50BooksJobParams(LocalDate referenceDate) {
         return new JobParametersBuilder()
                 .addLocalDate(
                         Top50BooksJobConfig.REFERENCE_DATE_PARAM_NAME,
                         referenceDate
-                )
-                .addString(
-                        Top50BooksJobConfig.COND_PERIOD_PARAM_NAME,
-                        conditions.periodType().name()
-                )
-                .addString(
-                        Top50BooksJobConfig.COND_GENDER_PARAM_NAME,
-                        conditions.gender().name()
-                )
-                .addString(
-                        Top50BooksJobConfig.COND_AGE_PARAM_NAME,
-                        conditions.periodType().name()
                 )
                 .toJobParameters();
     }
