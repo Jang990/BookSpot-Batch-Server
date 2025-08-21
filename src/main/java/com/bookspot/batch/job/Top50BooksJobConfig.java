@@ -118,14 +118,14 @@ public class Top50BooksJobConfig {
     // TODO: 추후에 나이, 성별에 따라 top 50 요청
     @Bean
     public Job weeklyTop50BooksJob(Step weeklyBookTop50SyncPartitionMasterStep) {
-        return new JobBuilder("top50BooksJob", jobRepository)
+        return new JobBuilder("weeklyTop50BooksJob", jobRepository)
                 .start(weeklyBookTop50SyncPartitionMasterStep)
                 .build();
     }
 
     @Bean
     public Job monthlyTop50BooksJob(Step monthlyBookTop50SyncPartitionMasterStep) {
-        return new JobBuilder("top50BooksJob", jobRepository)
+        return new JobBuilder("monthlyTop50BooksJob", jobRepository)
                 .start(monthlyBookTop50SyncPartitionMasterStep)
                 .build();
     }
@@ -135,7 +135,7 @@ public class Top50BooksJobConfig {
             Step weeklyBookTop50SyncPartitionMasterStep,
             Step monthlyBookTop50SyncPartitionMasterStep
     ) {
-        return new JobBuilder("top50BooksJob", jobRepository)
+        return new JobBuilder("dailySyncTop50BooksJob", jobRepository)
                 .start(weeklyBookTop50SyncPartitionMasterStep)
                 .next(monthlyBookTop50SyncPartitionMasterStep)
                 .build();
