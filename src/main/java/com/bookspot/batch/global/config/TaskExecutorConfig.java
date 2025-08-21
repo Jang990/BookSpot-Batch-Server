@@ -35,6 +35,17 @@ public class TaskExecutorConfig {
         return executor;
     }
 
+    @Bean
+    public TaskExecutor singleApiTaskPool() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(1);
+        executor.setMaxPoolSize(1);
+        executor.setThreadNamePrefix("single-api-thread");
+        executor.setWaitForTasksToCompleteOnShutdown(Boolean.TRUE);
+        executor.initialize();
+        return executor;
+    }
+
     @Bean(name = JOB_LAUNCHER_TASK_POOL_NAME)
     public TaskExecutor jobLauncherTaskPool() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

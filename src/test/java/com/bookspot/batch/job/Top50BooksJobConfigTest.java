@@ -89,18 +89,6 @@ class Top50BooksJobConfigTest {
                                 Top50BooksJobConfig.REFERENCE_DATE_PARAM_NAME,
                                 LocalDate.of(2025, 8, 18)
                         )
-                        .addString(
-                                Top50BooksJobConfig.COND_PERIOD_PARAM_NAME,
-                                RankingType.WEEKLY.name()
-                        )
-                        .addString(
-                                Top50BooksJobConfig.COND_GENDER_PARAM_NAME,
-                                RankingGender.MALE.name()
-                        )
-                        .addString(
-                                Top50BooksJobConfig.COND_AGE_PARAM_NAME,
-                                RankingAge.AGE_0_14.name()
-                        )
                         .toJobParameters()
         );
 

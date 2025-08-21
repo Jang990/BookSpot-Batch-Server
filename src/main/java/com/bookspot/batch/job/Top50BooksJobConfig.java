@@ -8,6 +8,7 @@ import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import com.bookspot.batch.step.book.api.Top50BookApiReader;
+import com.bookspot.batch.step.book.api.Top50BookPartitioner;
 import com.bookspot.batch.step.book.api.Top50BookWriter;
 import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import com.bookspot.batch.step.reader.api.top50.WeeklyTop50ApiRequester;
@@ -18,13 +19,16 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
+import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 @Configuration
@@ -35,14 +39,16 @@ public class Top50BooksJobConfig {
     public static final String REFERENCE_DATE_PARAM_NAME = "referenceDate";
     public static final String REFERENCE_DATE_PARAM = "#{jobParameters['referenceDate']}";
 
+    public static final String A_REFERENCE_DATE_PARAM = "#{stepExecutionContext['referenceDate']}";
+
     public static final String COND_PERIOD_PARAM_NAME = "condPeriod";
-    public static final String COND_PERIOD_PARAM = "#{jobParameters['condPeriod']}";
+    public static final String COND_PERIOD_PARAM = "#{stepExecutionContext['condPeriod']}";
 
     public static final String COND_AGE_PARAM_NAME = "condAge";
-    public static final String COND_AGE_PARAM = "#{jobParameters['condAge']}";
+    public static final String COND_AGE_PARAM = "#{stepExecutionContext['condAge']}";
 
     public static final String COND_GENDER_PARAM_NAME = "condGender";
-    public static final String COND_GENDER_PARAM = "#{jobParameters['condGender']}";
+    public static final String COND_GENDER_PARAM = "#{stepExecutionContext['condGender']}";
 
     private final JobRepository jobRepository;
     private final PlatformTransactionManager transactionManager;
@@ -57,7 +63,7 @@ public class Top50BooksJobConfig {
     @Bean
     @StepScope
     public Top50BookApiReader top50BookApiReader(
-            @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate,
+            @Value(A_REFERENCE_DATE_PARAM) LocalDate referenceDate,
             @Value(COND_PERIOD_PARAM) String periodType,
             @Value(COND_GENDER_PARAM) String gender,
             @Value(COND_AGE_PARAM) String age
@@ -86,6 +92,29 @@ public class Top50BooksJobConfig {
         );
     }
 
+    // TODO: 이전 주(4주전 작업한 내용) 삭제작업
+    // TODO: 추후에 나이, 성별에 따라 top 50 요청
+    @Bean
+    public Job top50BooksJob(Step bookTop50SyncPartitionMasterStep) {
+        return new JobBuilder("top50BooksJob", jobRepository)
+                .start(bookTop50SyncPartitionMasterStep)
+                .build();
+    }
+
+    @Bean
+    public Step bookTop50SyncPartitionMasterStep(
+            Step bookTop50SyncStep,
+            TaskExecutorPartitionHandler bookTop50SyncPartitionHandler
+    ) throws IOException {
+        return new StepBuilder("bookTop50SyncPartitionMasterStep", jobRepository)
+                .partitioner(
+                        bookTop50SyncStep.getName(),
+                        top50BookPartitioner(null)
+                )
+                .partitionHandler(bookTop50SyncPartitionHandler)
+                .build();
+    }
+
     @Bean
     public Step bookTop50SyncStep() {
         return new StepBuilder("bookTop50SyncStep", jobRepository)
@@ -95,12 +124,24 @@ public class Top50BooksJobConfig {
                 .build();
     }
 
-    // TODO: 이전 주(4주전 작업한 내용) 삭제작업
-    // TODO: 추후에 나이, 성별에 따라 top 50 요청
     @Bean
-    public Job top50BooksJob() {
-        return new JobBuilder("top50BooksJob", jobRepository)
-                .start(bookTop50SyncStep())
-                .build();
+    public TaskExecutorPartitionHandler bookTop50SyncPartitionHandler(
+            Step bookTop50SyncStep,
+            TaskExecutor singleApiTaskPool
+    ) {
+        // TODO: jpaRepository.save() 호출 시 데드락 가능성. 멀티스레드로 전환하려면 해결할 것
+        TaskExecutorPartitionHandler partitionHandler = new TaskExecutorPartitionHandler();
+        partitionHandler.setStep(bookTop50SyncStep);
+        partitionHandler.setTaskExecutor(singleApiTaskPool);
+        partitionHandler.setGridSize(1);
+        return partitionHandler;
+    }
+
+    @Bean
+    @StepScope
+    public Top50BookPartitioner top50BookPartitioner(
+            @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate
+    ) {
+        return new Top50BookPartitioner(referenceDate);
     }
 }
