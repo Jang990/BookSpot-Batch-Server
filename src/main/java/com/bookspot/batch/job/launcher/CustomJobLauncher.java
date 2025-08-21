@@ -13,7 +13,9 @@ public class CustomJobLauncher {
     private final BookSpotJobParamBuilder paramBuilder;
     private final Job bookSpotParentJob;
     private final Job bookOpenSearchSyncJob;
-    private final Job top50BooksJob;
+
+    private final Job weeklyTop50BooksJob;
+    private final Job monthlyTop50BooksJob;
 
     private final LocalDateResolver localDateResolver;
 
@@ -33,7 +35,7 @@ public class CustomJobLauncher {
 
     public void launchTop50BooksOfWeek(LocalDate referenceDate) {
         myBatchJobLauncher.launchSync(
-                top50BooksJob,
+                weeklyTop50BooksJob,
                 paramBuilder.buildTop50BooksJobParams(
                         localDateResolver.resolveMondayOfLastWeek(referenceDate)
                 )
@@ -42,7 +44,7 @@ public class CustomJobLauncher {
 
     public void launchTop50BooksOfMonth(LocalDate referenceDate) {
         myBatchJobLauncher.launchSync(
-                top50BooksJob, // TODO: top50 Monthly로 바꾸기
+                monthlyTop50BooksJob,
                 paramBuilder.buildTop50BooksJobParams(
                         localDateResolver.resolveFirstDayOfLastMonth(referenceDate)
                 )

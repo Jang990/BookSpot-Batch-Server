@@ -20,12 +20,13 @@ public class Top50BooksLauncher {
     private final MyBatchJobLauncher myBatchJobLauncher;
     private final BookSpotJobParamBuilder bookSpotJobParamBuilder;
 
-    private final Job top50BooksJob;
+    private final Job weeklyTop50BooksJob;
+    private final Job monthlyTop50BooksJob;
 
     @Async(TaskExecutorConfig.JOB_LAUNCHER_TASK_POOL_NAME)
     public void launchAllWeekly(LocalDate referenceDate) {
         myBatchJobLauncher.launchSync(
-                top50BooksJob,
+                weeklyTop50BooksJob,
                 bookSpotJobParamBuilder.buildTop50BooksJobParams(
                         referenceDate
                 )
@@ -35,7 +36,7 @@ public class Top50BooksLauncher {
     @Async(TaskExecutorConfig.JOB_LAUNCHER_TASK_POOL_NAME)
     public void launchAllMonthly(LocalDate referenceDate) {
         myBatchJobLauncher.launchSync(
-                top50BooksJob, // TODO: top50 Monthly로 바꾸기
+                monthlyTop50BooksJob,
                 bookSpotJobParamBuilder.buildTop50BooksJobParams(
                         referenceDate
                 )

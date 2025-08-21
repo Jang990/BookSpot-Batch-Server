@@ -92,21 +92,37 @@ public class Top50BooksJobConfig {
         );
     }
 
+    @Bean
+    public Step bookTop50SyncStep() {
+        return new StepBuilder("bookTop50SyncStep", jobRepository)
+                .<Top50Book, Top50Book>chunk(TOP_50, transactionManager)
+                .reader(top50BookApiReader(null, null, null, null))
+                .writer(top50BookWriter(null))
+                .build();
+    }
+
     // TODO: 이전 주(4주전 작업한 내용) 삭제작업
     // TODO: 추후에 나이, 성별에 따라 top 50 요청
     @Bean
-    public Job top50BooksJob(Step bookTop50SyncPartitionMasterStep) {
+    public Job weeklyTop50BooksJob(Step weeklyBookTop50SyncPartitionMasterStep) {
         return new JobBuilder("top50BooksJob", jobRepository)
-                .start(bookTop50SyncPartitionMasterStep)
+                .start(weeklyBookTop50SyncPartitionMasterStep)
                 .build();
     }
 
     @Bean
-    public Step bookTop50SyncPartitionMasterStep(
+    public Job monthlyTop50BooksJob(Step monthlyBookTop50SyncPartitionMasterStep) {
+        return new JobBuilder("top50BooksJob", jobRepository)
+                .start(monthlyBookTop50SyncPartitionMasterStep)
+                .build();
+    }
+
+    @Bean
+    public Step weeklyBookTop50SyncPartitionMasterStep(
             Step bookTop50SyncStep,
             TaskExecutorPartitionHandler bookTop50SyncPartitionHandler
     ) throws IOException {
-        return new StepBuilder("bookTop50SyncPartitionMasterStep", jobRepository)
+        return new StepBuilder("weeklyBookTop50SyncPartitionMasterStep", jobRepository)
                 .partitioner(
                         bookTop50SyncStep.getName(),
                         weeklyTop50BookPartitioner(null)
@@ -116,11 +132,16 @@ public class Top50BooksJobConfig {
     }
 
     @Bean
-    public Step bookTop50SyncStep() {
-        return new StepBuilder("bookTop50SyncStep", jobRepository)
-                .<Top50Book, Top50Book>chunk(TOP_50, transactionManager)
-                .reader(top50BookApiReader(null, null, null, null))
-                .writer(top50BookWriter(null))
+    public Step monthlyBookTop50SyncPartitionMasterStep(
+            Step bookTop50SyncStep,
+            TaskExecutorPartitionHandler bookTop50SyncPartitionHandler
+    ) throws IOException {
+        return new StepBuilder("monthlyBookTop50SyncPartitionMasterStep", jobRepository)
+                .partitioner(
+                        bookTop50SyncStep.getName(),
+                        monthlyTop50BookPartitioner(null)
+                )
+                .partitionHandler(bookTop50SyncPartitionHandler)
                 .build();
     }
 
@@ -143,5 +164,13 @@ public class Top50BooksJobConfig {
             @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate
     ) {
         return new Top50BookPartitioner(referenceDate, RankingType.WEEKLY);
+    }
+
+    @Bean
+    @StepScope
+    public Top50BookPartitioner monthlyTop50BookPartitioner(
+            @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate
+    ) {
+        return new Top50BookPartitioner(referenceDate, RankingType.MONTHLY);
     }
 }
