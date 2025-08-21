@@ -26,6 +26,13 @@ public class Top50BooksBatchServerScheduler {
 
     private final LocalDateResolver localDateResolver;
 
+    /**
+     * @see com.bookspot.batch.global.openapi.naru.NaruApiUrlCreator
+     * referencdeDate로 다음 기간의 API를 만들어낸다.
+     * Weekly: referencdeDate가 포함된 월~일요일
+     * Monthly: referencdeDate가 포함된 1~마지막일
+     */
+
     @Scheduled(cron = "0 0 23 * * SUN") // 매주 일요일 23:00
     public void fetchTop50Weekly() {
         LocalDate now = LocalDate.now();
