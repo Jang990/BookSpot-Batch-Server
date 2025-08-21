@@ -2,6 +2,7 @@ package com.bookspot.batch;
 
 import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.job.launcher.CustomJobLauncher;
+import com.bookspot.batch.job.launcher.LocalDateResolver;
 import com.bookspot.batch.job.listener.alert.JobAlertMessageConvertor;
 import com.bookspot.batch.service.alert.SlackAlertService;
 import lombok.RequiredArgsConstructor;
@@ -23,22 +24,27 @@ public class Top50BooksBatchServerScheduler {
     private final SlackAlertService slackAlertService;
     private final JobAlertMessageConvertor convertor;
 
+    private final LocalDateResolver localDateResolver;
+
     @Scheduled(cron = "0 1 0 * * MON") // 매주 월요일 00:01
     public void fetchTop50Weekly() {
-        fetchTop50(RankingType.WEEKLY);
+        LocalDate now = LocalDate.now();
+        LocalDate referenceDate = localDateResolver.resolveMondayOfLastWeek(now);
+        fetchTop50(referenceDate, RankingType.WEEKLY);
     }
 
     @Scheduled(cron = "0 1 0 1 * ?") // 매월 1일 00:01
     public void fetchTop50Monthly() {
-        fetchTop50(RankingType.MONTHLY);
+        LocalDate now = LocalDate.now();
+        LocalDate referenceDate = localDateResolver.resolveFirstDayOfLastMonth(now);
+        fetchTop50(referenceDate, RankingType.MONTHLY);
     }
 
-    private void fetchTop50(RankingType type) {
-        LocalDate now = LocalDate.now();
+    private void fetchTop50(LocalDate referenceDate, RankingType type) {
         try {
             switch (type) {
-                case WEEKLY -> customJobLauncher.launchTop50BooksOfWeek(now);
-                case MONTHLY -> customJobLauncher.launchTop50BooksOfMonth(now);
+                case WEEKLY -> customJobLauncher.launchTop50BooksOfWeek(referenceDate);
+                case MONTHLY -> customJobLauncher.launchTop50BooksOfMonth(referenceDate);
             }
         } catch (Throwable t) {
             slackAlertService.error(
