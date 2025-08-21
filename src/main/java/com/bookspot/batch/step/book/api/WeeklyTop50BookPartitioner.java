@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class Top50BookPartitioner implements Partitioner {
+public class WeeklyTop50BookPartitioner implements Partitioner {
     private final LocalDate referenceDate;
 
     @Override
@@ -20,18 +20,16 @@ public class Top50BookPartitioner implements Partitioner {
         Map<String, ExecutionContext> map = new HashMap<>();
 
         int idx = 0;
-        for (RankingType type : RankingType.values()) {
-            for (RankingGender gender : RankingGender.values()) {
-                for (RankingAge age : RankingAge.values()) {
-                    ExecutionContext ctx = new ExecutionContext();
-                    ctx.putString("referenceDate", referenceDate.toString());
-                    ctx.putString("condPeriod", type.name());
-                    ctx.putString("condGender", gender.name());
-                    ctx.putString("condAge", age.name());
+        for (RankingGender gender : RankingGender.values()) {
+            for (RankingAge age : RankingAge.values()) {
+                ExecutionContext ctx = new ExecutionContext();
+                ctx.putString("referenceDate", referenceDate.toString());
+                ctx.putString("condPeriod", RankingType.WEEKLY.toString());
+                ctx.putString("condGender", gender.name());
+                ctx.putString("condAge", age.name());
 
-                    map.put("partition-" + idx, ctx);
-                    idx++;
-                }
+                map.put("partition-" + idx, ctx);
+                idx++;
             }
         }
         return map;
