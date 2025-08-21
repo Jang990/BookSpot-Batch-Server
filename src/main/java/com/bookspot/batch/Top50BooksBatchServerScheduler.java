@@ -36,7 +36,7 @@ public class Top50BooksBatchServerScheduler {
     @Scheduled(cron = "0 0 23 * * SUN") // 매주 일요일 23:00
     public void fetchTop50Weekly() {
         LocalDate now = LocalDate.now();
-        LocalDate referenceDate = localDateResolver.resolveMondayOfLastWeek(now);
+        LocalDate referenceDate = localDateResolver.resolveMondayOfWeek(now);
         fetchTop50(referenceDate, RankingType.WEEKLY);
     }
 

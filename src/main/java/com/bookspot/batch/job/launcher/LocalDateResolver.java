@@ -14,11 +14,6 @@ public class LocalDateResolver {
         return referenceDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
     }
 
-    public LocalDate resolveMondayOfLastWeek(LocalDate referenceDate) {
-        return resolveMondayOfWeek(referenceDate)
-                .minusWeeks(1);
-    }
-
     public LocalDate resolveFirstDayOfMonth(LocalDate referenceDate) {
         return referenceDate.withDayOfMonth(1);
     }

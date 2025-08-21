@@ -21,17 +21,9 @@ class LocalDateResolverTest {
     LocalDateResolver resolver;
 
     @Test
-    void 저번주_월요일_반환() {
-        LocalDate result = resolver.resolveMondayOfLastWeek(_2025_08(20));
-
-        assertEquals(_2025_08(11), result);
-        assertEquals(DayOfWeek.MONDAY, result.getDayOfWeek());
-    }
-
-    @Test
-    void 저번달_1일_반환() {
-        LocalDate result = resolver.resolveFirstDayOfLastMonth(_2025_08(20));
-        assertEquals(LocalDate.of(2025, 7, 1), result);
+    void 이번달_1일_반환() {
+        LocalDate result = resolver.resolveFirstDayOfMonth(_2025_08(20));
+        assertEquals(LocalDate.of(2025, 8, 1), result);
     }
 
     @ParameterizedTest
