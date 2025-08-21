@@ -65,6 +65,8 @@ public class NaruTop50ApiBuilder {
 
     public String build() {
         StringBuilder sb = new StringBuilder(apiUrl);
+        if(!apiUrl.contains("?"))
+            sb.append("?");
         appendParam(sb, "startDt", periodStart.toString());
         appendParam(sb, "endDt", periodEnd.toString());
 

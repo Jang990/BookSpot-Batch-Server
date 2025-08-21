@@ -24,36 +24,51 @@ class NaruApiUrlCreatorTest {
     @Mock NaruApiUrlHolder holder;
     @InjectMocks NaruApiUrlCreator creator;
 
+    private String testApiUrl = "something-url?my-key=abc";
+
     @Test
     void 페이징_파라미터_연결() {
-        Mockito.when(holder.getLibraryUrl()).thenReturn("something-url");
-        assertEquals("something-url?pageNo=0&pageSize=10",
+        Mockito.when(holder.getLibraryUrl()).thenReturn(testApiUrl);
+        assertEquals(testApiUrl.concat("&pageNo=0&pageSize=10"),
                 creator.buildLibraryApi(PageRequest.of(0, 10)));
     }
 
     @Test
-    void 쿼리스트링_시작문자가_없다면_쿼리스트링을_시작() {
-        Mockito.when(holder.getLibraryUrl()).thenReturn("something-url-library?something=1");
+    void 쿼리스트링_시작_물음표가_없다면_시작_물음표를_붙이고_쿼리스트링_시작() {
+        String testUrl = "something-url"; // 끝에 ?가 없음
+        Mockito.when(holder.getLibraryUrl()).thenReturn(testUrl);
         assertEquals(
-                "something-url-library?something=1&pageNo=0&pageSize=10",
+                testUrl.concat("?pageNo=0&pageSize=10"),
                 creator.buildLibraryApi(PageRequest.of(0, 10))
         );
 
-        Mockito.when(holder.getTop50Books()).thenReturn("something-url-top100?something=1");
+        Mockito.when(holder.getTop50Books()).thenReturn(testUrl);
         assertEquals(
-                "something-url-top100?something=1&startDt=2025-08-11&endDt=2025-08-17",
+                testUrl.concat("?&startDt=2025-08-18&endDt=2025-08-24"),
                 creator.buildWeeklyTop50Api(
                         LocalDate.of(2025, 8, 18),
-                        new RankingConditions(RankingType.MONTHLY, RankingGender.ALL, RankingAge.ALL)
+                        new RankingConditions(RankingType.WEEKLY, RankingGender.ALL, RankingAge.ALL)
                 )
         );
     }
 
     @Test
-    void 이전주_대출수_TOP_100_api_생성() {
-        Mockito.when(holder.getTop50Books()).thenReturn("something-url");
+    void 기준일이_포함된_월to일_기간_api_생성() {
+        Mockito.when(holder.getTop50Books()).thenReturn(testApiUrl);
         assertEquals(
-                "something-url?startDt=2025-08-11&endDt=2025-08-17",
+                testApiUrl.concat("&startDt=2025-08-18&endDt=2025-08-24"),
+                creator.buildWeeklyTop50Api(
+                        LocalDate.of(2025, 8, 18),
+                        new RankingConditions(RankingType.WEEKLY, RankingGender.ALL, RankingAge.ALL)
+                )
+        );
+    }
+
+    @Test
+    void 기준일의_달의_기간_api_생성() {
+        Mockito.when(holder.getTop50Books()).thenReturn(testApiUrl);
+        assertEquals(
+                testApiUrl.concat("&startDt=2025-08-01&endDt=2025-08-31"),
                 creator.buildWeeklyTop50Api(
                         LocalDate.of(2025, 8, 18),
                         new RankingConditions(RankingType.MONTHLY, RankingGender.ALL, RankingAge.ALL)

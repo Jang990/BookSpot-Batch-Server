@@ -29,6 +29,16 @@ class NaruTop50ApiBuilderTest {
         );
     }
 
+    @Test
+    void apiUrl에_쿼리스트링_시작_물음표가_없다면_추가() {
+        NaruTop50ApiBuilder builder = new NaruTop50ApiBuilder(
+                "TEST_URL", referenceDate,
+                new RankingConditions(RankingType.MONTHLY, RankingGender.ALL, RankingAge.ALL)
+        );
+
+        assertEquals("TEST_URL".concat("?&startDt=2025-08-01&endDt=2025-08-31"), builder.build());
+    }
+
     static Stream<Arguments> args() {
         return Stream.of(
                 Arguments.of(
