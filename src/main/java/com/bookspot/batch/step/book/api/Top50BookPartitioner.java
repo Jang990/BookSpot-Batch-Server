@@ -12,8 +12,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class WeeklyTop50BookPartitioner implements Partitioner {
+public class Top50BookPartitioner implements Partitioner {
     private final LocalDate referenceDate;
+    private final RankingType rankingType;
 
     @Override
     public Map<String, ExecutionContext> partition(int gridSize) {
@@ -24,7 +25,7 @@ public class WeeklyTop50BookPartitioner implements Partitioner {
             for (RankingAge age : RankingAge.values()) {
                 ExecutionContext ctx = new ExecutionContext();
                 ctx.putString("referenceDate", referenceDate.toString());
-                ctx.putString("condPeriod", RankingType.WEEKLY.toString());
+                ctx.putString("condPeriod", rankingType.toString());
                 ctx.putString("condGender", gender.name());
                 ctx.putString("condAge", age.name());
 

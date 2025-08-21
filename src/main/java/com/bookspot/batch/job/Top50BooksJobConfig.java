@@ -8,7 +8,7 @@ import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import com.bookspot.batch.step.book.api.Top50BookApiReader;
-import com.bookspot.batch.step.book.api.WeeklyTop50BookPartitioner;
+import com.bookspot.batch.step.book.api.Top50BookPartitioner;
 import com.bookspot.batch.step.book.api.Top50BookWriter;
 import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import com.bookspot.batch.step.reader.api.top50.WeeklyTop50ApiRequester;
@@ -139,9 +139,9 @@ public class Top50BooksJobConfig {
 
     @Bean
     @StepScope
-    public WeeklyTop50BookPartitioner weeklyTop50BookPartitioner(
+    public Top50BookPartitioner weeklyTop50BookPartitioner(
             @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate
     ) {
-        return new WeeklyTop50BookPartitioner(referenceDate);
+        return new Top50BookPartitioner(referenceDate, RankingType.WEEKLY);
     }
 }
