@@ -34,7 +34,7 @@ public class CustomJobLauncher {
     }
 
     public void launchTop50BooksOfWeek(LocalDate referenceDate) {
-        myBatchJobLauncher.launchSync(
+        myBatchJobLauncher.launch(
                 weeklyTop50BooksJob,
                 paramBuilder.buildTop50BooksJobParams(
                         localDateResolver.resolveMondayOfLastWeek(referenceDate)
@@ -43,7 +43,7 @@ public class CustomJobLauncher {
     }
 
     public void launchTop50BooksOfMonth(LocalDate referenceDate) {
-        myBatchJobLauncher.launchSync(
+        myBatchJobLauncher.launch(
                 monthlyTop50BooksJob,
                 paramBuilder.buildTop50BooksJobParams(
                         localDateResolver.resolveFirstDayOfLastMonth(referenceDate)
