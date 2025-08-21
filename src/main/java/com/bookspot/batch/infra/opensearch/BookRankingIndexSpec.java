@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public record BookRankingIndexSpec() {
-    private static final String SERVICE_INDEX_NAME = "books-ranking";
     public static final String SCHEMA = """
             {
                 "settings": {
@@ -64,6 +63,10 @@ public record BookRankingIndexSpec() {
             """;
 
     public String serviceIndexName() {
-        return SERVICE_INDEX_NAME;
+        return "books-ranking";
+    }
+
+    public String dailyIndexName(LocalDate referenceDate) {
+        return "daily_books-ranking" + "-" + referenceDate;
     }
 }

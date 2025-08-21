@@ -36,6 +36,10 @@ import java.time.LocalDate;
 public class Top50BooksJobConfig {
     private static final int TOP_50 = 50;
 
+    public static final String DAILY_SYNC_FLAG_PARAM_NAME = "dailySyncFlag";
+    public static final String DAILY_SYNC_FLAG_PARAM = "#{jobParameters['dailySyncFlag']}";
+    public static final String DAILY_SYNC_FLAG_PARAM_VALUE = "DAILY_SYNC_FLAG";
+
     public static final String REFERENCE_DATE_PARAM_NAME = "referenceDate";
     public static final String REFERENCE_DATE_PARAM = "#{jobParameters['referenceDate']}";
 
@@ -81,11 +85,20 @@ public class Top50BooksJobConfig {
 
     @Bean
     @StepScope
-    public Top50BookWriter top50BookWriter(@Value(REFERENCE_DATE_PARAM)LocalDate referenceDate) {
+    public Top50BookWriter top50BookWriter(
+            @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate,
+            @Value(DAILY_SYNC_FLAG_PARAM) String dailySyncFlag
+    ) {
         BookRankingIndexSpec bookRankingIndexSpec = indexSpecCreator.createRankingIndexSpec();
+        String targetIndexName;
+        if (DAILY_SYNC_FLAG_PARAM_VALUE.equals(dailySyncFlag))
+            targetIndexName = bookRankingIndexSpec.dailyIndexName(referenceDate);
+        else
+            targetIndexName = bookRankingIndexSpec.serviceIndexName();
+
         return new Top50BookWriter(
                 referenceDate,
-                bookRankingIndexSpec.serviceIndexName(),
+                targetIndexName,
                 bookRepository,
                 openSearchRepository,
                 bookCodeResolver
@@ -97,7 +110,7 @@ public class Top50BooksJobConfig {
         return new StepBuilder("bookTop50SyncStep", jobRepository)
                 .<Top50Book, Top50Book>chunk(TOP_50, transactionManager)
                 .reader(top50BookApiReader(null, null, null, null))
-                .writer(top50BookWriter(null))
+                .writer(top50BookWriter(null, null))
                 .build();
     }
 
@@ -116,6 +129,18 @@ public class Top50BooksJobConfig {
                 .start(monthlyBookTop50SyncPartitionMasterStep)
                 .build();
     }
+
+    @Bean
+    public Job dailySyncTop50BooksJob(
+            Step weeklyBookTop50SyncPartitionMasterStep,
+            Step monthlyBookTop50SyncPartitionMasterStep
+    ) {
+        return new JobBuilder("top50BooksJob", jobRepository)
+                .start(weeklyBookTop50SyncPartitionMasterStep)
+                .next(monthlyBookTop50SyncPartitionMasterStep)
+                .build();
+    }
+
 
     @Bean
     public Step weeklyBookTop50SyncPartitionMasterStep(

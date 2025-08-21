@@ -16,6 +16,7 @@ public class CustomJobLauncher {
 
     private final Job weeklyTop50BooksJob;
     private final Job monthlyTop50BooksJob;
+    private final Job dailySyncTop50BooksJob;
 
     public void launchBookOpenSearchSyncJob() {
         myBatchJobLauncher.launch(
@@ -42,6 +43,13 @@ public class CustomJobLauncher {
         myBatchJobLauncher.launch(
                 monthlyTop50BooksJob,
                 paramBuilder.buildTop50BooksJobParams(referenceDate)
+        );
+    }
+
+    public void launchTop50BooksDailySync(LocalDate now) {
+        myBatchJobLauncher.launch(
+                dailySyncTop50BooksJob,
+                paramBuilder.buildDailySyncTop50BooksJobParams(now)
         );
     }
 }

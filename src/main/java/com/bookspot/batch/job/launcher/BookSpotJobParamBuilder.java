@@ -77,4 +77,17 @@ public class BookSpotJobParamBuilder {
                 )
                 .toJobParameters();
     }
+
+    public JobParameters buildDailySyncTop50BooksJobParams(LocalDate now) {
+        return new JobParametersBuilder()
+                .addLocalDate(
+                        Top50BooksJobConfig.REFERENCE_DATE_PARAM_NAME,
+                        now
+                )
+                .addString(
+                        Top50BooksJobConfig.DAILY_SYNC_FLAG_PARAM_NAME,
+                        Top50BooksJobConfig.DAILY_SYNC_FLAG_PARAM_VALUE
+                )
+                .toJobParameters();
+    }
 }
