@@ -2,9 +2,6 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.Top50Book;
-import com.bookspot.batch.data.document.RankingAge;
-import com.bookspot.batch.data.document.RankingGender;
-import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
@@ -33,7 +30,7 @@ import static org.mockito.Mockito.when;
 
 @BatchJobTest
 class Top50BooksJobConfigTest {
-    private final String TEST_OS_INDEX_NAME = "test-ranking-index";
+    private final String TEST_OS_WEEKLY_INDEX_NAME = "test-ranking-weekly-index";
 
     @Autowired
     BookRepository bookRepository;
@@ -45,7 +42,7 @@ class Top50BooksJobConfigTest {
     JobLauncherTestUtils jobLauncherTestUtils;
 
     @Autowired
-    Job top50BooksJob;
+    Job weeklyTop50BooksJob;
 
     @Autowired
     OpenSearchRepository repository;
@@ -61,11 +58,11 @@ class Top50BooksJobConfigTest {
 
     @BeforeEach
     void beforeEach() {
-        OpenSearchTestHelper.deleteIfExist(repository, TEST_OS_INDEX_NAME);
-        OpenSearchTestHelper.createIndexIfExist(repository, TEST_OS_INDEX_NAME, BookRankingIndexSpec.SCHEMA);
+        OpenSearchTestHelper.deleteIfExist(repository, TEST_OS_WEEKLY_INDEX_NAME);
+        OpenSearchTestHelper.createIndexIfExist(repository, TEST_OS_WEEKLY_INDEX_NAME, BookRankingIndexSpec.SCHEMA);
 
         when(indexSpecCreator.createRankingIndexSpec()).thenReturn(bookRankingIndexSpec);
-        when(bookRankingIndexSpec.serviceIndexName()).thenReturn(TEST_OS_INDEX_NAME);
+        when(bookRankingIndexSpec.serviceIndexName()).thenReturn(TEST_OS_WEEKLY_INDEX_NAME);
     }
 
     @Test
@@ -82,7 +79,7 @@ class Top50BooksJobConfigTest {
         );
 
 
-        jobLauncherTestUtils.setJob(top50BooksJob);
+        jobLauncherTestUtils.setJob(weeklyTop50BooksJob);
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(
                 new JobParametersBuilder()
                         .addLocalDate(
