@@ -89,11 +89,19 @@ public class Top50BooksJobConfig {
     @StepScope
     public Top50BookWriter top50BookWriter(
             @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate,
-            @Value(DAILY_SYNC_FLAG_PARAM) String dailySyncFlag
+            @Value(DAILY_SYNC_FLAG_PARAM) String dailySyncFlag,
+            @Value(COND_PERIOD_PARAM) String periodType,
+            @Value(COND_GENDER_PARAM) String gender,
+            @Value(COND_AGE_PARAM) String age
     ) {
         return new Top50BookWriter(
                 referenceDate,
                 getBookRankingIndexName(referenceDate, dailySyncFlag),
+                new RankingConditions(
+                        RankingType.valueOf(periodType),
+                        RankingGender.valueOf(gender),
+                        RankingAge.valueOf(age)
+                ),
                 bookRepository,
                 openSearchRepository,
                 bookCodeResolver
@@ -113,7 +121,7 @@ public class Top50BooksJobConfig {
         return new StepBuilder("bookTop50SyncStep", jobRepository)
                 .<Top50Book, Top50Book>chunk(TOP_50, transactionManager)
                 .reader(top50BookApiReader(null, null, null, null))
-                .writer(top50BookWriter(null, null))
+                .writer(top50BookWriter(null, null, null, null, null))
                 .build();
     }
 

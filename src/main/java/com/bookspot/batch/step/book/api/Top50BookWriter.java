@@ -9,6 +9,7 @@ import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.data.file.csv.ConvertedUniqueBook;
 import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
+import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import com.bookspot.batch.step.service.BookCodeResolver;
 import com.bookspot.batch.step.service.BookRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class Top50BookWriter implements ItemWriter<Top50Book> {
     private final LocalDate referenceDate;
     private final String rankingIndexName;
+    private final RankingConditions rankingConditions;
     private final BookRepository bookRepository;
     private final OpenSearchRepository openSearchRepository;
     private final BookCodeResolver bookCodeResolver;
@@ -80,8 +82,11 @@ public class Top50BookWriter implements ItemWriter<Top50Book> {
                 book.getSubjectCode() == null ?
                         BookCategories.EMPTY_CATEGORY
                         : bookCodeResolver.resolve(book.getSubjectCode()),
-                rankingResult.rank(), monday, RankingType.WEEKLY,
-                RankingAge.ALL, RankingGender.ALL, rankingResult.loanIncrease()
+                rankingResult.rank(), monday,
+                rankingConditions.periodType(),
+                rankingConditions.age(),
+                rankingConditions.gender(),
+                rankingResult.loanIncrease()
         );
     }
 
