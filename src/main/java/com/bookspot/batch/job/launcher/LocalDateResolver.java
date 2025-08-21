@@ -19,8 +19,7 @@ public class LocalDateResolver {
                 .minusWeeks(1);
     }
 
-    public LocalDate resolveFirstDayOfLastMonth(LocalDate referenceDate) {
-        return referenceDate.minusMonths(1)
-                .withDayOfMonth(1);
+    public LocalDate resolveFirstDayOfMonth(LocalDate referenceDate) {
+        return referenceDate.withDayOfMonth(1);
     }
 }

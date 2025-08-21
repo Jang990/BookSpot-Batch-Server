@@ -26,17 +26,17 @@ public class Top50BooksBatchServerScheduler {
 
     private final LocalDateResolver localDateResolver;
 
-    @Scheduled(cron = "0 1 0 * * MON") // 매주 월요일 00:01
+    @Scheduled(cron = "0 0 23 * * SUN") // 매주 일요일 23:00
     public void fetchTop50Weekly() {
         LocalDate now = LocalDate.now();
         LocalDate referenceDate = localDateResolver.resolveMondayOfLastWeek(now);
         fetchTop50(referenceDate, RankingType.WEEKLY);
     }
 
-    @Scheduled(cron = "0 1 0 1 * ?") // 매월 1일 00:01
+    @Scheduled(cron = "0 0 23 L * ?") // 매월 마지막날 23:00
     public void fetchTop50Monthly() {
         LocalDate now = LocalDate.now();
-        LocalDate referenceDate = localDateResolver.resolveFirstDayOfLastMonth(now);
+        LocalDate referenceDate = localDateResolver.resolveFirstDayOfMonth(now);
         fetchTop50(referenceDate, RankingType.MONTHLY);
     }
 
