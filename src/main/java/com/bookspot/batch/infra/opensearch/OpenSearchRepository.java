@@ -1,7 +1,6 @@
 package com.bookspot.batch.infra.opensearch;
 
 import com.bookspot.batch.data.document.BookCommonFields;
-import com.bookspot.batch.data.document.BookDocument;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
@@ -15,6 +14,7 @@ import org.opensearch.client.opensearch.OpenSearchClient;
 import org.opensearch.client.opensearch.core.BulkRequest;
 import org.opensearch.client.opensearch.indices.DeleteIndexResponse;
 import org.opensearch.client.opensearch.indices.UpdateAliasesResponse;
+import org.opensearch.client.opensearch.indices.update_aliases.Action;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -91,6 +91,28 @@ public class OpenSearchRepository {
                             .remove(rem -> rem
                                     .index(indexName)
                                     .alias(alias)
+                            )
+                    )
+            );
+            return response.acknowledged();
+        } catch (IOException e) {
+            log.error("Alias 제거 실패", e);
+            handleRetryableError(e);
+            throw new RuntimeException("Alias 제거 실패: " + alias, e);
+        }
+    }
+
+    public boolean moveIndexAlias(String fromIndex, String toIndex, String alias) {
+        try {
+            UpdateAliasesResponse response = openSearchClient.indices().updateAliases(
+                    u -> u.actions(
+                            List.of(
+                                    new Action.Builder()
+                                            .remove(r -> r.index(fromIndex).alias(alias))
+                                            .build(),
+                                    new Action.Builder()
+                                            .add(r -> r.index(toIndex).alias(alias))
+                                            .build()
                             )
                     )
             );

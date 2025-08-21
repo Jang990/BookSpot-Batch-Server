@@ -22,6 +22,8 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.partition.support.TaskExecutorPartitionHandler;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.core.step.tasklet.Tasklet;
+import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -89,20 +91,21 @@ public class Top50BooksJobConfig {
             @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate,
             @Value(DAILY_SYNC_FLAG_PARAM) String dailySyncFlag
     ) {
-        BookRankingIndexSpec bookRankingIndexSpec = indexSpecCreator.createRankingIndexSpec();
-        String targetIndexName;
-        if (DAILY_SYNC_FLAG_PARAM_VALUE.equals(dailySyncFlag))
-            targetIndexName = bookRankingIndexSpec.dailyIndexName(referenceDate);
-        else
-            targetIndexName = bookRankingIndexSpec.serviceIndexName();
-
         return new Top50BookWriter(
                 referenceDate,
-                targetIndexName,
+                getBookRankingIndexName(referenceDate, dailySyncFlag),
                 bookRepository,
                 openSearchRepository,
                 bookCodeResolver
         );
+    }
+
+    private String getBookRankingIndexName(LocalDate referenceDate, String dailySyncFlag) {
+        BookRankingIndexSpec bookRankingIndexSpec = indexSpecCreator.createRankingIndexSpec();
+        if (DAILY_SYNC_FLAG_PARAM_VALUE.equals(dailySyncFlag))
+            return bookRankingIndexSpec.dailyIndexName(referenceDate);
+        else
+            return bookRankingIndexSpec.serviceIndexName();
     }
 
     @Bean
@@ -132,12 +135,16 @@ public class Top50BooksJobConfig {
 
     @Bean
     public Job dailySyncTop50BooksJob(
+            Step createBookDailyRankingIndexStep,
             Step weeklyBookTop50SyncPartitionMasterStep,
-            Step monthlyBookTop50SyncPartitionMasterStep
+            Step monthlyBookTop50SyncPartitionMasterStep,
+            Step deletePrevBookDailyRankingIndexStep
     ) {
         return new JobBuilder("dailySyncTop50BooksJob", jobRepository)
-                .start(weeklyBookTop50SyncPartitionMasterStep)
+                .start(createBookDailyRankingIndexStep)
+                .next(weeklyBookTop50SyncPartitionMasterStep)
                 .next(monthlyBookTop50SyncPartitionMasterStep)
+                .next(deletePrevBookDailyRankingIndexStep)
                 .build();
     }
 
@@ -197,5 +204,57 @@ public class Top50BooksJobConfig {
             @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate
     ) {
         return new Top50BookPartitioner(referenceDate, RankingType.MONTHLY);
+    }
+
+
+    // =============== 인덱스 관리 Step, Tasklet
+    @Bean
+    public Step createBookDailyRankingIndexStep() {
+        return new StepBuilder("createBookDailyRankingIndexStep", jobRepository)
+                .tasklet(createBookDailyRankingIndexTasklet(null), transactionManager)
+                .build();
+    }
+
+    @Bean
+    public Step deletePrevBookDailyRankingIndexStep() {
+        return new StepBuilder("deleteBookDailyRankingIndexStep", jobRepository)
+                .tasklet(deletePrevBookDailyRankingIndexTasklet(null), transactionManager)
+                .build();
+    }
+
+    @Bean
+    @StepScope
+    public Tasklet createBookDailyRankingIndexTasklet(
+            @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate
+    ) {
+        BookRankingIndexSpec bookRankingIndexSpec = indexSpecCreator.createRankingIndexSpec();
+        return (contribution, chunkContext) -> {
+            openSearchRepository.createIndex(
+                    bookRankingIndexSpec.dailyIndexName(referenceDate),
+                    BookRankingIndexSpec.SCHEMA
+            );
+            return RepeatStatus.FINISHED;
+        };
+    }
+
+    @Bean
+    @StepScope
+    public Tasklet deletePrevBookDailyRankingIndexTasklet(
+            @Value(REFERENCE_DATE_PARAM) LocalDate referenceDate
+    ) {
+        BookRankingIndexSpec bookRankingIndexSpec = indexSpecCreator.createRankingIndexSpec();
+        return (contribution, chunkContext) -> {
+            String prevIndex = bookRankingIndexSpec.dailyIndexName(referenceDate.minusDays(1));
+            String currentIndex = bookRankingIndexSpec.dailyIndexName(referenceDate);
+
+            openSearchRepository.moveIndexAlias(
+                    prevIndex,
+                    currentIndex,
+                    bookRankingIndexSpec.dailyAliasName()
+            );
+
+            openSearchRepository.delete(prevIndex);
+            return RepeatStatus.FINISHED;
+        };
     }
 }

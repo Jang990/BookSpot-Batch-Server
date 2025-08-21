@@ -67,6 +67,10 @@ public record BookRankingIndexSpec() {
     }
 
     public String dailyIndexName(LocalDate referenceDate) {
-        return "daily_books-ranking" + "-" + referenceDate;
+        return "daily-books-ranking" + "-" + referenceDate;
+    }
+
+    public String dailyAliasName() {
+        return "daily-books-ranking";
     }
 }
