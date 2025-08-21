@@ -1,6 +1,7 @@
 package com.bookspot.batch.infra.opensearch;
 
 import com.bookspot.batch.data.document.BookCommonFields;
+import com.bookspot.batch.data.document.DocumentIdentifiable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
@@ -33,9 +34,14 @@ public class OpenSearchRepository {
         for (BookCommonFields bookDocument : list) {
             br.operations(
                     op -> op.index(
-                            idx -> idx.index(indexName)
-                                    .id(bookDocument.getBookId())
-                                    .document(bookDocument)
+                            idx -> {
+                                idx.index(indexName);
+                                if (bookDocument.getDocumentId() != null) {
+                                    idx.id(bookDocument.getDocumentId());
+                                }
+                                idx.document(bookDocument);
+                                return idx;
+                            }
                     )
             );
         }

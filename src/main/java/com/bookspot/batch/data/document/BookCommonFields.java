@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.time.LocalDate;
 
 @Getter
-public class BookCommonFields {
+public class BookCommonFields implements DocumentIdentifiable {
     @JsonProperty("book_id")
     private String bookId;
     private String isbn13;          // isbn
@@ -39,5 +39,10 @@ public class BookCommonFields {
         if(!bookCategories.equals(BookCategories.EMPTY_CATEGORY))
             this.bookCategories = bookCategories;
         this.createdAt = createdAt.toString();
+    }
+
+    @Override
+    public String getDocumentId() {
+        return getBookId();
     }
 }

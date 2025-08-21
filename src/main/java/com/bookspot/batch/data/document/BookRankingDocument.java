@@ -43,4 +43,9 @@ public class BookRankingDocument extends BookCommonFields{
         this.rankingGender = rankingGender;
         this.loanIncrease = loanIncrease;
     }
+
+    @Override
+    public String getDocumentId() {
+        return null;
+    }
 }
