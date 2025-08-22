@@ -1,6 +1,7 @@
 package com.bookspot.batch.data.document;
 
 import com.bookspot.batch.data.BookCategories;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
@@ -42,6 +43,7 @@ public class BookCommonFields implements DocumentIdentifiable {
     }
 
     @Override
+    @JsonIgnore
     public String getDocumentId() {
         return getBookId();
     }
