@@ -126,7 +126,6 @@ public class Top50BooksJobConfig {
     }
 
     // TODO: 이전 주(4주전 작업한 내용) 삭제작업
-    // TODO: 추후에 나이, 성별에 따라 top 50 요청
     @Bean
     public Job weeklyTop50BooksJob(Step weeklyBookTop50SyncPartitionMasterStep) {
         return new JobBuilder("weeklyTop50BooksJob", jobRepository)
@@ -134,6 +133,7 @@ public class Top50BooksJobConfig {
                 .build();
     }
 
+    // TODO: 2달전 내용 삭제 작업
     @Bean
     public Job monthlyTop50BooksJob(Step monthlyBookTop50SyncPartitionMasterStep) {
         return new JobBuilder("monthlyTop50BooksJob", jobRepository)
