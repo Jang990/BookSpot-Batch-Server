@@ -34,14 +34,14 @@ public class Top50BooksBatchServerScheduler {
      * Daily: Weekly Monthly를 모두 검색
      */
 
-    @Scheduled(cron = "0 0 23 * * SUN", zone = "Asia/Seoul") // 매주 일요일 23:00
+//    @Scheduled(cron = "0 0 23 * * SUN", zone = "Asia/Seoul") // 매주 일요일 23:00
     public void fetchTop50Weekly() {
         LocalDate now = LocalDate.now();
         LocalDate referenceDate = localDateResolver.resolveMondayOfWeek(now);
         fetchTop50(referenceDate, RankingType.WEEKLY);
     }
 
-    @Scheduled(cron = "0 0 23 L * ?", zone = "Asia/Seoul") // 매월 마지막날 23:00
+//    @Scheduled(cron = "0 0 23 L * ?", zone = "Asia/Seoul") // 매월 마지막날 23:00
     public void fetchTop50Monthly() {
         LocalDate now = LocalDate.now();
         LocalDate referenceDate = localDateResolver.resolveFirstDayOfMonth(now);
