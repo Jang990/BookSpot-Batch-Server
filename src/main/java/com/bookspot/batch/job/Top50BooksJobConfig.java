@@ -7,6 +7,7 @@ import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
+import com.bookspot.batch.job.listener.alert.AlertJobListener;
 import com.bookspot.batch.step.book.api.Top50BookApiReader;
 import com.bookspot.batch.step.book.api.Top50BookPartitioner;
 import com.bookspot.batch.step.book.api.Top50BookWriter;
@@ -147,13 +148,15 @@ public class Top50BooksJobConfig {
             Step createBookDailyRankingIndexStep,
             Step weeklyBookTop50SyncPartitionMasterStep,
             Step monthlyBookTop50SyncPartitionMasterStep,
-            Step deletePrevBookDailyRankingIndexStep
+            Step deletePrevBookDailyRankingIndexStep,
+            AlertJobListener alertJobListener
     ) {
         return new JobBuilder("dailySyncTop50BooksJob", jobRepository)
                 .start(createBookDailyRankingIndexStep)
                 .next(weeklyBookTop50SyncPartitionMasterStep)
                 .next(monthlyBookTop50SyncPartitionMasterStep)
                 .next(deletePrevBookDailyRankingIndexStep)
+                .listener(alertJobListener)
                 .build();
     }
 
