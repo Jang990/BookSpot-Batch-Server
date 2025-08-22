@@ -105,7 +105,8 @@ public class BatchServerScheduler {
             log.error("Backend 웜업 작업 실패. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
             return;
         }
-
-        log.info("Backend 웜업 작업 완료. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
+        
+        if(failed > 0)
+            log.info("Backend 웜업 작업 완료. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
     }
 }
