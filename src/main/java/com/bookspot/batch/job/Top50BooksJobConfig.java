@@ -31,6 +31,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import java.io.IOException;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 
 @Configuration
@@ -252,7 +253,11 @@ public class Top50BooksJobConfig {
     ) {
         BookRankingIndexSpec bookRankingIndexSpec = indexSpecCreator.createRankingIndexSpec();
         return (contribution, chunkContext) -> {
-            String prevIndex = bookRankingIndexSpec.dailyIndexName(referenceDate.minusDays(1));
+            int diffDays = 1;
+            if(DayOfWeek.TUESDAY.equals(referenceDate.getDayOfWeek()))
+                diffDays = 2;
+
+            String prevIndex = bookRankingIndexSpec.dailyIndexName(referenceDate.minusDays(diffDays));
             String currentIndex = bookRankingIndexSpec.dailyIndexName(referenceDate);
 
             openSearchRepository.moveIndexAlias(
