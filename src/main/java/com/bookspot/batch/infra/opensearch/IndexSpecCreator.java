@@ -9,4 +9,8 @@ public class IndexSpecCreator {
     public BookIndexSpec create(LocalDate date) {
         return new BookIndexSpec(date);
     }
+
+    public BookRankingIndexSpec createRankingIndexSpec() {
+        return new BookRankingIndexSpec();
+    }
 }

@@ -13,11 +13,9 @@ public class BookCode {
     @Id
     private Integer id;
     private String name;
-    private Integer parentId;
 
-    public BookCode(Integer id, String name, Integer parentId) {
+    public BookCode(Integer id, String name) {
         this.id = id;
         this.name = name;
-        this.parentId = parentId;
     }
 }

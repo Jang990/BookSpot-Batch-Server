@@ -1,7 +1,7 @@
 package com.bookspot.batch.step;
 
 import com.bookspot.batch.data.BookCode;
-import com.bookspot.batch.data.BookDocument;
+import com.bookspot.batch.data.document.BookDocument;
 import com.bookspot.batch.infra.opensearch.*;
 import com.bookspot.batch.job.BookSpotParentJobConfig;
 import com.bookspot.batch.step.listener.StepLoggingListener;

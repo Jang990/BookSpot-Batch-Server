@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDate;
 import java.time.Year;
@@ -12,6 +14,7 @@ import java.time.Year;
 @Entity
 @Table(name="book")
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ConvertedUniqueBook {
     @Id
@@ -29,6 +32,9 @@ public class ConvertedUniqueBook {
 
     @CreatedDate
     private LocalDate createdAt;
+
+    @LastModifiedDate
+    private LocalDate updatedAt;
 
     public ConvertedUniqueBook(
             String isbn13, String title, String author,

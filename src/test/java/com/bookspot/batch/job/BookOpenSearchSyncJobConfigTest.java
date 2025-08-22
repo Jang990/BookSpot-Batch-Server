@@ -50,9 +50,9 @@ class BookOpenSearchSyncJobConfigTest {
 
     @BeforeEach
     void beforeEach() {
-        deleteIfExist(SERVICE_INDEX);
-        deleteIfExist(BACKUP_INDEX);
-        deleteIfExist(DELETABLE_INDEX);
+        OpenSearchTestHelper.deleteIfExist(repository, SERVICE_INDEX);
+        OpenSearchTestHelper.deleteIfExist(repository, BACKUP_INDEX);
+        OpenSearchTestHelper.deleteIfExist(repository, DELETABLE_INDEX);
 
         when(indexSpecCreator.create(any())).thenReturn(mockBookIndexSpec);
 
@@ -61,8 +61,8 @@ class BookOpenSearchSyncJobConfigTest {
         when(mockBookIndexSpec.backupIndexName()).thenReturn(BACKUP_INDEX);
         when(mockBookIndexSpec.deletableIndexName()).thenReturn(DELETABLE_INDEX);
 
-        createIndexIfExist(BACKUP_INDEX);
-        createIndexIfExist(DELETABLE_INDEX);
+        OpenSearchTestHelper.createIndexIfExist(repository, BACKUP_INDEX, BookIndexSpec.SCHEMA);
+        OpenSearchTestHelper.createIndexIfExist(repository, DELETABLE_INDEX, BookIndexSpec.SCHEMA);
         repository.addAlias(BACKUP_INDEX, SERVICE_ALIAS);
 
         TestInsertUtils.bookBuilder().id(1).insert(jdbcTemplate);
@@ -83,12 +83,6 @@ class BookOpenSearchSyncJobConfigTest {
                 .bookId(2).libraryId(3).insert(jdbcTemplate);
     }
 
-    private void deleteIfExist(String indexName) {
-        try {
-            repository.delete(indexName);
-        } catch (OpenSearchException e) {}
-    }
-
     @Test
     void 정상처리() throws Exception {
         jobLauncherTestUtils.setJob(bookOpenSearchSyncJob);
@@ -101,9 +95,4 @@ class BookOpenSearchSyncJobConfigTest {
         assertEquals(jobExecution.getExitStatus(), ExitStatus.COMPLETED);
     }
 
-    private void createIndexIfExist(String indexName) {
-        try {
-            repository.createIndex(indexName, BookIndexSpec.SCHEMA);
-        } catch (RuntimeException e) {}
-    }
 }

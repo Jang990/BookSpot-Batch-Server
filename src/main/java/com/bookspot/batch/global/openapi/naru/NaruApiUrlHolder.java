@@ -9,4 +9,7 @@ import org.springframework.stereotype.Service;
 public class NaruApiUrlHolder {
     @Value("${api.naru.url.library}")
     private String libraryUrl;
+
+    @Value("${api.naru.url.top50Books}")
+    private String top50Books;
 }

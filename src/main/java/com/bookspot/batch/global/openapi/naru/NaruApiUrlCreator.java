@@ -1,8 +1,11 @@
 package com.bookspot.batch.global.openapi.naru;
 
+import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
@@ -14,13 +17,27 @@ public class NaruApiUrlCreator {
     private final NaruApiUrlHolder naruApiUrlHolder;
 
     public String buildLibraryApi(Pageable pageable) {
-        StringBuilder builder = new StringBuilder(naruApiUrlHolder.getLibraryUrl());
+        return naruApiUrlHolder.getLibraryUrl()
+                + getQuerySeparator(naruApiUrlHolder.getLibraryUrl())
+                + toPageQuery(pageable);
+    }
 
-        builder.append(
-                getQuerySeparator(builder.toString()));
-        return builder.append(
-                PAGE_SIZE_OPTION_TEMPLATE.formatted(
-                        pageable.getPageNumber(), pageable.getPageSize())).toString();
+    public String buildWeeklyTop50Api(
+            LocalDate referenceDAte,
+            RankingConditions rankingConditions
+    ) {
+        return new NaruTop50ApiBuilder(
+                naruApiUrlHolder.getTop50Books(),
+                referenceDAte,
+                rankingConditions
+        ).build();
+    }
+
+    private String toPageQuery(Pageable pageable) {
+        return PAGE_SIZE_OPTION_TEMPLATE.formatted(
+                pageable.getPageNumber(),
+                pageable.getPageSize()
+        );
     }
 
     private String getQuerySeparator(String url) {

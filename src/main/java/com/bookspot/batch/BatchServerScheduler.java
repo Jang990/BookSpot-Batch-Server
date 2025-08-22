@@ -1,9 +1,13 @@
 package com.bookspot.batch;
 
+import com.bookspot.batch.data.document.RankingAge;
+import com.bookspot.batch.data.document.RankingGender;
+import com.bookspot.batch.data.document.RankingType;
 import com.bookspot.batch.job.launcher.CustomJobLauncher;
 import com.bookspot.batch.job.listener.alert.JobAlertMessageConvertor;
 import com.bookspot.batch.service.SimpleRequester;
 import com.bookspot.batch.service.alert.SlackAlertService;
+import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import com.bookspot.batch.web.JobStatusService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,11 +17,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.ResourceAccessException;
 
-import java.net.SocketTimeoutException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
-
+/**
+ * @see com.bookspot.batch.global.config.TaskExecutorConfig
+ * @see com.bookspot.batch.global.config.SchedulerConfig
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -99,10 +105,8 @@ public class BatchServerScheduler {
             log.error("Backend 웜업 작업 실패. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
             return;
         }
-
-        log.info("Backend 웜업 작업 완료. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
+        
+        if(failed > 0)
+            log.info("Backend 웜업 작업 완료. - {}개의 요청 중 {}개의 요청 실패", urls.size(), failed);
     }
-
-
-
 }
