@@ -9,6 +9,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class TestQueryUtil {
 
     public static List<LibraryStock> findStocks(JdbcTemplate jdbcTemplate) {
         return jdbcTemplate.query("""
-                        SELECT library_id, book_id, created_at, updated_at
+                        SELECT library_id, book_id, created_at, updated_at_time
                         FROM library_stock
                         """, stockMapper()
         );
@@ -44,7 +45,7 @@ public class TestQueryUtil {
 
     public static List<LibraryStock> findStocks(JdbcTemplate jdbcTemplate, long libraryId) {
         return jdbcTemplate.query("""
-                        SELECT library_id, book_id, created_at, updated_at
+                        SELECT library_id, book_id, created_at, updated_at_time
                         FROM library_stock
                         WHERE library_id = ?
                         """, stockMapper(), libraryId
@@ -65,7 +66,7 @@ public class TestQueryUtil {
 
             ReflectionTestUtils.setField(
                     result, "updatedAt",
-                    rs.getObject("updated_at", LocalDate.class)
+                    rs.getObject("updated_at_time", LocalDateTime.class)
             );
             return result;
         };

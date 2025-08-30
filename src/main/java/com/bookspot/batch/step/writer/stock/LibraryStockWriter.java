@@ -11,8 +11,8 @@ public class LibraryStockWriter extends JdbcBatchItemWriter<LibraryStock> {
         setDataSource(dataSource);
         setSql("""
                 INSERT INTO library_stock
-                (library_id, book_id, created_at)
-                VALUES (?, ?, NOW(6));
+                (library_id, book_id, created_at, updated_at_time)
+                VALUES (?, ?, NOW(6), NOW(6));
                 """);
         setItemPreparedStatementSetter((stock, ps) -> {
             ps.setLong(1, stock.getLibraryId());

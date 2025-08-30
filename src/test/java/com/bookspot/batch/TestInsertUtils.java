@@ -117,7 +117,7 @@ public class TestInsertUtils {
 
         private static final String INSERT_SQL = """
                 INSERT INTO library_stock
-                (book_id, library_id, created_at, updated_at)
+                (book_id, library_id, created_at, updated_at_time)
                 VALUES(?, ?, ?, ?);
                 """;
 
