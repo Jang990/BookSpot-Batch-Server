@@ -42,14 +42,14 @@ public class TestInsertUtils {
     public static class BookBuilder {
         private static final String WITHOUT_ID_QUERY ="""
                 INSERT INTO bookspot_test.book
-                (isbn13, title, loan_count, created_at, updated_at)
-                VALUES(?, ?, ?, ?, NOW(6));
+                (isbn13, title, loan_count, created_at, updated_at, monthly_loan_increase)
+                VALUES(?, ?, ?, ?, NOW(6), ?);
                 """;
 
         private static final String WITH_ID_QUERY ="""
                 INSERT INTO bookspot_test.book
-                (id, isbn13, title, loan_count, created_at, updated_at)
-                VALUES(?, ?, ?, ?, ?, NOW(6));
+                (id, isbn13, title, loan_count, created_at, updated_at, monthly_loan_increase)
+                VALUES(?, ?, ?, ?, ?, NOW(6), ?);
                 """;
 
         private Long id = null;
@@ -57,6 +57,7 @@ public class TestInsertUtils {
         private String title = "Sample Title";
         private LocalDate createdAt = LocalDate.now();
         private int loanCount = 0;
+        private int monthlyLoanIncrement = 0;
 
         public BookBuilder id(long id) {
             this.id = id;
@@ -78,6 +79,11 @@ public class TestInsertUtils {
             return this;
         }
 
+        public BookBuilder monthlyLoanIncrement(int monthlyLoanIncrement) {
+            this.monthlyLoanIncrement = monthlyLoanIncrement;
+            return this;
+        }
+
         public BookBuilder createdAt(LocalDate createdAt) {
             this.createdAt = createdAt;
             return this;
@@ -93,6 +99,7 @@ public class TestInsertUtils {
                             ps.setString(2, title);
                             ps.setInt(3, loanCount);
                             ps.setDate(4, Date.valueOf(createdAt));
+                            ps.setInt(5, monthlyLoanIncrement);
                         }
                 );
                 return;
@@ -104,6 +111,7 @@ public class TestInsertUtils {
                         ps.setString(3, title);
                         ps.setInt(4, loanCount);
                         ps.setDate(5, Date.valueOf(createdAt));
+                        ps.setInt(6, monthlyLoanIncrement);
                     }
             );
         }

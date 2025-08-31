@@ -157,6 +157,7 @@ CREATE TABLE `book` (
   `loan_count` int NOT NULL DEFAULT '0',
   `created_at` datetime(6) NOT NULL,
   `updated_at` datetime(6) NOT NULL,
+  `monthly_loan_increase` INT UNSIGNED DEFAULT '0',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UKdjx0bsw5qtlpa3ertiyf8j0bc` (`isbn13`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;

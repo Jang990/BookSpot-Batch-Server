@@ -52,15 +52,17 @@ public class SyncLoanCountStepConfig {
         return new JdbcBatchItemWriterBuilder<AggregatedBook>()
                 .dataSource(dataSource)
                 .sql("""
-                        UPDATE book
-                        SET loan_count = ?
-                        WHERE isbn13 = ?
-                        """)
-//                monthlyLoanIncrease = loan_count + VALUES(loan_count);
+                    UPDATE book
+                    SET monthly_loan_increase = GREATEST(0, ? - loan_count),
+                        loan_count = ?
+                    WHERE isbn13 = ?
+                """)
                 .itemPreparedStatementSetter(
                         (book, ps) -> {
-                            ps.setInt(1, book.loanCount());
-                            ps.setString(2, book.isbn13());
+                            int newLoanCount = book.loanCount();
+                            ps.setInt(1, newLoanCount);  // 증가량 계산용
+                            ps.setInt(2, newLoanCount);  // 최신 loan_count
+                            ps.setString(3, book.isbn13());
                         })
                 .build();
     }
