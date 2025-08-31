@@ -9,7 +9,7 @@ public record BookIndexSpec(LocalDate base) {
     public static final String SCHEMA = """
             {
                 "settings": {
-                    "number_of_shards": 2,
+                    "number_of_shards": 1,
                     "number_of_replicas": 0,
                     "analysis": {
                         "tokenizer": {
@@ -51,6 +51,13 @@ public record BookIndexSpec(LocalDate base) {
                                         "lowercase",
                                         "min_length_2"
                                     ]
+                                },
+                                "ws_analyzer": {
+                                    "type":      "custom",
+                                    "tokenizer": "ws_tokenizer",
+                                    "filter": [
+                                        "lowercase"
+                                    ]
                                 }
                         }
                     }
@@ -86,7 +93,7 @@ public record BookIndexSpec(LocalDate base) {
                         },
                         "author": {
                             "type": "text",
-                            "analyzer": "my_nori_analyzer"
+                            "analyzer": "ws_analyzer"
                         },
                         "publication_year": {
                             "type": "short"
