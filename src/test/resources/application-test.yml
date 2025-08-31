@@ -5,9 +5,6 @@ opensearch:
 
 backend.url: http://localhost:8080
 spring:
-  profiles:
-    include:
-      - "api"
   sql.init.mode: always # schema.sql data.sql 실행
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

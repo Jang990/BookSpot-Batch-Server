@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "api"})
 @Sql(scripts = "classpath:schema.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 class BookWithLibraryIdReaderTest {
     @Autowired

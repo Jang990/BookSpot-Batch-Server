@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 @SpringBatchTest
-@ActiveProfiles("test")
+@ActiveProfiles({"test", "api"})
 @Sql(scripts = "classpath:schema.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public @interface BatchJobTest {
 }
