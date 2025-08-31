@@ -104,6 +104,9 @@ public record BookIndexSpec(LocalDate base) {
                         "loan_count": {
                             "type": "integer"
                         },
+                        "monthly_loan_increase": {
+                            "type": "integer"
+                        },
                         "library_ids": {
                             "type": "keyword"
                         },

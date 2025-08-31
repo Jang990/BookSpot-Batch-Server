@@ -15,9 +15,13 @@ public class BookDocument extends BookCommonFields{
     @JsonProperty("loan_count")
     private int loanCount;
 
+    @JsonProperty("monthly_loan_increase")
+    private int monthlyLoanIncrease;
+
     public BookDocument(
             String bookId, String isbn13, String title,
-            String author, String publisher, int loanCount,
+            String author, String publisher,
+            int loanCount, int monthlyLoanIncrease,
             Integer subjectCode, Integer publicationYear,
             List<String> libraryIds, BookCategories bookCategories,
             LocalDate createdAt
@@ -29,5 +33,6 @@ public class BookDocument extends BookCommonFields{
         );
         this.libraryIdsArrayString = libraryIds;
         this.loanCount = loanCount;
+        this.monthlyLoanIncrease = monthlyLoanIncrease;
     }
 }
