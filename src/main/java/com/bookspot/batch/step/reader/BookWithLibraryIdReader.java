@@ -116,6 +116,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
                         book.getAuthor(),
                         book.getPublisher(),
                         book.getLoanCount(),
+                        book.getMonthlyLoanIncrease(),
                         book.getSubjectCode(),
                         book.getPublicationYear() == null ? null : book.getPublicationYear().getValue(),
                         libraryIdMap.getOrDefault(book.getId(), new LinkedList<>()),

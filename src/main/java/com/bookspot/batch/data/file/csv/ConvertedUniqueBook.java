@@ -29,6 +29,7 @@ public class ConvertedUniqueBook {
 //    private int numberOfBooks;  // 도서권수
     private Integer subjectCode; // 주제분류번호
     private Year publicationYear;
+    private int monthlyLoanIncrease;
 
     @CreatedDate
     private LocalDate createdAt;

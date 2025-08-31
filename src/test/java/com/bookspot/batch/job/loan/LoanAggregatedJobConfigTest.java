@@ -41,9 +41,9 @@ class LoanAggregatedJobConfigTest {
 
     @BeforeEach
     void setup() {
-        TestInsertUtils.bookBuilder().id(1001L).isbn13("0000000001001").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(1002L).isbn13("0000000001002").insert(jdbcTemplate);
-        TestInsertUtils.bookBuilder().id(1003L).isbn13("0000000001003").insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().id(1001L).loanCount(100).monthlyLoanIncrement(50).isbn13("0000000001001").insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().id(1002L).loanCount(100).isbn13("0000000001002").insert(jdbcTemplate);
+        TestInsertUtils.bookBuilder().id(1003L).loanCount(100).isbn13("0000000001003").insert(jdbcTemplate);
     }
 
     @AfterEach
@@ -72,9 +72,17 @@ class LoanAggregatedJobConfigTest {
         );
         assertTrue(Files.exists(Path.of(outputFilePath)));
 
-        assertEquals(123, findBook(1001L).getLoanCount());
-        assertEquals(58, findBook(1002L).getLoanCount());
-        assertEquals(1512, findBook(1003L).getLoanCount());
+        ConvertedUniqueBook book1001 = findBook(1001L);
+        assertEquals(123, book1001.getLoanCount());
+        assertEquals(23, book1001.getMonthlyLoanIncrease());
+
+        ConvertedUniqueBook book1002 = findBook(1002L);
+        assertEquals(58, book1002.getLoanCount());
+        assertEquals(0, book1002.getMonthlyLoanIncrease());
+
+        ConvertedUniqueBook book1003 = findBook(1003L);
+        assertEquals(1512, book1003.getLoanCount());
+        assertEquals(1412, book1003.getMonthlyLoanIncrease());
     }
 
     private void assertFile(List<AggregatedBook> expected, String filePath) throws Exception {
