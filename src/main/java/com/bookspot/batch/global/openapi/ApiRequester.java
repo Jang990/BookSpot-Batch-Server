@@ -1,8 +1,10 @@
 package com.bookspot.batch.global.openapi;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+@Slf4j
 @Component
 public class ApiRequester {
     private final WebClient client;
@@ -14,6 +16,7 @@ public class ApiRequester {
     }
 
     public <T> T get(String url, Class<T> responseType) {
+        log.info("{}로 요청 시도", url);
         return client.get()
                 .uri(url)
                 .retrieve()
