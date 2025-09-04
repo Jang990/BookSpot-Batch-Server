@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class TitleEllipsisConverter implements ItemProcessor<StockCsvData, StockCsvData> {
-    private static final int MAX_TITLE_LENGTH = 200;
+    public static final int MAX_TITLE_LENGTH = 200;
     private final TextEllipsiser textEllipsiser;
 
     @Override
