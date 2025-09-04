@@ -8,7 +8,7 @@ public record Top50Book(
         int ranking, String title,
         String authors, String publisher,
         Year publicationYear, String isbn13,
-        String volume, double classNumber /* 813.26 */,
+        String volume, Integer classNumber /* 813.26 */,
         int loanCountInPeriod
 ) {
     public ConvertedUniqueBook toEntity() {
@@ -16,7 +16,7 @@ public record Top50Book(
                 isbn13, title, authors,
                 publisher, volume,
                 loanCountInPeriod,
-                (int) classNumber,
+                classNumber,
                 publicationYear
         );
     }
