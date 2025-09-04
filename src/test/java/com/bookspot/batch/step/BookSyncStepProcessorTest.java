@@ -6,6 +6,7 @@ import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.TitleEllipsisConverter;
 import com.bookspot.batch.step.processor.csv.IsbnValidator;
 import com.bookspot.batch.step.processor.StockCsvToBookConvertor;
+import com.bookspot.batch.step.processor.csv.TextEllipsiser;
 import com.bookspot.batch.step.processor.csv.book.BookClassificationParser;
 import com.bookspot.batch.step.processor.csv.book.YearParser;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
@@ -37,7 +38,7 @@ public class BookSyncStepProcessorTest {
         processor = config.bookSyncProcessor(
                 new IsbnValidationFilter(new IsbnValidator(), 1L),
                 new InMemoryIsbnFilter(isbnSet),
-                new TitleEllipsisConverter(),
+                new TitleEllipsisConverter(new TextEllipsiser()),
                 new StockCsvToBookConvertor(new BookClassificationParser(), new YearParser())
         );
     }

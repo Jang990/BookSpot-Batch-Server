@@ -1,6 +1,7 @@
 package com.bookspot.batch.step.processor;
 
 import com.bookspot.batch.data.file.csv.StockCsvData;
+import com.bookspot.batch.step.processor.csv.TextEllipsiser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
@@ -11,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class TitleEllipsisConverter implements ItemProcessor<StockCsvData, StockCsvData> {
     private static final int MAX_TITLE_LENGTH = 200;
-    public static final String ELLIPSIS = "...";
+    private final TextEllipsiser textEllipsiser;
 
     @Override
     public StockCsvData process(StockCsvData item) throws Exception {
@@ -20,7 +21,7 @@ public class TitleEllipsisConverter implements ItemProcessor<StockCsvData, Stock
             return item;
 
         return new StockCsvData(
-                ellipsize(item.getTitle()),
+                textEllipsiser.ellipsize(item.getTitle(), MAX_TITLE_LENGTH),
                 item.getAuthor(),
                 item.getPublisher(),
                 item.getPublicationYear(),
@@ -30,13 +31,5 @@ public class TitleEllipsisConverter implements ItemProcessor<StockCsvData, Stock
                 item.getNumberOfBooks(),
                 item.getLoanCount()
         );
-    }
-
-    private String ellipsize(String title) {
-        return title.substring(0, textLength()).concat(ELLIPSIS);
-    }
-
-    private int textLength() {
-        return MAX_TITLE_LENGTH - ELLIPSIS.length();
     }
 }
