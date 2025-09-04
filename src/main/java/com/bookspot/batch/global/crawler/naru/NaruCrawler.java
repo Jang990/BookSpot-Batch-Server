@@ -16,10 +16,12 @@ public class NaruCrawler {
     private static final String LIBRARY_LIST_PATH = DOMAIN.concat("/openDataL");
     private static final String LIBRARY_DETAIL_PATH = DOMAIN.concat("/openDataV");
 
-    private final String CSS_QUERY_DATE_TEXT = "tr td:nth-child(3)";
+
+    private final String CSS_QUERY_DATE_TEXT = "body > div.sub_contents_wrap > div > div:nth-child(3) > div:nth-child(2) > div.l_c_info > ul > li";
 
     private static final String CSS_QUERY_CSRF_TOKEN = "input[name=_csrf]";
     private static final String VALUE_CSRF_TOKEN = "value";
+
 
     private final String CSS_QUERY_CSV_FILE_LINK = "a.download_link:nth-child(1)";
 //    private final String CSS_QUERY_CSV_FILE_LINK = "#sb-site > section > div.sub_container > div:nth-child(5) > table > tbody > tr:nth-child(2) > td.data_type.br_none > a"; // 이전달 css
@@ -50,7 +52,7 @@ public class NaruCrawler {
 
         return new CsvFilePath(
                 DOMAIN.concat(findCurrentCsvFileLink(result)),
-                LocalDate.parse(result.findElementText(CSS_QUERY_DATE_TEXT))
+                LocalDate.parse(result.findElementText(CSS_QUERY_DATE_TEXT).replace("데이터 제공일", "").trim())
         );
     }
 
