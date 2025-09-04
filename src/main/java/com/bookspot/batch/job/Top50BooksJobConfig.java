@@ -8,9 +8,14 @@ import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
 import com.bookspot.batch.job.listener.alert.AlertJobListener;
+import com.bookspot.batch.step.book.api.Top50BookApiProcessor;
 import com.bookspot.batch.step.book.api.Top50BookApiReader;
 import com.bookspot.batch.step.book.api.Top50BookPartitioner;
 import com.bookspot.batch.step.book.api.Top50BookWriter;
+import com.bookspot.batch.step.processor.csv.IsbnValidator;
+import com.bookspot.batch.step.processor.csv.TextEllipsiser;
+import com.bookspot.batch.step.processor.csv.book.BookClassificationParser;
+import com.bookspot.batch.step.processor.csv.book.YearParser;
 import com.bookspot.batch.step.reader.api.top50.RankingConditions;
 import com.bookspot.batch.step.reader.api.top50.WeeklyTop50ApiRequester;
 import com.bookspot.batch.step.service.BookCodeResolver;
@@ -68,6 +73,11 @@ public class Top50BooksJobConfig {
 
     private final IndexSpecCreator indexSpecCreator;
 
+    private final YearParser yearParser;
+    private final IsbnValidator isbnValidator;
+    private final TextEllipsiser textEllipsiser;
+    private final BookClassificationParser classificationParser;
+
     @Bean
     @StepScope
     public Top50BookApiReader top50BookApiReader(
@@ -84,6 +94,16 @@ public class Top50BooksJobConfig {
                         RankingAge.valueOf(age)
                 ),
                 weeklyTop50ApiRequester
+        );
+    }
+
+    @Bean
+    public Top50BookApiProcessor top50BookApiProcessor() {
+        return new Top50BookApiProcessor(
+                yearParser,
+                isbnValidator,
+                textEllipsiser,
+                classificationParser
         );
     }
 

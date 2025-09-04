@@ -10,13 +10,11 @@ import com.bookspot.batch.step.processor.csv.book.YearParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
-import org.springframework.stereotype.Component;
 
 import java.time.DateTimeException;
 import java.time.Year;
 
 @Slf4j
-@Component
 @RequiredArgsConstructor
 public class Top50BookApiProcessor implements ItemProcessor<Top50BookStrings, Top50Book> {
     private final YearParser yearParser;
