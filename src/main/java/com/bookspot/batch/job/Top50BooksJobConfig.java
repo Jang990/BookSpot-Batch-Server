@@ -1,6 +1,7 @@
 package com.bookspot.batch.job;
 
 import com.bookspot.batch.data.Top50Book;
+import com.bookspot.batch.data.Top50BookStrings;
 import com.bookspot.batch.data.document.RankingAge;
 import com.bookspot.batch.data.document.RankingGender;
 import com.bookspot.batch.data.document.RankingType;
@@ -141,8 +142,9 @@ public class Top50BooksJobConfig {
     @Bean
     public Step bookTop50SyncStep() {
         return new StepBuilder("bookTop50SyncStep", jobRepository)
-                .<Top50Book, Top50Book>chunk(TOP_50, transactionManager)
+                .<Top50BookStrings, Top50Book>chunk(TOP_50, transactionManager)
                 .reader(top50BookApiReader(null, null, null, null))
+                .processor(top50BookApiProcessor())
                 .writer(top50BookWriter(null, null, null, null, null))
                 .build();
     }

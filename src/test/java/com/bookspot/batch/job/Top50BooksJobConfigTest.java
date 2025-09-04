@@ -2,6 +2,7 @@ package com.bookspot.batch.job;
 
 import com.bookspot.batch.TestInsertUtils;
 import com.bookspot.batch.data.Top50Book;
+import com.bookspot.batch.data.Top50BookStrings;
 import com.bookspot.batch.infra.opensearch.BookRankingIndexSpec;
 import com.bookspot.batch.infra.opensearch.IndexSpecCreator;
 import com.bookspot.batch.infra.opensearch.OpenSearchRepository;
@@ -72,9 +73,9 @@ class Top50BooksJobConfigTest {
 
         when(top50ApiRequester.findTop50(any(), any())).thenReturn(
                 List.of(
-                        createTop50BookResponse(1, "1111111111111"),
-                        createTop50BookResponse(2, "2222222222222"),
-                        createTop50BookResponse(3, "3333333333333")
+                        createTop50BookResponse("1", "1111111111111"),
+                        createTop50BookResponse("2", "2222222222222"),
+                        createTop50BookResponse("3", "3333333333333")
                 )
         );
 
@@ -93,12 +94,11 @@ class Top50BooksJobConfigTest {
         assertFalse(bookRepository.findByIsbn13In(List.of("3333333333333")).isEmpty());
     }
 
-    private Top50Book createTop50BookResponse(int rank, String isbn13) {
-        String str = Integer.toString(rank);
-        return new Top50Book(
-                rank, "1", str,
-                str, Year.of(rank), isbn13,
-                str, Double.parseDouble(str), 0
+    private Top50BookStrings createTop50BookResponse(String rankStr, String isbn13) {
+        return new Top50BookStrings(
+                rankStr, "1", rankStr,
+                rankStr, rankStr, isbn13,
+                rankStr, rankStr, rankStr
         );
     }
 

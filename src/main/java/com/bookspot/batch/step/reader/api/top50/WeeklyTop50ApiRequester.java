@@ -2,6 +2,7 @@ package com.bookspot.batch.step.reader.api.top50;
 
 
 import com.bookspot.batch.data.Top50Book;
+import com.bookspot.batch.data.Top50BookStrings;
 import com.bookspot.batch.global.openapi.ApiRequester;
 import com.bookspot.batch.global.openapi.naru.NaruApiUrlCreator;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ public class WeeklyTop50ApiRequester {
     private final ApiRequester apiRequester;
     private final NaruApiUrlCreator naruApiUrlCreator;
 
-    public List<Top50Book> findTop50(
+    public List<Top50BookStrings> findTop50(
             LocalDate baseDate,
             RankingConditions rankingConditions
     ) {
@@ -31,14 +32,14 @@ public class WeeklyTop50ApiRequester {
                 .toList();
     }
 
-    private Top50Book convert(WeeklyTop50ResponseSpec.Doc response) {
-        return new Top50Book(
+    private Top50BookStrings convert(WeeklyTop50ResponseSpec.Doc response) {
+        return new Top50BookStrings(
                 response.getRanking(),
-                response.getBookname().trim(),
-                response.getAuthors().trim(),
-                response.getPublisher().trim(),
-                Year.of(response.getPublication_year()),
-                response.getIsbn13().trim(),
+                response.getBookname(),
+                response.getAuthors(),
+                response.getPublisher(),
+                response.getPublication_year(),
+                response.getIsbn13(),
                 response.getVol(),
                 response.getClass_no(),
                 response.getLoan_count()
