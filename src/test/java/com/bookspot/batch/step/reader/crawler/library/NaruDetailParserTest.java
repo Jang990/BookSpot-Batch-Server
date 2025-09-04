@@ -3,6 +3,7 @@ package com.bookspot.batch.step.reader.crawler.library;
 import com.bookspot.batch.global.crawler.common.JsoupCrawler;
 import com.bookspot.batch.global.crawler.naru.NaruPagingUrlBuilder;
 import com.bookspot.batch.data.crawler.LibraryNaruDetail;
+import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
@@ -15,7 +16,7 @@ class NaruDetailParserTest {
             new NaruPagingUrlBuilder(),
             new LibraryListPageConvertor());
 
-//    @Test
+    @Test
     void test() {
         List<LibraryNaruDetail> result = parser.parseDetail(PageRequest.of(1, 1));
 

@@ -21,7 +21,7 @@ public class NaruDetailParser {
     private final JsoupCrawler jsoupCrawler;
     private final NaruPagingUrlBuilder urlBuilder;
     private final LibraryListPageConvertor libraryListPageConvertor;
-    private final String LIBRARY_LIST_URL = "https://www.data4library.kr/libDataL";
+    private final String LIBRARY_LIST_URL = "https://www.data4library.kr/libDataL/search";
 
     public List<LibraryNaruDetail> parseDetail(Pageable pageable) {
         CrawlingResult crawling = jsoupCrawler.get(urlBuilder.build(LIBRARY_LIST_URL, pageable));

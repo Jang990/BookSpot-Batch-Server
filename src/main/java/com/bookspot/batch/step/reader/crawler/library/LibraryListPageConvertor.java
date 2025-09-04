@@ -18,15 +18,15 @@ class LibraryListPageConvertor {
     }
 
     private String detailSelector(int num) {
-        return NaruDetailPageSpec.DETAIL_SELECTOR_TEMPLATE.formatted(num);
+        return NaruDetailPageSpec.DETAIL_SELECTOR_TEMPLATE.formatted(num + NaruDetailPageSpec.ADDED_IDX);
     }
 
     private String addressSelector(int num) {
-        return NaruDetailPageSpec.ADDRESS_SELECTOR_TEMPLATE.formatted(num);
+        return NaruDetailPageSpec.ADDRESS_SELECTOR_TEMPLATE.formatted(num + NaruDetailPageSpec.ADDED_IDX);
     }
 
     private String nameSelector(int num) {
-        return NaruDetailPageSpec.NAME_SELECTOR_TEMPLATE.formatted(num);
+        return NaruDetailPageSpec.NAME_SELECTOR_TEMPLATE.formatted(num + NaruDetailPageSpec.ADDED_IDX);
     }
 
     // detailView('8517'); -> 8517
