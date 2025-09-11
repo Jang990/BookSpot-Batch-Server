@@ -42,14 +42,14 @@ public class TestInsertUtils {
     public static class BookBuilder {
         private static final String WITHOUT_ID_QUERY ="""
                 INSERT INTO bookspot_test.book
-                (isbn13, title, loan_count, created_at, updated_at, monthly_loan_increase)
-                VALUES(?, ?, ?, ?, NOW(6), ?);
+                (isbn13, title, loan_count, created_at, updated_at, monthly_loan_increase, subject_code)
+                VALUES(?, ?, ?, ?, NOW(6), ?, ?);
                 """;
 
         private static final String WITH_ID_QUERY ="""
                 INSERT INTO bookspot_test.book
-                (id, isbn13, title, loan_count, created_at, updated_at, monthly_loan_increase)
-                VALUES(?, ?, ?, ?, ?, NOW(6), ?);
+                (id, isbn13, title, loan_count, created_at, updated_at, monthly_loan_increase, subject_code)
+                VALUES(?, ?, ?, ?, ?, NOW(6), ?, ?);
                 """;
 
         private Long id = null;
@@ -58,6 +58,7 @@ public class TestInsertUtils {
         private LocalDate createdAt = LocalDate.now();
         private int loanCount = 0;
         private int monthlyLoanIncrement = 0;
+        private String subjectCode = null;
 
         public BookBuilder id(long id) {
             this.id = id;
@@ -89,6 +90,11 @@ public class TestInsertUtils {
             return this;
         }
 
+        public BookBuilder subjectCode(String subjectCode) {
+            this.subjectCode = subjectCode;
+            return this;
+        }
+
         public void insert(JdbcTemplate jdbcTemplate) {
             if (id == null && isbn13 == null)
                 throw new IllegalArgumentException("책 Insert 시 ISBN13과 ID 둘 중 하나는 필수 설정");
@@ -100,6 +106,7 @@ public class TestInsertUtils {
                             ps.setInt(3, loanCount);
                             ps.setDate(4, Date.valueOf(createdAt));
                             ps.setInt(5, monthlyLoanIncrement);
+                            ps.setString(6, subjectCode);
                         }
                 );
                 return;
@@ -112,6 +119,7 @@ public class TestInsertUtils {
                         ps.setInt(4, loanCount);
                         ps.setDate(5, Date.valueOf(createdAt));
                         ps.setInt(6, monthlyLoanIncrement);
+                        ps.setString(7, subjectCode);
                     }
             );
         }
@@ -122,11 +130,12 @@ public class TestInsertUtils {
         private Long libraryId;
         private LocalDate createdAt = LocalDate.now();
         private LocalDate updatedAt = LocalDate.now();
+        private String subjectCode = null;
 
         private static final String INSERT_SQL = """
                 INSERT INTO library_stock
-                (book_id, library_id, created_at, updated_at_time)
-                VALUES(?, ?, ?, ?);
+                (book_id, library_id, created_at, updated_at_time, subject_code)
+                VALUES(?, ?, ?, ?, ?);
                 """;
 
         public LibraryStockBuilder bookId(long bookId) {
@@ -149,6 +158,11 @@ public class TestInsertUtils {
             return this;
         }
 
+        public LibraryStockBuilder subjectCode(String subjectCode) {
+            this.subjectCode = subjectCode;
+            return this;
+        }
+
         public void insert(JdbcTemplate jdbcTemplate) {
             if (bookId == null && libraryId == null)
                 throw new IllegalArgumentException("도서관 재고에 (책ID, 도서관ID)는 필수 설정");
@@ -158,6 +172,7 @@ public class TestInsertUtils {
                         ps.setLong(2, libraryId);
                         ps.setDate(3, Date.valueOf(createdAt));
                         ps.setDate(4, Date.valueOf(updatedAt));
+                        ps.setString(5, subjectCode);
                     }
             );
         }

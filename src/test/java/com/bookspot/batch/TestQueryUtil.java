@@ -37,7 +37,7 @@ public class TestQueryUtil {
 
     public static List<LibraryStock> findStocks(JdbcTemplate jdbcTemplate) {
         return jdbcTemplate.query("""
-                        SELECT library_id, book_id, created_at, updated_at_time
+                        SELECT library_id, book_id, subject_code, created_at, updated_at_time
                         FROM library_stock
                         """, stockMapper()
         );
@@ -45,10 +45,31 @@ public class TestQueryUtil {
 
     public static List<LibraryStock> findStocks(JdbcTemplate jdbcTemplate, long libraryId) {
         return jdbcTemplate.query("""
-                        SELECT library_id, book_id, created_at, updated_at_time
+                        SELECT library_id, book_id, subject_code, created_at, updated_at_time
                         FROM library_stock
                         WHERE library_id = ?
                         """, stockMapper(), libraryId
+        );
+    }
+
+    public static LibraryStock findSingleStock(JdbcTemplate jdbcTemplate, long libraryId, long bookId) {
+        return jdbcTemplate.queryForObject("""
+                        SELECT library_id, book_id, subject_code, created_at, updated_at_time
+                        FROM library_stock
+                        WHERE library_id = ? and book_id = ?
+                        """, stockMapper(), libraryId, bookId
+        );
+    }
+
+    public static boolean existsStock(JdbcTemplate jdbcTemplate, long libraryId, long bookId) {
+        return Boolean.TRUE.equals(
+                jdbcTemplate.queryForObject("""
+                                    SELECT EXISTS (
+                            SELECT 1
+                            FROM library_stock
+                            WHERE library_id = ? AND book_id = ?
+                        )
+                        """, Boolean.class, libraryId, bookId)
         );
     }
 
@@ -56,7 +77,8 @@ public class TestQueryUtil {
         return (rs, rowNum) -> {
             LibraryStock result = new LibraryStock(
                     rs.getLong("library_id"),
-                    rs.getLong("book_id")
+                    rs.getLong("book_id"),
+                    rs.getString("subject_code")
             );
 
             ReflectionTestUtils.setField(

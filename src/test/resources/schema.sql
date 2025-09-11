@@ -169,6 +169,7 @@ CREATE TABLE `library_stock` (
   `library_id` bigint NOT NULL,
   `created_at` date DEFAULT NULL,
   `updated_at_time` datetime DEFAULT NULL,
+  `subject_code` VARCHAR(40) NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `library_stock_un` (`book_id`,`library_id`),
   KEY `library_stock_FK_1` (`library_id`),

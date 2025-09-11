@@ -13,7 +13,8 @@ public class StockCleansingFileWriter extends FlatFileItemWriter<LibraryStock> {
         setLineAggregator(
                 item -> CleansingStockCsvSpec.createLine(
                         item.getBookId(),
-                        item.getLibraryId()
+                        item.getLibraryId(),
+                        item.getSubjectCode()
                 )
         );
     }

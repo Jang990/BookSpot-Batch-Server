@@ -23,12 +23,7 @@ public class CleansingStockFileReader extends FlatFileItemReader<LibraryStock> {
     private DefaultLineMapper<LibraryStock> lineMapper(DelimitedLineTokenizer tokenizer) {
         DefaultLineMapper<LibraryStock> lineMapper = new DefaultLineMapper<>();
         lineMapper.setLineTokenizer(tokenizer);
-        lineMapper.setFieldSetMapper(fieldSet ->
-                new LibraryStock(
-                        fieldSet.readLong(CleansingStockCsvSpec.LIBRARY_ID.value()),
-                        fieldSet.readLong(CleansingStockCsvSpec.BOOK_ID.value())
-                )
-        );
+        lineMapper.setFieldSetMapper(CleansingStockCsvSpec::readLine);
         return lineMapper;
     }
 

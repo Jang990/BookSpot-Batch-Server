@@ -19,6 +19,7 @@ public class LibraryStock {
     private Long id;
     private Long libraryId;
     private Long bookId;
+    private String subjectCode;
 
     @CreatedDate
     private LocalDate createdAt;
@@ -26,8 +27,9 @@ public class LibraryStock {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    public LibraryStock(Long libraryId, Long bookId) {
+    public LibraryStock(Long libraryId, Long bookId, String subjectCode) {
         this.libraryId = libraryId;
         this.bookId = bookId;
+        this.subjectCode = subjectCode;
     }
 }
