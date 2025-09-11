@@ -1,6 +1,7 @@
 package com.bookspot.batch.step.listener;
 
 import com.bookspot.batch.global.FileService;
+import com.bookspot.batch.global.file.spec.CleansingStockCsvSpec;
 import com.bookspot.batch.step.writer.ExistsStockChecker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.ExitStatus;
@@ -22,7 +23,7 @@ public class DeletedStockFileCreator implements StepExecutionListener {
         StringBuilder sb = new StringBuilder();
         existsStockChecker.processNonExistStock(
                 (bookId, libraryId) -> {
-                    sb.append("%d,%d\n".formatted(bookId, libraryId));
+                    sb.append(CleansingStockCsvSpec.createLine(bookId, libraryId, null) + "\n");
                 }
         );
 

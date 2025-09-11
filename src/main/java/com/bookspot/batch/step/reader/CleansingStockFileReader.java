@@ -26,7 +26,8 @@ public class CleansingStockFileReader extends FlatFileItemReader<LibraryStock> {
         lineMapper.setFieldSetMapper(fieldSet ->
                 new LibraryStock(
                         fieldSet.readLong(CleansingStockCsvSpec.LIBRARY_ID.value()),
-                        fieldSet.readLong(CleansingStockCsvSpec.BOOK_ID.value())
+                        fieldSet.readLong(CleansingStockCsvSpec.BOOK_ID.value()),
+                        fieldSet.readString(CleansingStockCsvSpec.SUBJECT_CODE.value())
                 )
         );
         return lineMapper;

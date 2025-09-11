@@ -2,7 +2,8 @@ package com.bookspot.batch.global.file.spec;
 
 public enum CleansingStockCsvSpec {
     BOOK_ID("bookId"),
-    LIBRARY_ID("libraryId");
+    LIBRARY_ID("libraryId"),
+    SUBJECT_CODE("subjectCode");
 
     private final String fieldName;
 
@@ -14,7 +15,7 @@ public enum CleansingStockCsvSpec {
         return fieldName;
     }
 
-    public static String createLine(long bookId, long libraryId) {
-        return String.format("%d,%d", bookId, libraryId);
+    public static String createLine(long bookId, long libraryId, String subjectCode) {
+        return String.format("%d,%d,%s", bookId, libraryId, subjectCode == null ? "" : subjectCode);
     }
 }
