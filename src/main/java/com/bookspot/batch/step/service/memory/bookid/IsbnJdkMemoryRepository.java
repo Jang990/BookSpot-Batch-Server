@@ -14,6 +14,8 @@ public class IsbnJdkMemoryRepository implements IsbnMemoryRepository {
     }
 
     public void add(Isbn13MemoryData data) {
+        if(data.bookId() == 0)
+            throw new IllegalArgumentException("MySQL 자동증가 키를 사용하므로 0은 거부됨");
         store.put(Long.parseLong(data.isbn13()), data.bookId());
     }
 
@@ -21,7 +23,10 @@ public class IsbnJdkMemoryRepository implements IsbnMemoryRepository {
     public Long get(String isbn13) {
         try {
             long isbn13Number = Long.parseLong(isbn13);
-            return store.get(isbn13Number);
+            long result = store.get(isbn13Number);
+            if(result == 0)
+                return null;
+            return result;
         } catch (NumberFormatException e) {
             return null;
         }
