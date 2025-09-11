@@ -61,6 +61,18 @@ public class TestQueryUtil {
         );
     }
 
+    public static boolean existsStock(JdbcTemplate jdbcTemplate, long libraryId, long bookId) {
+        return Boolean.TRUE.equals(
+                jdbcTemplate.queryForObject("""
+                                    SELECT EXISTS (
+                            SELECT 1
+                            FROM library_stock
+                            WHERE library_id = ? AND book_id = ?
+                        )
+                        """, Boolean.class, libraryId, bookId)
+        );
+    }
+
     private static RowMapper<LibraryStock> stockMapper() {
         return (rs, rowNum) -> {
             LibraryStock result = new LibraryStock(

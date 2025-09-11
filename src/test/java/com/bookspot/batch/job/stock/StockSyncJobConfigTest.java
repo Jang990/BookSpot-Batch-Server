@@ -7,7 +7,6 @@ import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.global.FileService;
 import com.bookspot.batch.job.BatchJobTest;
 import com.bookspot.batch.step.reader.CleansingStockFileReader;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -112,11 +110,18 @@ class StockSyncJobConfigTest {
 
         assertEquals(ExitStatus.COMPLETED, jobExecution.getExitStatus());
 
-        assertResultFile();
-        assertStockData(10002, 104, "123.123"); // 새로운 Insert가 아니라면 기존 데이터 유지
+        assertOutputFiles();
+
+        // 최신 파일에 없는 데이터는 제거됨
+        assertFalse(TestQueryUtil.existsStock(jdbcTemplate, 10002, 101));
+        assertFalse(TestQueryUtil.existsStock(jdbcTemplate, 10002, 102));
+        assertFalse(TestQueryUtil.existsStock(jdbcTemplate, 10002, 103));
+
+        assertStockData(10002, 104, "123.123"); // 새로운 Insert가 아니라면 기존 subjectCode 유지
+
+        // 새로운 데이터 추가
         assertStockData(10002, 105, "510.4");
         assertStockData(10002, 106, "510.4");
-        assertEquals(3, TestQueryUtil.findStocks(jdbcTemplate, 10002).size());
     }
 
     private void assertStockData(long libraryId, long bookId, String subjectCode) {
@@ -126,8 +131,8 @@ class StockSyncJobConfigTest {
         assertEquals(subjectCode, stock.getSubjectCode());
     }
 
-    private void assertResultFile() throws Exception {
-        assertResultFile(
+    private void assertOutputFiles() throws Exception {
+        assertOutputFile(
                 CLEANSING_DIR.concat("/10002_2025-03-01_cleansing.csv"),
                 new MyResultSet(104, 10002, "813.8"),
                 new MyResultSet(105, 10002, "510.4"),
@@ -135,7 +140,8 @@ class StockSyncJobConfigTest {
                 new MyResultSet(105, 10002, "510.4")
         );
 
-        assertResultFile(
+        // 중복 제거된 파일 생성
+        assertOutputFile(
                 FILTERED_DIR.concat("/10002_2025-03-01_filtered.csv"),
                 new MyResultSet(104, 10002, "813.8"),
                 new MyResultSet(105, 10002, "510.4"),
@@ -146,7 +152,7 @@ class StockSyncJobConfigTest {
          * @see com.bookspot.batch.step.listener.DeletedStockFileCreator
          * delete시에는 분류번호는 필요없는 값이기 때문에 null로 설정됨
          */
-        assertResultFile(
+        assertOutputFile(
                 DELETE_DIR.concat("/10002_2025-03-01_delete.csv"),
                 new MyResultSet(101, 10002, null),
                 new MyResultSet(103, 10002, null),
@@ -154,7 +160,7 @@ class StockSyncJobConfigTest {
         );
     }
 
-    private static void assertResultFile(String resultPath, MyResultSet... resultSets) throws Exception {
+    private static void assertOutputFile(String resultPath, MyResultSet... resultSets) throws Exception {
         assertTrue(Files.exists(Path.of(resultPath)));
 
         CleansingStockFileReader fileReader = new CleansingStockFileReader(
