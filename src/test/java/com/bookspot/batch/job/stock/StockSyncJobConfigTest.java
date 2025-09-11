@@ -121,7 +121,7 @@ class StockSyncJobConfigTest {
 
         // 새로운 데이터 추가
         assertStockData(10002, 105, "510.4");
-        assertStockData(10002, 106, "510.4");
+        assertStockData(10002, 106, null); // 콤마(,)가 있는 invalid subjectCode는 null 처리됨
     }
 
     private void assertStockData(long libraryId, long bookId, String subjectCode) {
@@ -136,7 +136,7 @@ class StockSyncJobConfigTest {
                 CLEANSING_DIR.concat("/10002_2025-03-01_cleansing.csv"),
                 new MyResultSet(104, 10002, "813.8"),
                 new MyResultSet(105, 10002, "510.4"),
-                new MyResultSet(106, 10002, "510.4"),
+                new MyResultSet(106, 10002, null),
                 new MyResultSet(105, 10002, "510.4")
         );
 
@@ -145,7 +145,7 @@ class StockSyncJobConfigTest {
                 FILTERED_DIR.concat("/10002_2025-03-01_filtered.csv"),
                 new MyResultSet(104, 10002, "813.8"),
                 new MyResultSet(105, 10002, "510.4"),
-                new MyResultSet(106, 10002, "510.4")
+                new MyResultSet(106, 10002, null)
         );
 
         /**
