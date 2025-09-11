@@ -11,6 +11,7 @@ import com.bookspot.batch.step.partition.StockCsvPartitionConfig;
 import com.bookspot.batch.step.processor.IsbnValidationFilter;
 import com.bookspot.batch.step.processor.StockProcessor;
 import com.bookspot.batch.step.processor.csv.TextEllipsiser;
+import com.bookspot.batch.step.processor.csv.book.SubjectCodeStringParser;
 import com.bookspot.batch.step.processor.exception.InvalidIsbn13Exception;
 import com.bookspot.batch.step.reader.IsbnIdReader;
 import com.bookspot.batch.step.reader.StockCsvFileReaderAndDeleter;
@@ -53,6 +54,7 @@ public class StockNormalizeStepConfig {
 
     private final IsbnIdReader isbnIdReader;
     private final TextEllipsiser textEllipsiser;
+    private final SubjectCodeStringParser subjectCodeStringParser;
     private final IsbnMemoryRepository isbnMemoryRepository;
 
     private static final int CHUNK_SIZE = 800;
@@ -167,6 +169,7 @@ public class StockNormalizeStepConfig {
     public StockProcessor stockProcessor(@Value("#{stepExecutionContext['file']}") Resource file) {
         return new StockProcessor(
                 textEllipsiser,
+                subjectCodeStringParser,
                 isbnMemoryRepository,
                 StockFilenameUtil.parse(file.getFilename()).libraryId()
         );

@@ -3,6 +3,7 @@ package com.bookspot.batch.step.processor;
 import com.bookspot.batch.data.LibraryStock;
 import com.bookspot.batch.data.file.csv.StockCsvData;
 import com.bookspot.batch.step.processor.csv.TextEllipsiser;
+import com.bookspot.batch.step.processor.csv.book.SubjectCodeStringParser;
 import com.bookspot.batch.step.service.memory.bookid.IsbnMemoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.*;
 class StockProcessorTest {
     @Mock
     private IsbnMemoryRepository isbnMemoryRepository;
+    private SubjectCodeStringParser subjectCodeStringParser = new SubjectCodeStringParser();
     private TextEllipsiser textEllipsiser = new TextEllipsiser();
     private StockProcessor stockProcessor;
 
@@ -24,7 +26,12 @@ class StockProcessorTest {
 
     @BeforeEach
     void setUp() {
-        stockProcessor = new StockProcessor(textEllipsiser, isbnMemoryRepository, libraryId);
+        stockProcessor = new StockProcessor(
+                textEllipsiser,
+                subjectCodeStringParser,
+                isbnMemoryRepository,
+                libraryId
+        );
     }
 
     @Test
@@ -52,19 +59,6 @@ class StockProcessorTest {
     }
 
     @Test
-    void subjectCode에_쉼표가_있으면_null처리() throws Exception {
-        StockCsvData item = mock(StockCsvData.class);
-        when(isbnMemoryRepository.get(item.getIsbn())).thenReturn(42L);
-        when(item.getSubjectCode()).thenReturn(",123.4");
-
-
-        LibraryStock result = stockProcessor.process(item);
-
-        assertNotNull(result);
-        assertNull(result.getSubjectCode());
-    }
-
-    @Test
     void subjectCode가_40자_초과하면_점을_붙혀줌() throws Exception {
         StockCsvData item = mock(StockCsvData.class);
         when(item.getSubjectCode()).thenReturn("123".repeat(14));
@@ -76,6 +70,35 @@ class StockProcessorTest {
         assertTrue(result.getSubjectCode().startsWith("123"));
         assertTrue(result.getSubjectCode().endsWith(TextEllipsiser.ELLIPSIS));
         assertTrue(result.getSubjectCode().length() == 40);
+    }
+
+    // 아예 없는것보다 좀 이상해도 있는게 사용자가 보기에 더 나을것이라는 판단
+
+    @Test
+    void subjectCode에_쉼표가_있으면_점으로_변경_처리() throws Exception {
+        StockCsvData item = mock(StockCsvData.class);
+        when(isbnMemoryRepository.get(item.getIsbn())).thenReturn(42L);
+        when(item.getSubjectCode()).thenReturn("123,4");
+
+
+        LibraryStock result = stockProcessor.process(item);
+
+        assertNotNull(result);
+        assertEquals("123.4", result.getSubjectCode());
+    }
+
+
+    @Test
+    void 개행문자_점으로_바꿔줌() throws Exception {
+        StockCsvData item = mock(StockCsvData.class);
+        when(isbnMemoryRepository.get(item.getIsbn())).thenReturn(42L);
+        when(item.getSubjectCode()).thenReturn("123\n456");
+
+
+        LibraryStock result = stockProcessor.process(item);
+
+        assertNotNull(result);
+        assertEquals("123.456", result.getSubjectCode());
     }
 
 }
