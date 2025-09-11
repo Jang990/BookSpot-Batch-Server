@@ -52,6 +52,15 @@ public class TestQueryUtil {
         );
     }
 
+    public static LibraryStock findSingleStock(JdbcTemplate jdbcTemplate, long libraryId, long bookId) {
+        return jdbcTemplate.queryForObject("""
+                        SELECT library_id, book_id, subject_code, created_at, updated_at_time
+                        FROM library_stock
+                        WHERE library_id = ? and book_id = ?
+                        """, stockMapper(), libraryId, bookId
+        );
+    }
+
     private static RowMapper<LibraryStock> stockMapper() {
         return (rs, rowNum) -> {
             LibraryStock result = new LibraryStock(
