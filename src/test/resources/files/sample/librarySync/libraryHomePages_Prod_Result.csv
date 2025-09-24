@@ -1,0 +1,4 @@
+id,name,isbn_search_prefix
+1,2.28도서관,https://library.daegu.go.kr/228lib/intro/search/index.do?menu_idx=125&viewPage=1&booktype=BOOKANDNONBOOK&isbn=
+177,고양시립원당도서관,
+181,고양시립한뫼도서관,https://www.goyanglib.or.kr/center/menu/10004/program/30002/searchResultList.do?searchType=DETAIL&searchManageCodeArr=MK&searchAdvIsbn=
