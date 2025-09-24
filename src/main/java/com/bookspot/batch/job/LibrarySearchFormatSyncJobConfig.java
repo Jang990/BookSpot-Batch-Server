@@ -31,7 +31,7 @@ public class LibrarySearchFormatSyncJobConfig {
     private final BookSpotDirectoryProperties bookSpotDirectoryProperties;
 
     @Bean
-    public Job librarySyncJob(AlertJobListener alertJobListener) {
+    public Job librarySearchFormatSyncJob(AlertJobListener alertJobListener) {
         return new JobBuilder("librarySearchFormatSyncJob", jobRepository)
                 .start(librarySearchPageSyncStep())
                 .listener(alertJobListener)

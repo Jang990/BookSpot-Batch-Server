@@ -28,4 +28,11 @@ public class JobController {
         return ResponseEntity.ok("Job을 진행함");
     }
 
+    @PostMapping("/job/library/format/start")
+    public ResponseEntity<String> startLibrarySearchFormatSyncJob() {
+        if(jobStatusService.hasRunningJob())
+            return ResponseEntity.badRequest().body("현재 진행중인 Job이 있습니다.");
+        customJobLauncher.launchLibrarySearchFormatSyncJob();
+        return ResponseEntity.ok("Job을 진행함");
+    }
 }

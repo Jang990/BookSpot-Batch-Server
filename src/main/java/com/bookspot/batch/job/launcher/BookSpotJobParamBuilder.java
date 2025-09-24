@@ -90,4 +90,8 @@ public class BookSpotJobParamBuilder {
                 )
                 .toJobParameters();
     }
+
+    public JobParameters buildLibrarySearchFormatSyncJobParams() {
+        return commonBuilder().toJobParameters();
+    }
 }
