@@ -84,7 +84,7 @@ public class LibrarySearchFormatSyncJobConfig {
                 .dataSource(dataSource)
                 .sql("""
                         UPDATE library
-                        SET isbn_search_pattern = :isbnSearchPrefix
+                        SET isbn_search_pattern = :format
                         WHERE id = :id
                         """)
                 .beanMapped()
