@@ -86,20 +86,30 @@ public record BookIndexSpec(LocalDate base) {
                                     "type": "text",
                                     "analyzer": "ws_min2_analyzer"
                                 }
-                            }
+                            },
+                            "copy_to": ["search_text"]
                         },
                         "subject_code": {
                             "type": "short"
                         },
                         "author": {
                             "type": "text",
-                            "analyzer": "ws_analyzer"
+                            "analyzer": "ws_analyzer",
+                            "copy_to": ["search_text"]
+                        },
+                        "search_text": {
+                          "type": "text",
+                          "analyzer": "my_nori_analyzer",
+                          "fields": {
+                            "ws": { "type": "text", "analyzer": "ws_min2_analyzer" }
+                          }
                         },
                         "publication_year": {
                             "type": "short"
                         },
                         "publisher": {
-                            "type": "keyword"
+                            "type": "keyword",
+                            "copy_to": ["search_text"]
                         },
                         "loan_count": {
                             "type": "integer"
