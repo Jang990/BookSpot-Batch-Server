@@ -52,6 +52,6 @@ public class StockCsvDataMapper implements FieldSetMapper<StockCsvData> {
     }
 
     private int toInt(String value) {
-        return value.isBlank() ? 0 : Integer.parseInt(value);
+        return value == null || value.isBlank() ? 0 : Integer.parseInt(value);
     }
 }
