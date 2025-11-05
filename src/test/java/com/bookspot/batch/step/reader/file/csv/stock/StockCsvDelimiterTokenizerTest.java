@@ -1,6 +1,8 @@
 package com.bookspot.batch.step.reader.file.csv.stock;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,5 +50,20 @@ class StockCsvDelimiterTokenizerTest {
         assertEquals("1", result[0]);
         assertEquals("콤마,무시해라", result[1]);
         assertEquals("무시됐다.", result[2]);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "1,,123",
+            "1,\"\",123"
+    })
+    void 빈값은_공백_문자열로_들어간다(String testCsvLine) {
+        String[] result = tokenizer.tokenize(
+                testCsvLine
+        ).getValues();
+
+        assertEquals("1", result[0]);
+        assertEquals("", result[1]);
+        assertEquals("123", result[2]);
     }
 }
