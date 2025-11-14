@@ -127,7 +127,7 @@ public class BookSyncStepConfig {
     ) {
         return new IsbnValidationFilter(
                 isbnValidator,
-                StockFilenameUtil.parse(file.getFilename()).libraryId()
+                file
         );
     }
 
