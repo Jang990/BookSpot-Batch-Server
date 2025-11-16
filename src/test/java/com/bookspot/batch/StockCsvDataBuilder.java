@@ -48,4 +48,8 @@ public class StockCsvDataBuilder {
     public StockCsvData build() {
         return new StockCsvData(title, author, publisher, year, isbn, volume, subjectCode, 0, 0);
     }
+
+    public static StockCsvData newSample() {
+        return new StockCsvDataBuilder().build();
+    }
 }
