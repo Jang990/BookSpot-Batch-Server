@@ -17,8 +17,7 @@ import static org.mockito.Mockito.*;
 class IsbnValidationFilterTest {
     @Mock IsbnValidator isbnValidator;
 
-    StockCsvData data = new StockCsvDataBuilder().build();
-
+    StockCsvData data = StockCsvDataBuilder.newSample();
 
     @Test
     void isbn13이_유효하지_않으면_예외처리() throws Exception {
