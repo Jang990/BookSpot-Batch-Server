@@ -42,12 +42,16 @@ public class LoanCountStepListener implements StepExecutionListener {
 
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
+        if(stepExecution.getExitStatus().equals(ExitStatus.COMPLETED))
+            saveLoanCountFile();
+        return StepExecutionListener.super.afterStep(stepExecution);
+    }
+
+    private void saveLoanCountFile() {
         try {
             aggregatedBooksCsvWriter.saveToCsv();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        return StepExecutionListener.super.afterStep(stepExecution);
     }
 }
