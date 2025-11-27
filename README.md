@@ -17,7 +17,7 @@
 
 
 ## 🧐 Structure
-![북스팟아키텍쳐](https://github.com/user-attachments/assets/cbca0ff3-7ae6-4c1c-9fbc-fb44f97d8c65)
+<img width="978" height="642" alt="북스팟아키텍쳐2" src="https://github.com/user-attachments/assets/a2c9bcf4-72bd-4e8f-b7df-44c18fea3ed7" />
 
 <br>
 
