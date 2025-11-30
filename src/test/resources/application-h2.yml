@@ -17,7 +17,7 @@ spring:
   sql.init:
     mode: always
     schema-locations: classpath:schema-h2.sql
-  batch.jdbc.initialize-schema: never
+  batch.jdbc.initialize-schema: always
   datasource:
     username: sa
     password:
