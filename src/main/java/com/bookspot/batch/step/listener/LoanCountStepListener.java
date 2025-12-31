@@ -33,10 +33,12 @@ public class LoanCountStepListener implements StepExecutionListener {
             while ((data = isbnIdReader.read()) != null)
                 loanCountService.add(data.isbn13());
 
-            isbnIdReader.close();
             loanCountService.beforeCount();
         } catch (Exception e) {
+            loanCountService.clearAll();
             throw new RuntimeException(e);
+        } finally {
+            isbnIdReader.close();
         }
     }
 
