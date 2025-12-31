@@ -23,13 +23,14 @@ public class BookSyncStepListener implements StepExecutionListener {
                 String isbn = isbnReader.read();
                 if (isbn == null) {
                     isbnSet.beforeProcess();
-                    isbnReader.close();
                     return;
                 }
                 isbnSet.add(isbn);
             }
         } catch (Exception e) {
             throw new RuntimeException("bookSync.ISBN 캐시 로딩 실패", e);
+        } finally {
+            isbnReader.close();
         }
     }
 
