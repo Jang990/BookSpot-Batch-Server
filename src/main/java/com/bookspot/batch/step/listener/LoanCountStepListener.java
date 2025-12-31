@@ -54,6 +54,8 @@ public class LoanCountStepListener implements StepExecutionListener {
             aggregatedBooksCsvWriter.saveToCsv();
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            loanCountService.clearAll();
         }
     }
 }
