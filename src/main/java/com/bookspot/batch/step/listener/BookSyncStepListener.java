@@ -28,6 +28,7 @@ public class BookSyncStepListener implements StepExecutionListener {
                 isbnSet.add(isbn);
             }
         } catch (Exception e) {
+            isbnSet.clearAll();
             throw new RuntimeException("bookSync.ISBN 캐시 로딩 실패", e);
         } finally {
             isbnReader.close();
