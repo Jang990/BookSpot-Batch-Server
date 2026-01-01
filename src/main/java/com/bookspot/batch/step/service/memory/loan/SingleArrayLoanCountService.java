@@ -6,6 +6,8 @@ import java.util.Arrays;
 
 //@Component
 public class SingleArrayLoanCountService implements LoanCountService {
+    private static final long EMPTY_SPACE = Long.MAX_VALUE;
+
     private long[] isbnArray;
     private int[] loanArray;
     private int loanIdx ;

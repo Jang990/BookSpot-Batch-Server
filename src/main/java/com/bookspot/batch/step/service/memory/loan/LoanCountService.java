@@ -2,7 +2,6 @@ package com.bookspot.batch.step.service.memory.loan;
 
 
 public interface LoanCountService {
-    long EMPTY_SPACE = Long.MAX_VALUE;
     int BOOK_TABLE_SIZE = 4_000_000;
 
     void init();

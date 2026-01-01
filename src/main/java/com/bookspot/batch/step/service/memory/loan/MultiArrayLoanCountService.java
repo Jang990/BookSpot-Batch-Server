@@ -7,6 +7,8 @@ import java.util.concurrent.atomic.AtomicIntegerArray;
 
 @Component
 public class MultiArrayLoanCountService implements LoanCountService {
+    private static final long EMPTY_SPACE = Long.MAX_VALUE;
+
     private long[] isbnArray;
     private AtomicIntegerArray loanArray;
     private int loanIdx = 0;
