@@ -68,7 +68,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
 
     private void fetchNextPage() {
         saveState();
-        List<ConvertedUniqueBook> content = queryBooks();
+        List<ConvertedUniqueBook> content = fetchBooks();
         if (content.isEmpty()) {
             currentBatch = Collections.emptyList();
             return;
@@ -84,7 +84,7 @@ public class BookWithLibraryIdReader implements ItemReader<BookDocument>, ItemSt
         currentPage = lastBookId(content);
     }
 
-    private List<ConvertedUniqueBook> queryBooks() {
+    private List<ConvertedUniqueBook> fetchBooks() {
         return entityManager.createQuery(BOOK_SQL, ConvertedUniqueBook.class)
                 .setParameter("lastId", currentPage)
                 .setMaxResults(pageSize)
