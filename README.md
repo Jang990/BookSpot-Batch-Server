@@ -20,6 +20,36 @@
 <img width="978" height="642" alt="북스팟아키텍쳐2" src="https://github.com/user-attachments/assets/a2c9bcf4-72bd-4e8f-b7df-44c18fea3ed7" />
 
 <br>
+<br>
+
+## 📦  Data Overview
+
+<table>
+  <tr>
+    <td>
+      <img width="378" height="728" alt="image" src="https://github.com/user-attachments/assets/0ade8187-ec51-479e-9923-7e011c549583" />
+    </td>
+    <td>
+
+**DB 테이블 정보**
+
+**book** : 약 **280만 권**의 책 정보 <br>
+**library** : 약 **1500 곳**의 도서관 정보 <br>
+**library_stock** : 약 **1.1억 건**의 장서 정보 <br>
+
+---
+
+**소스 CSV 파일 정보**
+
+**(매월 1일 최신화) 도서관 장서 csv 파일** <br>
+(1500개의 도서관 CSV 파일, **전체 약 1.3억 개 데이터**) <br>
+<img width="800" alt="image" src="https://github.com/user-attachments/assets/a4135afc-e923-4f2d-998e-d837ee23b88c" />
+(매월 평균) 1.5만 개의 신규 책, 50만 개의 신규 장서 정보
+    </td>
+  </tr>
+</table>
+
+<br>
 
 ## 🏭 Batch Process
 
