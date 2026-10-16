@@ -53,6 +53,9 @@
 
 ## 🏭 Batch Process
 
+<img width="2720" height="1640" alt="bookspot_batch_overview" src="https://github.com/user-attachments/assets/4950605e-1cf0-4e56-9118-b8719a278801" />
+
+
 ### 🏛️ 도서관 동기화 작업
 - **도서관 정보 최신화** (ChunkSize -  200)
     - BeforeStep: 정보나루에서 도서관 Excel 파일 다운로드
@@ -193,9 +196,6 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
     - (25년 6월 기준) books-2025-04 인덱스 제거. 
 
 <br>
-
-![BookSpot-Batch](https://github.com/user-attachments/assets/b37032c1-e75f-4f87-b2ef-2263906e6eee)
-
 <br>
 
 ### 🔗 데이터 옵션
