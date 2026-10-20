@@ -53,7 +53,8 @@
 
 ## 🏭 Batch Process
 
-<img width="2720" height="1640" alt="bookspot_batch_overview" src="https://github.com/user-attachments/assets/4950605e-1cf0-4e56-9118-b8719a278801" />
+<img width="2720" height="1640" alt="bookspot_batch_overview_v3" src="https://github.com/user-attachments/assets/840c0dd0-fceb-411a-b5c6-b9c8ff70e2e9" />
+
 
 
 ### 🏛️ 도서관 동기화 작업
@@ -182,13 +183,12 @@ Delete 파일 생성 Step에서 사용하는 Map을 Map<Long, Boolean> => LongBo
 
 <br>
 
-### 🔍 책 정보 OpenSearch 동기화 작업
+### 🔍 OpenSearch 책 검색 인덱스 교체 작업
 
 - **OpenSearch 신규 책 인덱스 생성**
   - (25년 6월 기준) books-2025-06 인덱스 생성
 - **책 정보 OpenSearch 적재** (ChunkSize - 150)
-  - Reader: 책 테이블 정보 읽기
-  - Processor: Document로 변환하기
+  - Reader: 책과 책을 소장하고 있는 도서관 읽어오기 + Document로 변환하기
   - Writer: OpenSearch로 Bulk Insert
 - **OpenSearch 인덱스 청소**
     - (25년 6월 기준) books-2025-06 인덱스에 books Alias 부여.
